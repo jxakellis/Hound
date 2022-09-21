@@ -111,21 +111,21 @@ final class Log: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        self.logId = aDecoder.decodeInteger(forKey: "logId")
-        self.userId = aDecoder.decodeObject(forKey: "userId") as? String ?? ClassConstant.LogConstant.defaultUserId
-        self.logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: "logAction") as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue) ?? ClassConstant.LogConstant.defaultLogAction
-        self.logCustomActionName = aDecoder.decodeObject(forKey: "logCustomActionName") as? String
-        self.logDate = aDecoder.decodeObject(forKey: "logDate") as? Date ?? Date()
-        self.logNote = aDecoder.decodeObject(forKey: "logNote") as? String ?? ClassConstant.LogConstant.defaultLogNote
+        logId = aDecoder.decodeObject(forKey: KeyConstant.logId.rawValue) as? Int ?? logId
+        userId = aDecoder.decodeObject(forKey: KeyConstant.userId.rawValue) as? String ?? userId
+        logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: KeyConstant.logAction.rawValue) as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue) ?? logAction
+        logCustomActionName = aDecoder.decodeObject(forKey: KeyConstant.logCustomActionName.rawValue) as? String ?? logCustomActionName
+        logDate = aDecoder.decodeObject(forKey: KeyConstant.logDate.rawValue) as? Date ?? logDate
+        logNote = aDecoder.decodeObject(forKey: KeyConstant.logNote.rawValue) as? String ?? logNote
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(logId, forKey: "logId")
-        aCoder.encode(userId, forKey: "userId")
-        aCoder.encode(logAction.rawValue, forKey: "logAction")
-        aCoder.encode(logCustomActionName, forKey: "logCustomActionName")
-        aCoder.encode(logDate, forKey: "logDate")
-        aCoder.encode(logNote, forKey: "logNote")
+        aCoder.encode(logId, forKey: KeyConstant.logId.rawValue)
+        aCoder.encode(userId, forKey: KeyConstant.userId.rawValue)
+        aCoder.encode(logAction.rawValue, forKey: KeyConstant.logAction.rawValue)
+        aCoder.encode(logCustomActionName, forKey: KeyConstant.logCustomActionName.rawValue)
+        aCoder.encode(logDate, forKey: KeyConstant.logDate.rawValue)
+        aCoder.encode(logNote, forKey: KeyConstant.logNote.rawValue)
     }
     
     // MARK: - Main
@@ -154,22 +154,22 @@ final class Log: NSObject, NSCoding, NSCopying {
     
     convenience init(fromBody body: [String: Any]) {
         
-        let logId: Int = body[ServerDefaultKeys.logId.rawValue] as? Int ?? ClassConstant.LogConstant.defaultLogId
+        let logId: Int = body[KeyConstant.logId.rawValue] as? Int ?? ClassConstant.LogConstant.defaultLogId
         // don't user ClassConstant.LogConstant.defaultUserId here. if we cannot decode the value, then just leave it as -1, as otherwise it would incorrectly display that this user created the log (as ClassConstant.LogConstant.defaultUserId defaults to UserInformation.userId first)
-        let userId: String = body[ServerDefaultKeys.userId.rawValue] as? String ?? EnumConstant.HashConstant.defaultSHA256Hash
-        let logAction: LogAction = LogAction(rawValue: body[ServerDefaultKeys.logAction.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue) ?? ClassConstant.LogConstant.defaultLogAction
-        let logCustomActionName: String? = body[ServerDefaultKeys.logCustomActionName.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogCustomActionName
+        let userId: String = body[KeyConstant.userId.rawValue] as? String ?? EnumConstant.HashConstant.defaultSHA256Hash
+        let logAction: LogAction = LogAction(rawValue: body[KeyConstant.logAction.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue) ?? ClassConstant.LogConstant.defaultLogAction
+        let logCustomActionName: String? = body[KeyConstant.logCustomActionName.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogCustomActionName
         
         var logDate: Date = ClassConstant.LogConstant.defaultLogDate
-        if let logDateString = body[ServerDefaultKeys.logDate.rawValue] as? String {
+        if let logDateString = body[KeyConstant.logDate.rawValue] as? String {
             logDate = ResponseUtils.dateFormatter(fromISO8601String: logDateString) ?? ClassConstant.LogConstant.defaultLogDate
         }
         
-        let logNote: String = body[ServerDefaultKeys.logNote.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogNote
+        let logNote: String = body[KeyConstant.logNote.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogNote
         
         self.init(logId: logId, userId: userId, logAction: logAction, logCustomActionName: logCustomActionName, logDate: logDate, logNote: logNote)
         
-        logIsDeleted = body[ServerDefaultKeys.logIsDeleted.rawValue] as? Bool ?? false
+        logIsDeleted = body[KeyConstant.logIsDeleted.rawValue] as? Bool ?? false
     }
     
     // MARK: Properties
@@ -211,10 +211,10 @@ extension Log {
     /// Returns an array literal of the logs's properties. This is suitable to be used as the JSON body for a HTTP request
     func createBody() -> [String: Any] {
         var body: [String: Any] = [:]
-        body[ServerDefaultKeys.logNote.rawValue] = logNote
-        body[ServerDefaultKeys.logDate.rawValue] = logDate.ISO8601FormatWithFractionalSeconds()
-        body[ServerDefaultKeys.logAction.rawValue] = logAction.rawValue
-        body[ServerDefaultKeys.logCustomActionName.rawValue] = logCustomActionName
+        body[KeyConstant.logNote.rawValue] = logNote
+        body[KeyConstant.logDate.rawValue] = logDate.ISO8601FormatWithFractionalSeconds()
+        body[KeyConstant.logAction.rawValue] = logAction.rawValue
+        body[KeyConstant.logCustomActionName.rawValue] = logCustomActionName
         return body
         
     }

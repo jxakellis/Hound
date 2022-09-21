@@ -132,39 +132,39 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     required init?(coder aDecoder: NSCoder) {
         super.init()
         
-        self.reminderId = aDecoder.decodeInteger(forKey: "reminderId")
-        self.reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: "reminderAction") as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue) ?? ClassConstant.ReminderConstant.defaultReminderAction
+        reminderId = aDecoder.decodeObject(forKey: KeyConstant.reminderId.rawValue) as? Int ?? reminderId
+        reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: KeyConstant.reminderAction.rawValue) as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue) ?? reminderAction
         
-        self.reminderCustomActionName = aDecoder.decodeObject(forKey: "reminderCustomActionName") as? String
+        reminderCustomActionName = aDecoder.decodeObject(forKey: KeyConstant.reminderCustomActionName.rawValue) as? String ?? reminderCustomActionName
         
-        self.countdownComponents = aDecoder.decodeObject(forKey: "countdownComponents") as? CountdownComponents ?? CountdownComponents()
-        self.weeklyComponents = aDecoder.decodeObject(forKey: "weeklyComponents") as?  WeeklyComponents ?? WeeklyComponents()
-        self.monthlyComponents = aDecoder.decodeObject(forKey: "monthlyComponents") as?  MonthlyComponents ?? MonthlyComponents()
-        self.oneTimeComponents = aDecoder.decodeObject(forKey: "oneTimeComponents") as? OneTimeComponents ?? OneTimeComponents()
-        self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as? SnoozeComponents ?? SnoozeComponents()
+        countdownComponents = aDecoder.decodeObject(forKey: KeyConstant.countdownComponents.rawValue) as? CountdownComponents ?? countdownComponents
+        weeklyComponents = aDecoder.decodeObject(forKey: KeyConstant.weeklyComponents.rawValue) as?  WeeklyComponents ?? weeklyComponents
+        monthlyComponents = aDecoder.decodeObject(forKey: KeyConstant.monthlyComponents.rawValue) as?  MonthlyComponents ?? monthlyComponents
+        oneTimeComponents = aDecoder.decodeObject(forKey: KeyConstant.oneTimeComponents.rawValue) as? OneTimeComponents ?? oneTimeComponents
+        snoozeComponents = aDecoder.decodeObject(forKey: KeyConstant.snoozeComponents.rawValue) as? SnoozeComponents ?? snoozeComponents
         
-        self.storedReminderType = ReminderType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? ClassConstant.ReminderConstant.defaultReminderType.rawValue) ?? ClassConstant.ReminderConstant.defaultReminderType
+        storedReminderType = ReminderType(rawValue: aDecoder.decodeObject(forKey: KeyConstant.reminderType.rawValue) as? String ?? ClassConstant.ReminderConstant.defaultReminderType.rawValue) ?? storedReminderType
         
-        self.storedReminderExecutionBasis = aDecoder.decodeObject(forKey: "reminderExecutionBasis") as? Date ?? Date()
+        storedReminderExecutionBasis = aDecoder.decodeObject(forKey: KeyConstant.reminderExecutionBasis.rawValue) as? Date ?? storedReminderExecutionBasis
         
-        self.reminderIsEnabled = aDecoder.decodeBool(forKey: "reminderIsEnabled")
+        reminderIsEnabled = aDecoder.decodeObject(forKey: KeyConstant.reminderIsEnabled.rawValue) as? Bool ?? reminderIsEnabled
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(reminderId, forKey: "reminderId")
-        aCoder.encode(reminderAction.rawValue, forKey: "reminderAction")
-        aCoder.encode(reminderCustomActionName, forKey: "reminderCustomActionName")
+        aCoder.encode(reminderId, forKey: KeyConstant.reminderId.rawValue)
+        aCoder.encode(reminderAction.rawValue, forKey: KeyConstant.reminderAction.rawValue)
+        aCoder.encode(reminderCustomActionName, forKey: KeyConstant.reminderCustomActionName.rawValue)
         
-        aCoder.encode(countdownComponents, forKey: "countdownComponents")
-        aCoder.encode(weeklyComponents, forKey: "weeklyComponents")
-        aCoder.encode(monthlyComponents, forKey: "monthlyComponents")
-        aCoder.encode(oneTimeComponents, forKey: "oneTimeComponents")
-        aCoder.encode(snoozeComponents, forKey: "snoozeComponents")
-        aCoder.encode(storedReminderType.rawValue, forKey: "reminderType")
+        aCoder.encode(countdownComponents, forKey: KeyConstant.countdownComponents.rawValue)
+        aCoder.encode(weeklyComponents, forKey: KeyConstant.weeklyComponents.rawValue)
+        aCoder.encode(monthlyComponents, forKey: KeyConstant.monthlyComponents.rawValue)
+        aCoder.encode(oneTimeComponents, forKey: KeyConstant.oneTimeComponents.rawValue)
+        aCoder.encode(snoozeComponents, forKey: KeyConstant.snoozeComponents.rawValue)
+        aCoder.encode(storedReminderType.rawValue, forKey: KeyConstant.reminderType.rawValue)
         
-        aCoder.encode(storedReminderExecutionBasis, forKey: "reminderExecutionBasis")
+        aCoder.encode(storedReminderExecutionBasis, forKey: KeyConstant.reminderExecutionBasis.rawValue)
         
-        aCoder.encode(reminderIsEnabled, forKey: "reminderIsEnabled")
+        aCoder.encode(reminderIsEnabled, forKey: KeyConstant.reminderIsEnabled.rawValue)
     }
     
     // MARK: Main
@@ -193,65 +193,65 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     convenience init(fromBody body: [String: Any]) {
         
         // if reminder was deleted, then return nil and don't create object
-        // guard body[ServerDefaultKeys.reminderIsDeleted.rawValue] as? Bool ?? false == false else {
+        // guard body[KeyConstant.reminderIsDeleted.rawValue] as? Bool ?? false == false else {
         //     return nil
         // }
         
-        let reminderId = body[ServerDefaultKeys.reminderId.rawValue] as? Int ?? ClassConstant.ReminderConstant.defaultReminderId
-        let reminderAction = ReminderAction(rawValue: body[ServerDefaultKeys.reminderAction.rawValue] as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue) ?? ClassConstant.ReminderConstant.defaultReminderAction
-        let reminderCustomActionName = body[ServerDefaultKeys.reminderCustomActionName.rawValue] as? String ?? ClassConstant.ReminderConstant.defaultReminderCustomActionName
-        let reminderType = ReminderType(rawValue: body[ServerDefaultKeys.reminderType.rawValue] as? String ?? ClassConstant.ReminderConstant.defaultReminderType.rawValue) ?? ClassConstant.ReminderConstant.defaultReminderType
+        let reminderId = body[KeyConstant.reminderId.rawValue] as? Int ?? ClassConstant.ReminderConstant.defaultReminderId
+        let reminderAction = ReminderAction(rawValue: body[KeyConstant.reminderAction.rawValue] as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue) ?? ClassConstant.ReminderConstant.defaultReminderAction
+        let reminderCustomActionName = body[KeyConstant.reminderCustomActionName.rawValue] as? String ?? ClassConstant.ReminderConstant.defaultReminderCustomActionName
+        let reminderType = ReminderType(rawValue: body[KeyConstant.reminderType.rawValue] as? String ?? ClassConstant.ReminderConstant.defaultReminderType.rawValue) ?? ClassConstant.ReminderConstant.defaultReminderType
         var reminderExecutionBasis = ClassConstant.ReminderConstant.defaultReminderExecutionBasis
-        if let reminderExecutionBasisString = body[ServerDefaultKeys.reminderExecutionBasis.rawValue] as? String {
+        if let reminderExecutionBasisString = body[KeyConstant.reminderExecutionBasis.rawValue] as? String {
             reminderExecutionBasis = ResponseUtils.dateFormatter(fromISO8601String: reminderExecutionBasisString) ?? ClassConstant.ReminderConstant.defaultReminderExecutionBasis
         }
-        let reminderIsEnabled = body[ServerDefaultKeys.reminderIsEnabled.rawValue] as? Bool ?? ClassConstant.ReminderConstant.defaultReminderIsEnabled
+        let reminderIsEnabled = body[KeyConstant.reminderIsEnabled.rawValue] as? Bool ?? ClassConstant.ReminderConstant.defaultReminderIsEnabled
         
         self.init(reminderId: reminderId, reminderAction: reminderAction, reminderCustomActionName: reminderCustomActionName, reminderType: reminderType, reminderExecutionBasis: reminderExecutionBasis, reminderIsEnabled: reminderIsEnabled)
         
-        reminderIsDeleted = body[ServerDefaultKeys.reminderIsDeleted.rawValue] as? Bool ?? false
+        reminderIsDeleted = body[KeyConstant.reminderIsDeleted.rawValue] as? Bool ?? false
         
         // snooze
-        snoozeComponents = SnoozeComponents(snoozeIsEnabled: body[ServerDefaultKeys.snoozeIsEnabled.rawValue] as? Bool, executionInterval: body[ServerDefaultKeys.snoozeExecutionInterval.rawValue] as? TimeInterval, intervalElapsed: body[ServerDefaultKeys.snoozeIntervalElapsed.rawValue] as? TimeInterval)
+        snoozeComponents = SnoozeComponents(snoozeIsEnabled: body[KeyConstant.snoozeIsEnabled.rawValue] as? Bool, executionInterval: body[KeyConstant.snoozeExecutionInterval.rawValue] as? TimeInterval, intervalElapsed: body[KeyConstant.snoozeIntervalElapsed.rawValue] as? TimeInterval)
         
         // countdown
         countdownComponents = CountdownComponents(
-            executionInterval: body[ServerDefaultKeys.countdownExecutionInterval.rawValue] as? TimeInterval,
-            intervalElapsed: body[ServerDefaultKeys.countdownIntervalElapsed.rawValue] as? TimeInterval)
+            executionInterval: body[KeyConstant.countdownExecutionInterval.rawValue] as? TimeInterval,
+            intervalElapsed: body[KeyConstant.countdownIntervalElapsed.rawValue] as? TimeInterval)
         
         // weekly
         var weeklySkippedDate: Date?
-        if let weeklySkippedDateString = body[ServerDefaultKeys.weeklySkippedDate.rawValue] as? String {
+        if let weeklySkippedDateString = body[KeyConstant.weeklySkippedDate.rawValue] as? String {
             weeklySkippedDate = ResponseUtils.dateFormatter(fromISO8601String: weeklySkippedDateString)
         }
         weeklyComponents = WeeklyComponents(
-            UTCHour: body[ServerDefaultKeys.weeklyUTCHour.rawValue] as? Int,
-            UTCMinute: body[ServerDefaultKeys.weeklyUTCMinute.rawValue] as? Int,
+            UTCHour: body[KeyConstant.weeklyUTCHour.rawValue] as? Int,
+            UTCMinute: body[KeyConstant.weeklyUTCMinute.rawValue] as? Int,
             skippedDate: weeklySkippedDate,
-            sunday: body[ServerDefaultKeys.weeklySunday.rawValue] as? Bool,
-            monday: body[ServerDefaultKeys.weeklyMonday.rawValue] as? Bool,
-            tuesday: body[ServerDefaultKeys.weeklyTuesday.rawValue] as? Bool,
-            wednesday: body[ServerDefaultKeys.weeklyWednesday.rawValue] as? Bool,
-            thursday: body[ServerDefaultKeys.weeklyThursday.rawValue] as? Bool,
-            friday: body[ServerDefaultKeys.weeklyFriday.rawValue] as? Bool,
-            saturday: body[ServerDefaultKeys.weeklySaturday.rawValue] as? Bool)
+            sunday: body[KeyConstant.weeklySunday.rawValue] as? Bool,
+            monday: body[KeyConstant.weeklyMonday.rawValue] as? Bool,
+            tuesday: body[KeyConstant.weeklyTuesday.rawValue] as? Bool,
+            wednesday: body[KeyConstant.weeklyWednesday.rawValue] as? Bool,
+            thursday: body[KeyConstant.weeklyThursday.rawValue] as? Bool,
+            friday: body[KeyConstant.weeklyFriday.rawValue] as? Bool,
+            saturday: body[KeyConstant.weeklySaturday.rawValue] as? Bool)
         
         // monthly
         var monthlySkippedDate: Date?
-        if let monthlySkippedDateString = body[ServerDefaultKeys.monthlySkippedDate.rawValue] as? String {
+        if let monthlySkippedDateString = body[KeyConstant.monthlySkippedDate.rawValue] as? String {
             monthlySkippedDate = ResponseUtils.dateFormatter(fromISO8601String: monthlySkippedDateString)
         }
         
         monthlyComponents = MonthlyComponents(
-            UTCDay: body[ServerDefaultKeys.monthlyUTCDay.rawValue] as? Int,
-            UTCHour: body[ServerDefaultKeys.monthlyUTCHour.rawValue] as? Int,
-            UTCMinute: body[ServerDefaultKeys.monthlyUTCMinute.rawValue] as? Int,
+            UTCDay: body[KeyConstant.monthlyUTCDay.rawValue] as? Int,
+            UTCHour: body[KeyConstant.monthlyUTCHour.rawValue] as? Int,
+            UTCMinute: body[KeyConstant.monthlyUTCMinute.rawValue] as? Int,
             skippedDate: monthlySkippedDate
         )
         
         // one time
         var oneTimeDate = Date()
-        if let oneTimeDateString = body[ServerDefaultKeys.oneTimeDate.rawValue] as? String {
+        if let oneTimeDateString = body[KeyConstant.oneTimeDate.rawValue] as? String {
             oneTimeDate = ResponseUtils.dateFormatter(fromISO8601String: oneTimeDateString) ?? Date()
         }
         oneTimeComponents = OneTimeComponents(date: oneTimeDate)
@@ -619,65 +619,65 @@ extension Reminder {
     /// Returns an array literal of the reminders's properties. This is suitable to be used as the JSON body for a HTTP request
     func createBody() -> [String: Any] {
         var body: [String: Any] = [:]
-        body[ServerDefaultKeys.reminderId.rawValue] = reminderId
-        body[ServerDefaultKeys.reminderType.rawValue] = reminderType.rawValue
-        body[ServerDefaultKeys.reminderAction.rawValue] = reminderAction.rawValue
-        body[ServerDefaultKeys.reminderCustomActionName.rawValue] = reminderCustomActionName
-        body[ServerDefaultKeys.reminderExecutionBasis.rawValue] = reminderExecutionBasis.ISO8601FormatWithFractionalSeconds()
-        body[ServerDefaultKeys.reminderExecutionDate.rawValue] = reminderExecutionDate?.ISO8601FormatWithFractionalSeconds()
-        body[ServerDefaultKeys.reminderIsEnabled.rawValue] = reminderIsEnabled
+        body[KeyConstant.reminderId.rawValue] = reminderId
+        body[KeyConstant.reminderType.rawValue] = reminderType.rawValue
+        body[KeyConstant.reminderAction.rawValue] = reminderAction.rawValue
+        body[KeyConstant.reminderCustomActionName.rawValue] = reminderCustomActionName
+        body[KeyConstant.reminderExecutionBasis.rawValue] = reminderExecutionBasis.ISO8601FormatWithFractionalSeconds()
+        body[KeyConstant.reminderExecutionDate.rawValue] = reminderExecutionDate?.ISO8601FormatWithFractionalSeconds()
+        body[KeyConstant.reminderIsEnabled.rawValue] = reminderIsEnabled
         
         // snooze
-        body[ServerDefaultKeys.snoozeIsEnabled.rawValue] = snoozeComponents.snoozeIsEnabled
-        body[ServerDefaultKeys.snoozeExecutionInterval.rawValue] = snoozeComponents.executionInterval
-        body[ServerDefaultKeys.snoozeIntervalElapsed.rawValue] = snoozeComponents.intervalElapsed
+        body[KeyConstant.snoozeIsEnabled.rawValue] = snoozeComponents.snoozeIsEnabled
+        body[KeyConstant.snoozeExecutionInterval.rawValue] = snoozeComponents.executionInterval
+        body[KeyConstant.snoozeIntervalElapsed.rawValue] = snoozeComponents.intervalElapsed
         
         // countdown
-        body[ServerDefaultKeys.countdownExecutionInterval.rawValue] = countdownComponents.executionInterval
-        body[ServerDefaultKeys.countdownIntervalElapsed.rawValue] = countdownComponents.intervalElapsed
+        body[KeyConstant.countdownExecutionInterval.rawValue] = countdownComponents.executionInterval
+        body[KeyConstant.countdownIntervalElapsed.rawValue] = countdownComponents.intervalElapsed
         
         // weekly
-        body[ServerDefaultKeys.weeklyUTCHour.rawValue] = weeklyComponents.UTCHour
-        body[ServerDefaultKeys.weeklyUTCMinute.rawValue] = weeklyComponents.UTCMinute
-        body[ServerDefaultKeys.weeklySkippedDate.rawValue] = weeklyComponents.skippedDate?.ISO8601FormatWithFractionalSeconds()
+        body[KeyConstant.weeklyUTCHour.rawValue] = weeklyComponents.UTCHour
+        body[KeyConstant.weeklyUTCMinute.rawValue] = weeklyComponents.UTCMinute
+        body[KeyConstant.weeklySkippedDate.rawValue] = weeklyComponents.skippedDate?.ISO8601FormatWithFractionalSeconds()
         
-        body[ServerDefaultKeys.weeklySunday.rawValue] = false
-        body[ServerDefaultKeys.weeklyMonday.rawValue] = false
-        body[ServerDefaultKeys.weeklyTuesday.rawValue] = false
-        body[ServerDefaultKeys.weeklyWednesday.rawValue] = false
-        body[ServerDefaultKeys.weeklyThursday.rawValue] = false
-        body[ServerDefaultKeys.weeklyFriday.rawValue] = false
-        body[ServerDefaultKeys.weeklySaturday.rawValue] = false
+        body[KeyConstant.weeklySunday.rawValue] = false
+        body[KeyConstant.weeklyMonday.rawValue] = false
+        body[KeyConstant.weeklyTuesday.rawValue] = false
+        body[KeyConstant.weeklyWednesday.rawValue] = false
+        body[KeyConstant.weeklyThursday.rawValue] = false
+        body[KeyConstant.weeklyFriday.rawValue] = false
+        body[KeyConstant.weeklySaturday.rawValue] = false
         
         for weekday in weeklyComponents.weekdays {
             switch weekday {
             case 1:
-                body[ServerDefaultKeys.weeklySunday.rawValue] = true
+                body[KeyConstant.weeklySunday.rawValue] = true
             case 2:
-                body[ServerDefaultKeys.weeklyMonday.rawValue] = true
+                body[KeyConstant.weeklyMonday.rawValue] = true
             case 3:
-                body[ServerDefaultKeys.weeklyTuesday.rawValue] = true
+                body[KeyConstant.weeklyTuesday.rawValue] = true
             case 4:
-                body[ServerDefaultKeys.weeklyWednesday.rawValue] = true
+                body[KeyConstant.weeklyWednesday.rawValue] = true
             case 5:
-                body[ServerDefaultKeys.weeklyThursday.rawValue] = true
+                body[KeyConstant.weeklyThursday.rawValue] = true
             case 6:
-                body[ServerDefaultKeys.weeklyFriday.rawValue] = true
+                body[KeyConstant.weeklyFriday.rawValue] = true
             case 7:
-                body[ServerDefaultKeys.weeklySaturday.rawValue] = true
+                body[KeyConstant.weeklySaturday.rawValue] = true
             default:
                 continue
             }
         }
         
         // monthly
-        body[ServerDefaultKeys.monthlyUTCDay.rawValue] = monthlyComponents.UTCDay
-        body[ServerDefaultKeys.monthlyUTCHour.rawValue] = monthlyComponents.UTCHour
-        body[ServerDefaultKeys.monthlyUTCMinute.rawValue] = monthlyComponents.UTCMinute
-        body[ServerDefaultKeys.monthlySkippedDate.rawValue] = monthlyComponents.skippedDate?.ISO8601FormatWithFractionalSeconds()
+        body[KeyConstant.monthlyUTCDay.rawValue] = monthlyComponents.UTCDay
+        body[KeyConstant.monthlyUTCHour.rawValue] = monthlyComponents.UTCHour
+        body[KeyConstant.monthlyUTCMinute.rawValue] = monthlyComponents.UTCMinute
+        body[KeyConstant.monthlySkippedDate.rawValue] = monthlyComponents.skippedDate?.ISO8601FormatWithFractionalSeconds()
         
         // one time
-        body[ServerDefaultKeys.oneTimeDate.rawValue] = oneTimeComponents.oneTimeDate.ISO8601FormatWithFractionalSeconds()
+        body[KeyConstant.oneTimeDate.rawValue] = oneTimeComponents.oneTimeDate.ISO8601FormatWithFractionalSeconds()
         
         return body
     }
@@ -685,7 +685,7 @@ extension Reminder {
     /// Returns an array literal of the reminders's reminderId and no other properties. This is suitable to be used as the JSON body for a HTTP request
     func createIdBody() -> [String: Any] {
         var body: [String: Any] = [:]
-        body[ServerDefaultKeys.reminderId.rawValue] = reminderId
+        body[KeyConstant.reminderId.rawValue] = reminderId
         return body
     }
 }

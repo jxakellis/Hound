@@ -9,9 +9,7 @@
 import UIKit
 
 protocol LogsAddLogViewControllerDelegate: AnyObject {
-    func didRemoveLog(sender: Sender, parentDogId: Int, logId: Int)
-    func didAddLog(sender: Sender, parentDogId: Int, newLog: Log)
-    func didUpdateLog(sender: Sender, parentDogId: Int, updatedLog: Log)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
 final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, DropDownUIViewDataSource {
@@ -24,7 +22,6 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
         // get the current text, or use an empty string if that failed
         let currentText = textField.text ?? ""
         
@@ -253,6 +250,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                     RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                         if requestWasSuccessful {
                             completionTracker.completedTask()
+                            self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                         }
                         else {
                             completionTracker.failedTask()
@@ -276,7 +274,9 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                         }
                         newLog.logId = logId
                         
-                        self.delegate.didAddLog(sender: Sender(origin: self, localized: self), parentDogId: dogId, newLog: newLog)
+                        self.dogManager.findDog(forDogId: dogId)?.dogLogs.addLog(forLog: newLog)
+                        
+                        self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                         
                         completionTracker.completedTask()
                     }
@@ -306,7 +306,11 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                     if let logCustomActionName = logToUpdate.logCustomActionName, logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                         LocalConfiguration.addLogCustomAction(forName: logCustomActionName)
                     }
-                    self.delegate.didUpdateLog(sender: Sender(origin: self, localized: self), parentDogId: parentDogIdToUpdate, updatedLog: logToUpdate)
+                    
+                    self.dogManager.findDog(forDogId: parentDogIdToUpdate)?.dogLogs.addLog(forLog: logToUpdate)
+                    
+                    self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    
                     self.navigationController?.popViewController(animated: true)
                 }
                 
@@ -331,9 +335,14 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             // the user decided to delete so we must query server
             LogsRequest.delete(invokeErrorManager: true, forDogId: parentDogIdToUpdate, forLogId: logToUpdate.logId) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
-                    self.delegate.didRemoveLog(sender: Sender(origin: self, localized: self),
-                                               parentDogId: parentDogIdToUpdate,
-                                               logId: logToUpdate.logId)
+                    if let dog = self.dogManager.findDog(forDogId: parentDogIdToUpdate) {
+                        for dogLog in dog.dogLogs.logs where dogLog.logId == logToUpdate.logId {
+                            dog.dogLogs.removeLog(forLogId: dogLog.logId)
+                        }
+                    }
+                    
+                    self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    
                     self.navigationController?.popViewController(animated: true)
                 }
             }

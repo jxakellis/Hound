@@ -13,28 +13,28 @@ final class LocalDogIcon: NSObject, NSCoding {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        dogId = aDecoder.decodeInteger(forKey: "dogId")
-        dogIcon = aDecoder.decodeObject(forKey: "dogIcon") as? UIImage ?? ClassConstant.DogConstant.defaultDogIcon
         super.init()
+        dogId = aDecoder.decodeObject(forKey: KeyConstant.dogId.rawValue) as? Int ?? dogId
+        dogIcon = aDecoder.decodeObject(forKey: KeyConstant.dogIcon.rawValue) as? UIImage ?? dogIcon
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(dogId, forKey: "dogId")
-        aCoder.encode(dogIcon, forKey: "dogIcon")
+        aCoder.encode(dogId, forKey: KeyConstant.dogId.rawValue)
+        aCoder.encode(dogIcon, forKey: KeyConstant.dogIcon.rawValue)
     }
     
     // MARK: - Main
     
     init(forDogId dogId: Int, forDogIcon dogIcon: UIImage) {
+        super.init()
         self.dogId = dogId
         self.dogIcon = dogIcon
-        super.init()
     }
     
     // MARK: - Properties
     
-    var dogId: Int
-    var dogIcon: UIImage
+    var dogId: Int = ClassConstant.DogConstant.defaultDogId
+    var dogIcon: UIImage = ClassConstant.DogConstant.defaultDogIcon
     
     // MARK: - Functions
     

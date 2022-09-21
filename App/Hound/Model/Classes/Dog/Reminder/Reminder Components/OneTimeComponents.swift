@@ -21,11 +21,11 @@ final class OneTimeComponents: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        self.oneTimeDate = aDecoder.decodeObject(forKey: "oneTimeDate") as? Date ?? Date()
+        oneTimeDate = aDecoder.decodeObject(forKey: KeyConstant.oneTimeDate.rawValue) as? Date ?? oneTimeDate
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(oneTimeDate, forKey: "oneTimeDate")
+        aCoder.encode(oneTimeDate, forKey: KeyConstant.oneTimeDate.rawValue)
     }
     
     // MARK: Main

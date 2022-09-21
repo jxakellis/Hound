@@ -15,15 +15,15 @@ enum FamilyConfiguration {
     
     /// Sets the FamilyConfiguration values equal to all the values found in the body. The key for the each body value must match the name of the FamilyConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
-        if let isLocked = body[ServerDefaultKeys.isLocked.rawValue] as? Bool {
+        if let isLocked = body[KeyConstant.isLocked.rawValue] as? Bool {
             self.isLocked = isLocked
         }
-        if let familyCode = body[ServerDefaultKeys.familyCode.rawValue] as? String {
+        if let familyCode = body[KeyConstant.familyCode.rawValue] as? String {
             self.familyCode = familyCode
         }
-        if let familyMembersBody = body[ServerDefaultKeys.familyMembers.rawValue] as? [[String: Any]] {
+        if let familyMembersBody = body[KeyConstant.familyMembers.rawValue] as? [[String: Any]] {
             familyMembers.removeAll()
-            let familyHeadUserId = body[ServerDefaultKeys.userId.rawValue] as? String
+            let familyHeadUserId = body[KeyConstant.userId.rawValue] as? String
             // get individual bodies for members
             for familyMemberBody in familyMembersBody {
                 // convert body into family member
@@ -49,7 +49,7 @@ enum FamilyConfiguration {
                 }
             }
         }
-        if let previousFamilyMembersBody = body[ServerDefaultKeys.previousFamilyMembers.rawValue] as? [[String: Any]] {
+        if let previousFamilyMembersBody = body[KeyConstant.previousFamilyMembers.rawValue] as? [[String: Any]] {
             previousFamilyMembers.removeAll()
             
             // get individual bodies for previous family members
@@ -66,7 +66,7 @@ enum FamilyConfiguration {
             }
             
         }
-        if let activeSubscriptionBody = body[ServerDefaultKeys.activeSubscription.rawValue] as? [String: Any] {
+        if let activeSubscriptionBody = body[KeyConstant.activeSubscription.rawValue] as? [String: Any] {
             let activeSubscription = Subscription(fromBody: activeSubscriptionBody)
             addFamilySubscription(forSubscription: activeSubscription)
         }

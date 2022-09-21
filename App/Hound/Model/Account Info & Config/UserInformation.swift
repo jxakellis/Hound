@@ -12,25 +12,25 @@ import Foundation
 enum UserInformation {
     /// Sets the UserInformation values equal to all the values found in the body. The key for the each body value must match the name of the UserConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
-        if let userId = body[ServerDefaultKeys.userId.rawValue] as? String {
+        if let userId = body[KeyConstant.userId.rawValue] as? String {
             self.userId = userId
         }
-        if let userApplicationUsername = body[ServerDefaultKeys.userApplicationUsername.rawValue] as? String {
+        if let userApplicationUsername = body[KeyConstant.userApplicationUsername.rawValue] as? String {
             self.userApplicationUsername = userApplicationUsername
         }
-        if let userNotificationToken = body[ServerDefaultKeys.userNotificationToken.rawValue] as? String {
+        if let userNotificationToken = body[KeyConstant.userNotificationToken.rawValue] as? String {
             self.userNotificationToken = userNotificationToken
         }
-        if let familyId = body[ServerDefaultKeys.familyId.rawValue] as? String {
+        if let familyId = body[KeyConstant.familyId.rawValue] as? String {
             self.familyId = familyId
         }
-        if let userEmail = body[ServerDefaultKeys.userEmail.rawValue] as? String {
+        if let userEmail = body[KeyConstant.userEmail.rawValue] as? String {
             self.userEmail = userEmail
         }
-        if let userFirstName = body[ServerDefaultKeys.userFirstName.rawValue] as? String {
+        if let userFirstName = body[KeyConstant.userFirstName.rawValue] as? String {
             self.userFirstName = userFirstName
         }
-        if let userLastName = body[ServerDefaultKeys.userLastName.rawValue] as? String {
+        if let userLastName = body[KeyConstant.userLastName.rawValue] as? String {
             self.userLastName = userLastName
         }
     }
@@ -82,10 +82,10 @@ extension UserInformation {
     /// Returns an array literal of the user information's properties. This is suitable to be used as the JSON body for a HTTP request
     static func createBody(addingOntoBody body: [String: Any]?) -> [String: Any] {
         var body: [String: Any] = body ?? [:]
-        body[ServerDefaultKeys.userIdentifier.rawValue] = UserInformation.userIdentifier
-        body[ServerDefaultKeys.userEmail.rawValue] = UserInformation.userEmail
-        body[ServerDefaultKeys.userFirstName.rawValue] = UserInformation.userFirstName
-        body[ServerDefaultKeys.userLastName.rawValue] = UserInformation.userLastName
+        body[KeyConstant.userIdentifier.rawValue] = UserInformation.userIdentifier
+        body[KeyConstant.userEmail.rawValue] = UserInformation.userEmail
+        body[KeyConstant.userFirstName.rawValue] = UserInformation.userFirstName
+        body[KeyConstant.userLastName.rawValue] = UserInformation.userLastName
         return body
     }
 }

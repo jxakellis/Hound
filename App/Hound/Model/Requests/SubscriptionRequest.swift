@@ -41,7 +41,7 @@ enum SubscriptionRequest: RequestProtocol {
             return receiptData.base64EncodedString(options: [])
         }
         
-        let body: [String: Any] = [ServerDefaultKeys.base64EncodedAppStoreReceiptURL.rawValue: base64EncodedReceiptString ?? VisualConstant.TextConstant.unknownText]
+        let body: [String: Any] = [KeyConstant.base64EncodedAppStoreReceiptURL.rawValue: base64EncodedReceiptString ?? VisualConstant.TextConstant.unknownText]
         return InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
@@ -62,7 +62,7 @@ extension SubscriptionRequest {
         _ = SubscriptionRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
+                if let result = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]] {
                     
                     FamilyConfiguration.clearAllFamilySubscriptions()
                     for subscription in result {
@@ -93,7 +93,7 @@ extension SubscriptionRequest {
         _ = SubscriptionRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
+                if let result = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
                     let activeSubscription = Subscription(fromBody: result)
                     FamilyConfiguration.addFamilySubscription(forSubscription: activeSubscription)
                     

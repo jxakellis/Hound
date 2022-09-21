@@ -75,13 +75,13 @@ extension UserRequest {
             switch responseStatus {
             case .successResponse:
                 // attempt to extract body and userId
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], let userId = result[ServerDefaultKeys.userId.rawValue] as? String {
+                if let result = responseBody?[KeyConstant.result.rawValue] as? [String: Any], let userId = result[KeyConstant.userId.rawValue] as? String {
                     
                     // set all local configuration equal to whats in the server
                     UserInformation.setup(fromBody: result)
                     UserConfiguration.setup(fromBody: result)
                     
-                    let familyId: String? = result[ServerDefaultKeys.familyId.rawValue] as? String
+                    let familyId: String? = result[KeyConstant.familyId.rawValue] as? String
                     
                     completionHandler(userId, familyId, .successResponse)
                 }
@@ -105,7 +105,7 @@ extension UserRequest {
         _ = UserRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let userId = responseBody?[ServerDefaultKeys.result.rawValue] as? String {
+                if let userId = responseBody?[KeyConstant.result.rawValue] as? String {
                     completionHandler(userId, responseStatus)
                 }
                 else {

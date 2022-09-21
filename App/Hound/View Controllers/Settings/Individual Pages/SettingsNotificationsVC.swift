@@ -100,7 +100,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
                     
                     self.synchronizeNotificationsValues(animated: true)
                     
-                    let body = [ServerDefaultKeys.isNotificationEnabled.rawValue: UserConfiguration.isNotificationEnabled]
+                    let body = [KeyConstant.isNotificationEnabled.rawValue: UserConfiguration.isNotificationEnabled]
                     
                     UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                         if requestWasSuccessful == false {
@@ -191,7 +191,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
         
         synchronizeNotificationsIsEnabled()
         
-        let body = [ServerDefaultKeys.silentModeIsEnabled.rawValue: UserConfiguration.silentModeIsEnabled]
+        let body = [KeyConstant.silentModeIsEnabled.rawValue: UserConfiguration.silentModeIsEnabled]
         
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
@@ -211,8 +211,8 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
         UserConfiguration.silentModeStartUTCHour = Calendar.UTCCalendar.component(.hour, from: silentModeStartHoursDatePicker.date)
         UserConfiguration.silentModeStartUTCMinute = Calendar.UTCCalendar.component(.minute, from: silentModeStartHoursDatePicker.date)
         
-        let body = [ServerDefaultKeys.silentModeStartUTCHour.rawValue: UserConfiguration.silentModeStartUTCHour,
-                    ServerDefaultKeys.silentModeStartUTCMinute.rawValue: UserConfiguration.silentModeStartUTCMinute]
+        let body = [KeyConstant.silentModeStartUTCHour.rawValue: UserConfiguration.silentModeStartUTCHour,
+                    KeyConstant.silentModeStartUTCMinute.rawValue: UserConfiguration.silentModeStartUTCMinute]
         
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
@@ -233,8 +233,8 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
         UserConfiguration.silentModeEndUTCHour = Calendar.UTCCalendar.component(.hour, from: silentModeEndHoursDatePicker.date)
         UserConfiguration.silentModeEndUTCMinute = Calendar.UTCCalendar.component(.minute, from: silentModeEndHoursDatePicker.date)
         
-        let body = [ServerDefaultKeys.silentModeEndUTCHour.rawValue: UserConfiguration.silentModeEndUTCHour,
-                    ServerDefaultKeys.silentModeEndUTCMinute.rawValue: UserConfiguration.silentModeEndUTCMinute]
+        let body = [KeyConstant.silentModeEndUTCHour.rawValue: UserConfiguration.silentModeEndUTCHour,
+                    KeyConstant.silentModeEndUTCMinute.rawValue: UserConfiguration.silentModeEndUTCMinute]
         
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
@@ -328,7 +328,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
         
         AudioManager.playAudio(forAudioPath: "\(UserConfiguration.notificationSound.rawValue.lowercased())")
         
-        let body = [ServerDefaultKeys.notificationSound.rawValue: UserConfiguration.notificationSound.rawValue]
+        let body = [KeyConstant.notificationSound.rawValue: UserConfiguration.notificationSound.rawValue]
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
@@ -366,7 +366,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
         
         let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
         UserConfiguration.isLoudNotification = isLoudNotificationSwitch.isOn
-        let body = [ServerDefaultKeys.isLoudNotification.rawValue: UserConfiguration.isLoudNotification]
+        let body = [KeyConstant.isLoudNotification.rawValue: UserConfiguration.isLoudNotification]
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
@@ -383,7 +383,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     @IBAction private func didUpdateSnoozeLength(_ sender: Any) {
         let beforeUpdateSnoozeLength = UserConfiguration.snoozeLength
         UserConfiguration.snoozeLength = snoozeLengthDatePicker.countDownDuration
-        let body = [ServerDefaultKeys.snoozeLength.rawValue: UserConfiguration.snoozeLength]
+        let body = [KeyConstant.snoozeLength.rawValue: UserConfiguration.snoozeLength]
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous

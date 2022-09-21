@@ -45,7 +45,7 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
             
             UserInformation.userIdentifier = userIdentifier
             
-            keychain.set(userIdentifier, forKey: ServerDefaultKeys.userIdentifier.rawValue)
+            keychain.set(userIdentifier, forKey: KeyConstant.userIdentifier.rawValue)
             
             // IMPORTANT NOTES ABOUT PERSISTANCE AND KEYCHAIN
             // fullName and email are ONLY provided on the FIRST time the user uses sign in with apple
@@ -64,7 +64,7 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
             
             let email = appleIDCredential.email
             if let email = email {
-                keychain.set(email, forKey: ServerDefaultKeys.userEmail.rawValue)
+                keychain.set(email, forKey: KeyConstant.userEmail.rawValue)
                 UserInformation.userEmail = email
             }
             
@@ -72,13 +72,13 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
             
             let firstName = fullName?.givenName
             if let firstName = firstName {
-                keychain.set(firstName, forKey: ServerDefaultKeys.userFirstName.rawValue)
+                keychain.set(firstName, forKey: KeyConstant.userFirstName.rawValue)
                 UserInformation.userFirstName = firstName
             }
             
             let lastName = fullName?.familyName
             if let lastName = lastName {
-                keychain.set(lastName, forKey: ServerDefaultKeys.userLastName.rawValue)
+                keychain.set(lastName, forKey: KeyConstant.userLastName.rawValue)
                 UserInformation.userLastName = lastName
             }
             

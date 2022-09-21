@@ -27,19 +27,24 @@ final class Dog: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         super.init()
-        dogId = aDecoder.decodeInteger(forKey: "dogId")
-        dogName = aDecoder.decodeObject(forKey: "dogName") as? String ?? UUID().uuidString
-        dogIcon = aDecoder.decodeObject(forKey: "dogIcon") as? UIImage ?? ClassConstant.DogConstant.defaultDogIcon
-        dogLogs = aDecoder.decodeObject(forKey: "dogLogs") as? LogManager ?? LogManager()
-        dogReminders = aDecoder.decodeObject(forKey: "dogReminders") as? ReminderManager ?? ReminderManager()
+        // TO DO NOW test that decodeInteger, decodeBool, decodeDoulbe into decodeObject as? Int/Bool/Double works
+        print(aDecoder.decodeInteger(forKey: KeyConstant.dogId.rawValue))
+        print(aDecoder.decodeObject(forKey: KeyConstant.dogId.rawValue))
+        print(aDecoder.decodeObject(forKey: KeyConstant.dogId.rawValue) as? Int)
+        
+        dogId = aDecoder.decodeObject(forKey: KeyConstant.dogId.rawValue) as? Int ?? dogId
+        dogName = aDecoder.decodeObject(forKey: KeyConstant.dogName.rawValue) as? String ?? dogName
+        dogIcon = aDecoder.decodeObject(forKey: KeyConstant.dogIcon.rawValue) as? UIImage ?? dogIcon
+        dogLogs = aDecoder.decodeObject(forKey: KeyConstant.dogLogs.rawValue) as? LogManager ?? dogLogs
+        dogReminders = aDecoder.decodeObject(forKey: KeyConstant.dogReminders.rawValue) as? ReminderManager ?? dogReminders
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(dogId, forKey: "dogId")
-        aCoder.encode(dogName, forKey: "dogName")
-        aCoder.encode(dogIcon, forKey: "dogIcon")
-        aCoder.encode(dogLogs, forKey: "dogLogs")
-        aCoder.encode(dogReminders, forKey: "dogReminders")
+        aCoder.encode(dogId, forKey: KeyConstant.dogId.rawValue)
+        aCoder.encode(dogName, forKey: KeyConstant.dogName.rawValue)
+        aCoder.encode(dogIcon, forKey: KeyConstant.dogIcon.rawValue)
+        aCoder.encode(dogLogs, forKey: KeyConstant.dogLogs.rawValue)
+        aCoder.encode(dogReminders, forKey: KeyConstant.dogReminders.rawValue)
     }
     
     // MARK: - Main
@@ -63,12 +68,12 @@ final class Dog: NSObject, NSCoding, NSCopying {
     convenience init(fromBody body: [String: Any]) {
         
         // make sure the dog isn't deleted, otherwise it returns nil (indicating there is no dog left)
-        // guard body[ServerDefaultKeys.dogIsDeleted.rawValue] as? Bool ?? false == false else {
+        // guard body[KeyConstant.dogIsDeleted.rawValue] as? Bool ?? false == false else {
         //   return nil
         // }
         
-        let dogId = body[ServerDefaultKeys.dogId.rawValue] as? Int ?? ClassConstant.DogConstant.defaultDogId
-        let dogName = body[ServerDefaultKeys.dogName.rawValue] as? String ?? ClassConstant.DogConstant.defaultDogName
+        let dogId = body[KeyConstant.dogId.rawValue] as? Int ?? ClassConstant.DogConstant.defaultDogId
+        let dogName = body[KeyConstant.dogName.rawValue] as? String ?? ClassConstant.DogConstant.defaultDogName
         
         do {
             try self.init(dogId: dogId, dogName: dogName, dogIcon: LocalDogIcon.getIcon(forDogId: dogId) ?? ClassConstant.DogConstant.defaultDogIcon)
@@ -77,15 +82,15 @@ final class Dog: NSObject, NSCoding, NSCopying {
             try! self.init(dogId: dogId, dogIcon: LocalDogIcon.getIcon(forDogId: dogId) ?? ClassConstant.DogConstant.defaultDogIcon) // swiftlint:disable:this force_try
         }
         
-        dogIsDeleted = body[ServerDefaultKeys.dogIsDeleted.rawValue] as? Bool ?? false
+        dogIsDeleted = body[KeyConstant.dogIsDeleted.rawValue] as? Bool ?? false
         
         // check for any reminders
-        if let reminderBodies = body[ServerDefaultKeys.reminders.rawValue] as? [[String: Any]] {
+        if let reminderBodies = body[KeyConstant.reminders.rawValue] as? [[String: Any]] {
             dogReminders = ReminderManager(fromBody: reminderBodies)
         }
         
         // check for any logs
-        if let logBodies = body[ServerDefaultKeys.logs.rawValue] as? [[String: Any]] {
+        if let logBodies = body[KeyConstant.logs.rawValue] as? [[String: Any]] {
             dogLogs = LogManager(fromBody: logBodies)
         }
     }
@@ -143,7 +148,7 @@ extension Dog {
     /// Returns an array literal of the dog's properties (does not include nested properties, e.g. logs or reminders). This is suitable to be used as the JSON body for a HTTP request
     func createBody() -> [String: Any] {
         var body: [String: Any] = [:]
-        body[ServerDefaultKeys.dogName.rawValue] = dogName
+        body[KeyConstant.dogName.rawValue] = dogName
         return body
     }
 }

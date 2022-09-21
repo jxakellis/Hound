@@ -23,11 +23,11 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
-        reminders = aDecoder.decodeObject(forKey: "reminders") as? [Reminder] ?? []
+        reminders = aDecoder.decodeObject(forKey: KeyConstant.reminders.rawValue) as? [Reminder] ?? reminders
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(reminders, forKey: "reminders")
+        aCoder.encode(reminders, forKey: KeyConstant.reminders.rawValue)
     }
     
     // MARK: - Main

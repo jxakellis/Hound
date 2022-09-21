@@ -45,7 +45,7 @@ enum InternalRequestUtils {
             if deconstructedURLComponents?.queryItems == nil {
                 deconstructedURLComponents?.queryItems = []
             }
-            deconstructedURLComponents?.queryItems?.append(URLQueryItem(name: ServerDefaultKeys.userIdentifier.rawValue, value: userIdentifier))
+            deconstructedURLComponents?.queryItems?.append(URLQueryItem(name: KeyConstant.userIdentifier.rawValue, value: userIdentifier))
             modifiedRequest.url = deconstructedURLComponents?.url ?? request.url
         }
         
@@ -100,9 +100,9 @@ enum InternalRequestUtils {
             guard 200...299 ~= responseStatusCode else {
                 // Our request went through but was invalid
                 AppDelegate.APIResponseLogger.warning(
-                    "Failure \(request.httpMethod ?? VisualConstant.TextConstant.unknownText) Response for \(request.url?.description ?? VisualConstant.TextConstant.unknownText)\n Message: \(responseBody[ServerDefaultKeys.message.rawValue] as? String ?? VisualConstant.TextConstant.unknownText)\n Code: \(responseBody[ServerDefaultKeys.code.rawValue] as? String ?? VisualConstant.TextConstant.unknownText)\n Type:\(responseBody[ServerDefaultKeys.name.rawValue] as? String ?? VisualConstant.TextConstant.unknownText)")
+                    "Failure \(request.httpMethod ?? VisualConstant.TextConstant.unknownText) Response for \(request.url?.description ?? VisualConstant.TextConstant.unknownText)\n Message: \(responseBody[KeyConstant.message.rawValue] as? String ?? VisualConstant.TextConstant.unknownText)\n Code: \(responseBody[KeyConstant.code.rawValue] as? String ?? VisualConstant.TextConstant.unknownText)\n Type:\(responseBody[KeyConstant.name.rawValue] as? String ?? VisualConstant.TextConstant.unknownText)")
                 
-                let responseErrorCode: String? = responseBody[ServerDefaultKeys.code.rawValue] as? String
+                let responseErrorCode: String? = responseBody[KeyConstant.code.rawValue] as? String
                 
                 let responseError: HoundError = {
                     if let responseErrorCode = responseErrorCode {

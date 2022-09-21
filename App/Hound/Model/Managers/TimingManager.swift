@@ -45,7 +45,7 @@ final class TimingManager {
                                                    interval: -1,
                                                    target: self,
                                                    selector: #selector(willUpdateIsSkipping(sender:)),
-                                                   userInfo: [ServerDefaultKeys.dogId.rawValue: dog.dogId, ServerDefaultKeys.reminderId.rawValue: reminder.reminderId],
+                                                   userInfo: [KeyConstant.dogId.rawValue: dog.dogId, KeyConstant.reminderId.rawValue: reminder.reminderId],
                                                    repeats: false)
                     
                     isSkippingDisablingTimers.append(isSkippingDisabler)
@@ -58,9 +58,9 @@ final class TimingManager {
                                   target: self,
                                   selector: #selector(self.didExecuteTimer(sender:)),
                                   userInfo: [
-                                    ServerDefaultKeys.dogManager.rawValue: dogManager,
-                                    ServerDefaultKeys.dogId.rawValue: dog.dogId,
-                                    ServerDefaultKeys.reminderId.rawValue: reminder.reminderId
+                                    KeyConstant.dogManager.rawValue: dogManager,
+                                    KeyConstant.dogId.rawValue: dog.dogId,
+                                    KeyConstant.reminderId.rawValue: reminder.reminderId
                                   ],
                                   repeats: false)
                 RunLoop.main.add(timer, forMode: .common)
@@ -103,9 +103,9 @@ final class TimingManager {
             return
         }
         
-        let dogManager = parsedDictionary[ServerDefaultKeys.dogManager.rawValue] as? DogManager
-        let dogId = parsedDictionary[ServerDefaultKeys.dogId.rawValue] as? Int
-        let reminderId = parsedDictionary[ServerDefaultKeys.reminderId.rawValue] as? Int
+        let dogManager = parsedDictionary[KeyConstant.dogManager.rawValue] as? DogManager
+        let dogId = parsedDictionary[KeyConstant.dogId.rawValue] as? Int
+        let reminderId = parsedDictionary[KeyConstant.reminderId.rawValue] as? Int
         
         guard let dogManager = dogManager, let dogId = dogId, let reminderId = reminderId else {
             return
@@ -117,8 +117,8 @@ final class TimingManager {
     /// If a reminder is skipping the next time of day alarm, at some point it will go from 1+ day away to 23 hours and 59 minutes. When that happens then the timer should be changed from isSkipping to normal mode because it just skipped that alarm that should have happened
     @objc private static func willUpdateIsSkipping(sender: Timer) {
         guard let dictionary = sender.userInfo as? [String: Any],
-              let dogId: Int = dictionary[ServerDefaultKeys.dogId.rawValue] as? Int,
-              let passedReminderId: Int = dictionary[ServerDefaultKeys.reminderId.rawValue] as? Int else {
+              let dogId: Int = dictionary[KeyConstant.dogId.rawValue] as? Int,
+              let passedReminderId: Int = dictionary[KeyConstant.reminderId.rawValue] as? Int else {
             return
         }
         

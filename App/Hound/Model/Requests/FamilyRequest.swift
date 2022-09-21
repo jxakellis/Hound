@@ -45,7 +45,7 @@ enum FamilyRequest: RequestProtocol {
     private static func internalUpdate(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         // the user is trying to join a family with the family code, so omit familyId (as we don't have one)
-        if body[ServerDefaultKeys.familyCode.rawValue] != nil {
+        if body[KeyConstant.familyCode.rawValue] != nil {
             return InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
                 completionHandler(responseBody, responseStatus)
             }
@@ -84,7 +84,7 @@ extension FamilyRequest {
         return FamilyRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
+                if let result = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
                     // set up family configuration
                     FamilyConfiguration.setup(fromBody: result)
                     
@@ -112,7 +112,7 @@ extension FamilyRequest {
             switch responseStatus {
             case .successResponse:
                 // check for familyId
-                if let familyId = responseBody?[ServerDefaultKeys.result.rawValue] as? String {
+                if let familyId = responseBody?[KeyConstant.result.rawValue] as? String {
                     completionHandler(familyId, responseStatus)
                 }
                 else {

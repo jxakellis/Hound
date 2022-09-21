@@ -23,15 +23,17 @@ final class SnoozeComponents: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        self.snoozeIsEnabled = aDecoder.decodeBool(forKey: "snoozeIsEnabled")
-        self.executionInterval = aDecoder.decodeDouble(forKey: "executionInterval")
-        self.intervalElapsed = aDecoder.decodeDouble(forKey: "intervalElapsed")
+        snoozeIsEnabled = aDecoder.decodeObject(forKey: KeyConstant.snoozeIsEnabled.rawValue) as? Bool ?? snoozeIsEnabled
+        // <= build 8000 "executionInterval"
+        executionInterval = aDecoder.decodeObject(forKey: KeyConstant.snoozeExecutionInterval.rawValue) as? Double ?? aDecoder.decodeObject(forKey: "executionInterval") as? Double ?? executionInterval
+        // <= build 8000 "intervalElapsed"
+        intervalElapsed = aDecoder.decodeObject(forKey: KeyConstant.snoozeIntervalElapsed.rawValue) as? Double ?? aDecoder.decodeObject(forKey: "intervalElapsed") as? Double ?? intervalElapsed
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(snoozeIsEnabled, forKey: "snoozeIsEnabled")
-        aCoder.encode(executionInterval, forKey: "executionInterval")
-        aCoder.encode(intervalElapsed, forKey: "intervalElapsed")
+        aCoder.encode(snoozeIsEnabled, forKey: KeyConstant.snoozeIsEnabled.rawValue)
+        aCoder.encode(executionInterval, forKey: KeyConstant.snoozeExecutionInterval.rawValue)
+        aCoder.encode(intervalElapsed, forKey: KeyConstant.snoozeIntervalElapsed.rawValue)
     }
     
     // MARK: Main

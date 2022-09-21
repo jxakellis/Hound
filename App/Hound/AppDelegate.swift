@@ -58,7 +58,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         // If the token is different that what we have saved (i.e. there is a new token or there was no token saved), then update the server
         if token != UserInformation.userNotificationToken {
             // don't sent the user an alert if this request fails as there is no point
-            UserRequest.update(invokeErrorManager: false, body: [ServerDefaultKeys.userNotificationToken.rawValue: token]) { requestWasSuccessful, _ in
+            UserRequest.update(invokeErrorManager: false, body: [KeyConstant.userNotificationToken.rawValue: token]) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
                     UserInformation.userNotificationToken = token
                 }

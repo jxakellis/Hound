@@ -133,30 +133,30 @@ extension LocalConfiguration {
         // MARK: User Inforamtion
         
         UserInformation.familyId = nil
-        UserDefaults.standard.setValue(UserInformation.familyId, forKey: ServerDefaultKeys.familyId.rawValue)
+        UserDefaults.standard.setValue(UserInformation.familyId, forKey: KeyConstant.familyId.rawValue)
         
         // MARK: Local Configuration
         
         LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore = false
-        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedHoundIntroductionViewControllerBefore.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore, forKey: KeyConstant.hasLoadedHoundIntroductionViewControllerBefore.rawValue)
         
         LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
-        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: KeyConstant.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)
         
         LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore = false
-        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedSettingsFamilyIntroductionViewControllerBefore.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore, forKey: KeyConstant.hasLoadedSettingsFamilyIntroductionViewControllerBefore.rawValue)
         
         LocalConfiguration.lastDogManagerSynchronization = ClassConstant.DateConstant.default1970Date
-        UserDefaults.standard.set(LocalConfiguration.lastDogManagerSynchronization, forKey: ServerDefaultKeys.lastDogManagerSynchronization.rawValue)
+        UserDefaults.standard.set(LocalConfiguration.lastDogManagerSynchronization, forKey: KeyConstant.lastDogManagerSynchronization.rawValue)
         
         LocalConfiguration.dogIcons = []
         if let dataDogIcons = try? NSKeyedArchiver.archivedData(withRootObject: LocalConfiguration.dogIcons, requiringSecureCoding: false) {
-            UserDefaults.standard.set(dataDogIcons, forKey: UserDefaultsKeys.dogIcons.rawValue)
+            UserDefaults.standard.set(dataDogIcons, forKey: KeyConstant.dogIcons.rawValue)
         }
         
         // reset local dogManager to blank to clear what was saved from the last
         if let dataDogManager = try? NSKeyedArchiver.archivedData(withRootObject: DogManager(), requiringSecureCoding: false) {
-            UserDefaults.standard.set(dataDogManager, forKey: ServerDefaultKeys.dogManager.rawValue)
+            UserDefaults.standard.set(dataDogManager, forKey: KeyConstant.dogManager.rawValue)
         }
     }
 }

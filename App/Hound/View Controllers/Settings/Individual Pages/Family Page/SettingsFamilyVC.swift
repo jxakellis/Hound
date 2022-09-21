@@ -216,7 +216,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         FamilyConfiguration.isLocked = isLockedSwitch.isOn
         updateIsLockedLabel()
         
-        let body = [ServerDefaultKeys.isLocked.rawValue: isLockedSwitch.isOn]
+        let body = [KeyConstant.isLocked.rawValue: isLockedSwitch.isOn]
         FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // request failed so we revert
@@ -281,7 +281,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
             
             let kickAlertAction = UIAlertAction(title: "Kick \(familyMember.displayFullName)", style: .destructive) { _ in
                 // the user wants to kick the family member so query the server
-                let body = [ServerDefaultKeys.kickUserId.rawValue: familyMember.userId]
+                let body = [KeyConstant.kickUserId.rawValue: familyMember.userId]
                 RequestUtils.beginRequestIndictator()
                 FamilyRequest.delete(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                     RequestUtils.endRequestIndictator {

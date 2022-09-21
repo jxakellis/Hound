@@ -25,18 +25,23 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        weekdays = aDecoder.decodeObject(forKey: "weekdays") as? [Int] ?? weekdays
-        UTCHour = aDecoder.decodeInteger(forKey: "UTCHour")
-        UTCMinute = aDecoder.decodeInteger(forKey: "UTCMinute")
-        skippedDate = aDecoder.decodeObject(forKey: "skippedDate") as? Date
+        
+        // <= build 8000 "weekdays"
+        weekdays = aDecoder.decodeObject(forKey: KeyConstant.weeklyWeekdays.rawValue) as? [Int] ?? aDecoder.decodeObject(forKey: "weekdays") as? [Int] ?? weekdays
+        // <= build 8000 "UTCHour"
+        UTCHour = aDecoder.decodeObject(forKey: KeyConstant.weeklyUTCHour.rawValue) as? Int ?? aDecoder.decodeObject(forKey: "UTCHour") as? Int ?? UTCHour
+        // <= build 8000 "UTCMinute"
+        UTCMinute = aDecoder.decodeObject(forKey: KeyConstant.weeklyUTCMinute.rawValue) as? Int ?? aDecoder.decodeObject(forKey: "UTCMinute") as? Int ?? UTCMinute
+        // <= build 8000 "skippedDate"
+        skippedDate = aDecoder.decodeObject(forKey: KeyConstant.weeklySkippedDate.rawValue) as? Date ?? aDecoder.decodeObject(forKey: "skippedDate") as? Date
         
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(weekdays, forKey: "weekdays")
-        aCoder.encode(UTCHour, forKey: "UTCHour")
-        aCoder.encode(UTCMinute, forKey: "UTCMinute")
-        aCoder.encode(skippedDate, forKey: "skippedDate")
+        aCoder.encode(weekdays, forKey: KeyConstant.weeklyWeekdays.rawValue)
+        aCoder.encode(UTCHour, forKey: KeyConstant.weeklyUTCHour.rawValue)
+        aCoder.encode(UTCMinute, forKey: KeyConstant.weeklyUTCMinute.rawValue)
+        aCoder.encode(skippedDate, forKey: KeyConstant.weeklySkippedDate.rawValue)
     }
     
     // MARK: Main

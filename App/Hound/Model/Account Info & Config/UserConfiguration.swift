@@ -12,43 +12,43 @@ import UIKit
 enum UserConfiguration {
     /// Sets the UserConfiguration values equal to all the values found in the body. The key for the each body value must match the name of the UserConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
-        if let logsInterfaceScaleString = body[ServerDefaultKeys.logsInterfaceScale.rawValue] as? String, let logsInterfaceScale = LogsInterfaceScale(rawValue: logsInterfaceScaleString) {
+        if let logsInterfaceScaleString = body[KeyConstant.logsInterfaceScale.rawValue] as? String, let logsInterfaceScale = LogsInterfaceScale(rawValue: logsInterfaceScaleString) {
             self.logsInterfaceScale = logsInterfaceScale
         }
-        if let remindersInterfaceScaleString = body[ServerDefaultKeys.remindersInterfaceScale.rawValue] as? String, let remindersInterfaceScale = RemindersInterfaceScale(rawValue: remindersInterfaceScaleString) {
+        if let remindersInterfaceScaleString = body[KeyConstant.remindersInterfaceScale.rawValue] as? String, let remindersInterfaceScale = RemindersInterfaceScale(rawValue: remindersInterfaceScaleString) {
             self.remindersInterfaceScale = remindersInterfaceScale
         }
-        if let interfaceStyleInt = body[ServerDefaultKeys.interfaceStyle.rawValue] as? Int, let interfaceStyle = UIUserInterfaceStyle(rawValue: interfaceStyleInt) {
+        if let interfaceStyleInt = body[KeyConstant.interfaceStyle.rawValue] as? Int, let interfaceStyle = UIUserInterfaceStyle(rawValue: interfaceStyleInt) {
             self.interfaceStyle = interfaceStyle
         }
-        if let maximumNumberOfLogsDisplayed = body[ServerDefaultKeys.maximumNumberOfLogsDisplayed.rawValue] as? Int {
+        if let maximumNumberOfLogsDisplayed = body[KeyConstant.maximumNumberOfLogsDisplayed.rawValue] as? Int {
             self.maximumNumberOfLogsDisplayed = maximumNumberOfLogsDisplayed
         }
-        if let snoozeLength = body[ServerDefaultKeys.snoozeLength.rawValue] as? TimeInterval {
+        if let snoozeLength = body[KeyConstant.snoozeLength.rawValue] as? TimeInterval {
             self.snoozeLength = snoozeLength
         }
-        if let isNotificationEnabled = body[ServerDefaultKeys.isNotificationEnabled.rawValue] as? Bool {
+        if let isNotificationEnabled = body[KeyConstant.isNotificationEnabled.rawValue] as? Bool {
             self.isNotificationEnabled = isNotificationEnabled
         }
-        if let isLoudNotification = body[ServerDefaultKeys.isLoudNotification.rawValue] as? Bool {
+        if let isLoudNotification = body[KeyConstant.isLoudNotification.rawValue] as? Bool {
             self.isLoudNotification = isLoudNotification
         }
-        if let notificationSoundString = body[ServerDefaultKeys.notificationSound.rawValue] as? String, let notificationSound = NotificationSound(rawValue: notificationSoundString) {
+        if let notificationSoundString = body[KeyConstant.notificationSound.rawValue] as? String, let notificationSound = NotificationSound(rawValue: notificationSoundString) {
             self.notificationSound = notificationSound
         }
-        if let silentModeIsEnabled = body[ServerDefaultKeys.silentModeIsEnabled.rawValue] as? Bool {
+        if let silentModeIsEnabled = body[KeyConstant.silentModeIsEnabled.rawValue] as? Bool {
             self.silentModeIsEnabled = silentModeIsEnabled
         }
-        if let silentModeStartUTCHour = body[ServerDefaultKeys.silentModeStartUTCHour.rawValue] as? Int {
+        if let silentModeStartUTCHour = body[KeyConstant.silentModeStartUTCHour.rawValue] as? Int {
             self.silentModeStartUTCHour = silentModeStartUTCHour
         }
-        if let silentModeEndUTCHour = body[ServerDefaultKeys.silentModeEndUTCHour.rawValue] as? Int {
+        if let silentModeEndUTCHour = body[KeyConstant.silentModeEndUTCHour.rawValue] as? Int {
             self.silentModeEndUTCHour = silentModeEndUTCHour
         }
-        if let silentModeStartUTCMinute = body[ServerDefaultKeys.silentModeStartUTCMinute.rawValue] as? Int {
+        if let silentModeStartUTCMinute = body[KeyConstant.silentModeStartUTCMinute.rawValue] as? Int {
             self.silentModeStartUTCMinute = silentModeStartUTCMinute
         }
-        if let silentModeEndUTCMinute = body[ServerDefaultKeys.silentModeEndUTCMinute.rawValue] as? Int {
+        if let silentModeEndUTCMinute = body[KeyConstant.silentModeEndUTCMinute.rawValue] as? Int {
             self.silentModeEndUTCMinute = silentModeEndUTCMinute
         }
     }
@@ -62,7 +62,7 @@ enum UserConfiguration {
     static var interfaceStyle: UIUserInterfaceStyle = .unspecified
     
     static var maximumNumberOfLogsDisplayed: Int = 500
-    static var maximumNumberOfLogsDisplayedOptions: [Int] = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
+    static var maximumNumberOfLogsDisplayedOptions: [Int] = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
     
     // MARK: - Alarm Timing Related
     
@@ -142,20 +142,20 @@ extension UserConfiguration {
     /// Returns an array literal of the user configurations's properties. This is suitable to be used as the JSON body for a HTTP request
     static func createBody(addingOntoBody body: [String: Any]?) -> [String: Any] {
         var body: [String: Any] = body ?? [:]
-        body[ServerDefaultKeys.logsInterfaceScale.rawValue] = UserConfiguration.logsInterfaceScale.rawValue
-        body[ServerDefaultKeys.remindersInterfaceScale.rawValue] = UserConfiguration.remindersInterfaceScale.rawValue
-        body[ServerDefaultKeys.interfaceStyle.rawValue] = UserConfiguration.interfaceStyle.rawValue
-        body[ServerDefaultKeys.maximumNumberOfLogsDisplayed.rawValue] = UserConfiguration.maximumNumberOfLogsDisplayed
-        body[ServerDefaultKeys.snoozeLength.rawValue] = UserConfiguration.snoozeLength
-        body[ServerDefaultKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
-        body[ServerDefaultKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
-        body[ServerDefaultKeys.notificationSound.rawValue] = UserConfiguration.notificationSound.rawValue
+        body[KeyConstant.logsInterfaceScale.rawValue] = UserConfiguration.logsInterfaceScale.rawValue
+        body[KeyConstant.remindersInterfaceScale.rawValue] = UserConfiguration.remindersInterfaceScale.rawValue
+        body[KeyConstant.interfaceStyle.rawValue] = UserConfiguration.interfaceStyle.rawValue
+        body[KeyConstant.maximumNumberOfLogsDisplayed.rawValue] = UserConfiguration.maximumNumberOfLogsDisplayed
+        body[KeyConstant.snoozeLength.rawValue] = UserConfiguration.snoozeLength
+        body[KeyConstant.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
+        body[KeyConstant.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
+        body[KeyConstant.notificationSound.rawValue] = UserConfiguration.notificationSound.rawValue
         
-        body[ServerDefaultKeys.silentModeIsEnabled.rawValue] = UserConfiguration.silentModeIsEnabled
-        body[ServerDefaultKeys.silentModeStartUTCHour.rawValue] = UserConfiguration.silentModeStartUTCHour
-        body[ServerDefaultKeys.silentModeEndUTCHour.rawValue] = UserConfiguration.silentModeEndUTCHour
-        body[ServerDefaultKeys.silentModeStartUTCMinute.rawValue] = UserConfiguration.silentModeStartUTCMinute
-        body[ServerDefaultKeys.silentModeEndUTCMinute.rawValue] = UserConfiguration.silentModeEndUTCMinute
+        body[KeyConstant.silentModeIsEnabled.rawValue] = UserConfiguration.silentModeIsEnabled
+        body[KeyConstant.silentModeStartUTCHour.rawValue] = UserConfiguration.silentModeStartUTCHour
+        body[KeyConstant.silentModeEndUTCHour.rawValue] = UserConfiguration.silentModeEndUTCHour
+        body[KeyConstant.silentModeStartUTCMinute.rawValue] = UserConfiguration.silentModeStartUTCMinute
+        body[KeyConstant.silentModeEndUTCMinute.rawValue] = UserConfiguration.silentModeEndUTCMinute
         return body
     }
 }

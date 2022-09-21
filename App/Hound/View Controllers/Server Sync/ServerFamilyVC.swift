@@ -60,7 +60,7 @@ final class ServerFamilyViewController: UIViewController {
             // client side the code is okay
             else {
                 RequestUtils.beginRequestIndictator()
-                FamilyRequest.update(invokeErrorManager: true, body: [ServerDefaultKeys.familyCode.rawValue: familyCode]) { requestWasSuccessful, _ in
+                FamilyRequest.update(invokeErrorManager: true, body: [KeyConstant.familyCode.rawValue: familyCode]) { requestWasSuccessful, _ in
                     RequestUtils.endRequestIndictator {
                         // the code successfully allowed the user to join
                         if requestWasSuccessful == true {

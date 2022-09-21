@@ -65,7 +65,7 @@ enum NotificationManager {
                 
                 // Contact the server about the updated values and, if there is no response or a bad response, revert the values to their previous values. isNotificationAuthorized purposefully excluded as server doesn't need to know that and its value cant exactly just be flipped (as tied to apple notif auth status)
                 let body: [String: Any] = [
-                    ServerDefaultKeys.isNotificationEnabled.rawValue: UserConfiguration.isNotificationEnabled, ServerDefaultKeys.isLoudNotification.rawValue: UserConfiguration.isLoudNotification
+                    KeyConstant.isNotificationEnabled.rawValue: UserConfiguration.isNotificationEnabled, KeyConstant.isLoudNotification.rawValue: UserConfiguration.isLoudNotification
                 ]
                 UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                     if requestWasSuccessful == false {
@@ -129,10 +129,10 @@ enum NotificationManager {
             var body: [String: Any] = [:]
             // check for if values were changed, if there were then tell the server
             if UserConfiguration.isNotificationEnabled != beforeUpdateIsNotificationEnabled {
-                body[ServerDefaultKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
+                body[KeyConstant.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
             }
             if UserConfiguration.isLoudNotification != beforeUpdateIsLoudNotification {
-                body[ServerDefaultKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
+                body[KeyConstant.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
             }
             
             guard body.keys.isEmpty == false else {

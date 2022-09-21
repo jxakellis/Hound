@@ -108,7 +108,7 @@ extension DogsRequest {
             switch responseStatus {
             case .successResponse:
                 // dog JSON {dog1:'foo'}
-                if let newDogBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], newDogBody.isEmpty == false {
+                if let newDogBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any], newDogBody.isEmpty == false {
                     
                     // the dog was updated since last opened
                     let newDog = Dog(fromBody: newDogBody)
@@ -159,7 +159,7 @@ extension DogsRequest {
         return DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: nil) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let newDogManagerBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]], newDogManagerBody.isEmpty == false, let newDogManager = DogManager(fromBody: newDogManagerBody) {
+                if let newDogManagerBody = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]], newDogManagerBody.isEmpty == false, let newDogManager = DogManager(fromBody: newDogManagerBody) {
                     // successful sync, so we can update value
                     LocalConfiguration.lastDogManagerSynchronization = lastDogManagerSynchronization
                     
@@ -210,7 +210,7 @@ extension DogsRequest {
         _ = DogsRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDog: dog) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let dogId = responseBody?[ServerDefaultKeys.result.rawValue] as? Int {
+                if let dogId = responseBody?[KeyConstant.result.rawValue] as? Int {
                     // Successfully saved to server, so save dogIcon locally
                     // add a localDogIcon that has the same dogId and dogIcon as the newly created dog
                     LocalDogIcon.addIcon(forDogId: dogId, forDogIcon: dog.dogIcon)

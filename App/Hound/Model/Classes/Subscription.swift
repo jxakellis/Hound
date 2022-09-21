@@ -80,27 +80,27 @@ final class Subscription: NSObject {
     
     /// Assume array of family properties
     convenience init(fromBody body: [String: Any]) {
-        let transactionId = body[ServerDefaultKeys.transactionId.rawValue] as? Int
+        let transactionId = body[KeyConstant.transactionId.rawValue] as? Int
         
-        let product = InAppPurchaseProduct(rawValue: body[ServerDefaultKeys.productId.rawValue] as? String ?? InAppPurchaseProduct.unknown.rawValue) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionProduct
+        let product = InAppPurchaseProduct(rawValue: body[KeyConstant.productId.rawValue] as? String ?? InAppPurchaseProduct.unknown.rawValue) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionProduct
         
         var purchaseDate: Date?
-        if let purchaseDateString = body[ServerDefaultKeys.purchaseDate.rawValue] as? String {
+        if let purchaseDateString = body[KeyConstant.purchaseDate.rawValue] as? String {
             purchaseDate = ResponseUtils.dateFormatter(fromISO8601String: purchaseDateString)
         }
         
         var expirationDate: Date?
-        if let expirationDateString = body[ServerDefaultKeys.expirationDate.rawValue] as? String {
+        if let expirationDateString = body[KeyConstant.expirationDate.rawValue] as? String {
             expirationDate = ResponseUtils.dateFormatter(fromISO8601String: expirationDateString)
         }
         
-        let numberOfFamilyMembers = body[ServerDefaultKeys.numberOfFamilyMembers.rawValue] as? Int ?? ClassConstant.SubscriptionConstant.defaultSubscriptionNumberOfFamilyMembers
+        let numberOfFamilyMembers = body[KeyConstant.numberOfFamilyMembers.rawValue] as? Int ?? ClassConstant.SubscriptionConstant.defaultSubscriptionNumberOfFamilyMembers
         
-        let numberOfDogs = body[ServerDefaultKeys.numberOfDogs.rawValue] as? Int ?? ClassConstant.SubscriptionConstant.defaultSubscriptionNumberOfDogs
+        let numberOfDogs = body[KeyConstant.numberOfDogs.rawValue] as? Int ?? ClassConstant.SubscriptionConstant.defaultSubscriptionNumberOfDogs
         
-        let isActive = body[ServerDefaultKeys.isActive.rawValue] as? Bool ?? false
+        let isActive = body[KeyConstant.isActive.rawValue] as? Bool ?? false
         
-        let isAutoRenewing = body[ServerDefaultKeys.isAutoRenewing.rawValue] as? Bool
+        let isAutoRenewing = body[KeyConstant.isAutoRenewing.rawValue] as? Bool
         
         self.init(
             transactionId: transactionId,

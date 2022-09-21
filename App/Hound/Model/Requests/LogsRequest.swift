@@ -97,7 +97,7 @@ extension LogsRequest {
         _ = LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
+                if let result = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
                     completionHandler(Log(fromBody: result), responseStatus)
                 }
                 else {
@@ -121,7 +121,7 @@ extension LogsRequest {
             switch responseStatus {
             case .successResponse:
                 // Array of log JSON [{log1:'foo'},{log2:'bar'}]
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
+                if let result = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]] {
                     var logArray: [Log] = []
                     for logBody in result {
                         let log = Log(fromBody: logBody)
@@ -149,7 +149,7 @@ extension LogsRequest {
         _ = LogsRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLog: log) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let logId = responseBody?[ServerDefaultKeys.result.rawValue] as? Int {
+                if let logId = responseBody?[KeyConstant.result.rawValue] as? Int {
                     completionHandler(logId, responseStatus)
                 }
                 else {

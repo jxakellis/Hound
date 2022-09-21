@@ -22,13 +22,15 @@ final class CountdownComponents: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        self.executionInterval = aDecoder.decodeDouble(forKey: "executionInterval")
-        self.intervalElapsed = aDecoder.decodeDouble(forKey: "intervalElapsed")
+        // <= build 8000 "executionInterval"
+        executionInterval = aDecoder.decodeObject(forKey: KeyConstant.countdownExecutionInterval.rawValue) as? Double ?? aDecoder.decodeObject(forKey: "executionInterval") as? Double ?? executionInterval
+        // <= build 8000 "intervalElapsed"
+        intervalElapsed = aDecoder.decodeObject(forKey: KeyConstant.countdownIntervalElapsed.rawValue) as? Double ?? aDecoder.decodeObject(forKey: "intervalElapsed") as? Double ?? intervalElapsed
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(executionInterval, forKey: "executionInterval")
-        aCoder.encode(intervalElapsed, forKey: "intervalElapsed")
+        aCoder.encode(executionInterval, forKey: KeyConstant.countdownExecutionInterval.rawValue)
+        aCoder.encode(intervalElapsed, forKey: KeyConstant.countdownIntervalElapsed.rawValue)
     }
     
     // MARK: - Main

@@ -20,48 +20,14 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
         return true
     }
     
-    // MARK: - LogsAddLogViewControllerDelegate
-    
-    func didAddLog(sender: Sender, parentDogId: Int, newLog: Log) {
-        if dogManager.dogs.isEmpty == false {
-            dogManager.findDog(forDogId: parentDogId)?.dogLogs.addLog(forLog: newLog)
-        }
-        setDogManager(sender: sender, forDogManager: dogManager)
-        
-        CheckManager.checkForReview()
-    }
-    
-    func didUpdateLog(sender: Sender, parentDogId: Int, updatedLog: Log) {
-        if dogManager.dogs.isEmpty == false, let dog = dogManager.findDog(forDogId: parentDogId) {
-            
-            dog.dogLogs.addLog(forLog: updatedLog)
-            
-        }
-        
-        setDogManager(sender: sender, forDogManager: dogManager)
-        
-        CheckManager.checkForReview()
-        
-    }
-    
-    func didRemoveLog(sender: Sender, parentDogId: Int, logId: Int) {
-        
-        if let dog = dogManager.findDog(forDogId: parentDogId) {
-            for dogLogIndex in 0..<dog.dogLogs.logs.count where dog.dogLogs.logs[dogLogIndex].logId == logId {
-                dog.dogLogs.removeLog(forIndex: dogLogIndex)
-                break
-            }
-        }
-        
-        setDogManager(sender: sender, forDogManager: dogManager)
-        
-        CheckManager.checkForReview()
-    }
-    
-    // MARK: - LogsTableViewControllerDelegate
+    // MARK: - LogsAddLogViewControllerDelegate & LogsTableViewControllerDelegate
     
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
         setDogManager(sender: sender, forDogManager: forDogManager)
+        
+        if sender.origin is LogsAddLogViewController {
+            CheckManager.checkForReview()
+        }
     }
     
     /// Log selected in the main table view of the logs of care page. This log object has JUST been retrieved and constructed from data from the server.

@@ -24,17 +24,21 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        UTCDay = aDecoder.decodeInteger(forKey: "UTCDay")
-        UTCHour = aDecoder.decodeInteger(forKey: "UTCHour")
-        UTCMinute = aDecoder.decodeInteger(forKey: "UTCMinute")
-        skippedDate = aDecoder.decodeObject(forKey: "skippedDate") as? Date
+        // <= build 8000 "UTCDay"
+        UTCDay = aDecoder.decodeObject(forKey: KeyConstant.monthlyUTCDay.rawValue) as? Int ?? aDecoder.decodeObject(forKey: "UTCDay") as? Int ?? UTCDay
+        // <= build 8000 "UTCHour"
+        UTCHour = aDecoder.decodeObject(forKey: KeyConstant.monthlyUTCHour.rawValue) as? Int ?? aDecoder.decodeObject(forKey: "UTCHour") as? Int ?? UTCHour
+        // <= build 8000 "UTCMinute"
+        UTCMinute = aDecoder.decodeObject(forKey: KeyConstant.monthlyUTCMinute.rawValue) as? Int ?? aDecoder.decodeObject(forKey: "UTCMinute") as? Int ?? UTCMinute
+        // <= build 8000 "skippedDate"
+        skippedDate = aDecoder.decodeObject(forKey: KeyConstant.monthlySkippedDate.rawValue) as? Date ?? aDecoder.decodeObject(forKey: "skippedDate") as? Date ?? skippedDate
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(UTCDay, forKey: "UTCDay")
-        aCoder.encode(UTCHour, forKey: "UTCHour")
-        aCoder.encode(UTCMinute, forKey: "UTCMinute")
-        aCoder.encode(skippedDate, forKey: "skippedDate")
+        aCoder.encode(UTCDay, forKey: KeyConstant.monthlyUTCDay.rawValue)
+        aCoder.encode(UTCHour, forKey: KeyConstant.monthlyUTCHour.rawValue)
+        aCoder.encode(UTCMinute, forKey: KeyConstant.monthlyUTCMinute.rawValue)
+        aCoder.encode(skippedDate, forKey: KeyConstant.monthlySkippedDate.rawValue)
     }
     
     // MARK: Main

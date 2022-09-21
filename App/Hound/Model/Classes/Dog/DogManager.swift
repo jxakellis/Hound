@@ -26,11 +26,11 @@ final class DogManager: NSObject, NSCopying, NSCoding {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        dogs = aDecoder.decodeObject(forKey: "dogs") as? [Dog] ?? []
+        dogs = aDecoder.decodeObject(forKey: KeyConstant.dogs.rawValue) as? [Dog] ?? dogs
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(dogs, forKey: "dogs")
+        aCoder.encode(dogs, forKey: KeyConstant.dogs.rawValue)
     }
     
     // MARK: - Main
