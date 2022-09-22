@@ -36,7 +36,7 @@ async function createFamilyForUserId(databaseConnection, userId) {
   const promises = [
     databaseQuery(
       databaseConnection,
-      'INSERT INTO families(userId, familyId, familyCode, isLocked, familyAccountCreationDate) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO families(userId, familyId, familyCode, familyIsLocked, familyAccountCreationDate) VALUES (?, ?, ?, ?, ?)',
       [userId, familyId, familyCode, false, familyAccountCreationDate],
     ),
     databaseQuery(

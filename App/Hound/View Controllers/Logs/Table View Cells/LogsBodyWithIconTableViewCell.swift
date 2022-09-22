@@ -45,7 +45,7 @@ final class LogsBodyWithIconTableViewCell: UITableViewCell {
     
     func setup(forParentDogIcon parentDogIcon: UIImage, forLog log: Log) {
         
-        let familyMemberThatLogged = FamilyConfiguration.findFamilyMember(forUserId: log.userId)
+        let familyMemberThatLogged = FamilyInformation.findFamilyMember(forUserId: log.userId)
         familyMemberNameLabel.text = familyMemberThatLogged?.displayFirstName ?? VisualConstant.TextConstant.unknownText
         
         let fontSize = VisualConstant.FontConstant.logCellFontSize

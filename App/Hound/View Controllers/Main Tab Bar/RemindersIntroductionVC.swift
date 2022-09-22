@@ -32,7 +32,7 @@ final class RemindersIntroductionViewController: UIViewController {
         continueButton.isEnabled = false
         
         // If the user has notifications authorized and turned on, then there is no need to pop a request to the user
-        if LocalConfiguration.isNotificationAuthorized == true && UserConfiguration.isNotificationEnabled == true {
+        if LocalConfiguration.localIsNotificationAuthorized == true && UserConfiguration.isNotificationEnabled == true {
             completeRemindersIntroductionPage()
         }
         else {
@@ -48,7 +48,7 @@ final class RemindersIntroductionViewController: UIViewController {
             guard self.dogManager.hasCreatedDog == true, self.dogManager.hasCreatedReminder == false, let remindersToggleSwitch = self.remindersToggleSwitch, remindersToggleSwitch.isOn == true else {
                 // the user has chosen to not add default reminders (or was blocked because their family already created reminders for some dog)
                 self.continueButton.isEnabled = true
-                LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
+                LocalConfiguration.localHasCompletedRemindersIntroductionViewController = true
                 self.dismiss(animated: true, completion: nil)
                 return
             }
@@ -65,7 +65,7 @@ final class RemindersIntroductionViewController: UIViewController {
                 // if we were able to add the reminders, then append to the dogManager
                 self.dogManager.dogs[0].dogReminders.addReminders(forReminders: reminders)
                 self.delegate.didComplete(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-                LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
+                LocalConfiguration.localHasCompletedRemindersIntroductionViewController = true
                 self.dismiss(animated: true, completion: nil)
             }
         }

@@ -17,8 +17,8 @@ async function getInAppSubscriptions(req, res) {
 async function createInAppSubscriptions(req, res) {
   try {
     const { userId, familyId } = req.params;
-    const { base64EncodedAppStoreReceiptURL } = req.body;
-    const result = await createInAppSubscriptionForUserIdFamilyIdRecieptId(req.databaseConnection, userId, familyId, base64EncodedAppStoreReceiptURL);
+    const { appStoreReceiptURL } = req.body;
+    const result = await createInAppSubscriptionForUserIdFamilyIdRecieptId(req.databaseConnection, userId, familyId, appStoreReceiptURL);
 
     return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }

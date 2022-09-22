@@ -1,5 +1,5 @@
 //
-//  FamilyConfiguration.swift
+//  FamilyInformation.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 4/5/22.
@@ -9,14 +9,14 @@
 import Foundation
 
 /// Configuration that is local to the app only. If the app is reinstalled then this data should be pulled down from the cloud
-enum FamilyConfiguration {
+enum FamilyInformation {
     
     // MARK: - Main
     
-    /// Sets the FamilyConfiguration values equal to all the values found in the body. The key for the each body value must match the name of the FamilyConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
+    /// Sets the FamilyInformation values equal to all the values found in the body. The key for the each body value must match the name of the FamilyInformation property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
-        if let isLocked = body[KeyConstant.isLocked.rawValue] as? Bool {
-            self.isLocked = isLocked
+        if let familyIsLocked = body[KeyConstant.familyIsLocked.rawValue] as? Bool {
+            self.familyIsLocked = familyIsLocked
         }
         if let familyCode = body[KeyConstant.familyCode.rawValue] as? String {
             self.familyCode = familyCode
@@ -66,9 +66,9 @@ enum FamilyConfiguration {
             }
             
         }
-        if let activeSubscriptionBody = body[KeyConstant.activeSubscription.rawValue] as? [String: Any] {
-            let activeSubscription = Subscription(fromBody: activeSubscriptionBody)
-            addFamilySubscription(forSubscription: activeSubscription)
+        if let familyActiveSubscriptionBody = body[KeyConstant.familyActiveSubscription.rawValue] as? [String: Any] {
+            let familyActiveSubscription = Subscription(fromBody: familyActiveSubscriptionBody)
+            addFamilySubscription(forSubscription: familyActiveSubscription)
         }
     }
     
@@ -78,7 +78,7 @@ enum FamilyConfiguration {
     static private(set) var familyCode: String = ""
     
     /// If a family is locked, then no new members can join. Only the family head can lock and unlock the family.
-    static var isLocked: Bool = false
+    static var familyIsLocked: Bool = false
     
     /// Users that used to be in the family
     static private var previousFamilyMembers: [FamilyMember] = []
@@ -98,9 +98,9 @@ enum FamilyConfiguration {
             return nil
         }
         
-        let matchingFamilyMember: FamilyMember? = FamilyConfiguration.familyMembers.first { familyMember in
+        let matchingFamilyMember: FamilyMember? = FamilyInformation.familyMembers.first { familyMember in
             return familyMember.userId == userId
-        } ?? FamilyConfiguration.previousFamilyMembers.first(where: { previousFamilyMember in
+        } ?? FamilyInformation.previousFamilyMembers.first(where: { previousFamilyMember in
             return previousFamilyMember.userId == userId
         })
         

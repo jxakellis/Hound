@@ -60,7 +60,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     weak var delegate: SettingsFamilyViewControllerDelegate!
     
     private var familyCode: String {
-        var code = FamilyConfiguration.familyCode
+        var code = FamilyInformation.familyCode
         code.insert("-", at: code.index(code.startIndex, offsetBy: 4))
         return code
     }
@@ -114,12 +114,12 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         
         // MARK: Family Lock
         
-        isLockedSwitch.isOn = FamilyConfiguration.isLocked
+        familyIsLockedSwitch.isOn = FamilyInformation.familyIsLocked
         updateIsLockedLabel()
         
         // MARK: Family Members
         
-        tableView.allowsSelection = FamilyConfiguration.isUserFamilyHead
+        tableView.allowsSelection = FamilyInformation.isUserFamilyHead
         
         // MARK: Leave Family Button
         
@@ -143,7 +143,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         leaveFamilyAlertController = GeneralUIAlertController(title: "placeholder", message: nil, preferredStyle: .alert)
         
         // user is not the head of the family, so the button is enabled for them
-        if FamilyConfiguration.isUserFamilyHead == false {
+        if FamilyInformation.isUserFamilyHead == false {
             leaveFamilyButton.isEnabled = true
             
             leaveFamilyButton.setTitle("Leave Family", for: .normal)
@@ -163,7 +163,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         // user is the head of the family, further checks needed
         else {
             // user must kicked other members before they can destroy their family
-            if FamilyConfiguration.familyMembers.count == 1 {
+            if FamilyInformation.familyMembers.count == 1 {
                 leaveFamilyButton.isEnabled = true
                 leaveFamilyButton.backgroundColor = .systemBlue
             }
@@ -175,7 +175,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
             
             leaveFamilyButton.setTitle("Delete Family", for: .normal)
             
-            let familyHasPurchasedSubscription = FamilyConfiguration.activeFamilySubscription.product != ClassConstant.SubscriptionConstant.defaultSubscriptionProduct
+            let familyHasPurchasedSubscription = FamilyInformation.activeFamilySubscription.product != ClassConstant.SubscriptionConstant.defaultSubscriptionProduct
             // If the user has an active subscription, then let them know they will lose the rest of its duration
             let forfitSubscriptionDisclaimer: String = familyHasPurchasedSubscription ? " If you delete your family, the remaining duration of your active subscription will be forfitted." : ""
             
@@ -196,7 +196,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         
         // MARK: Introduct Page
         
-        if LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore == false {
+        if LocalConfiguration.localHasCompletedSettingsFamilyIntroductionViewController == false {
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "SettingsFamilyIntroductionViewController")
         }
     }
@@ -207,35 +207,35 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     @IBOutlet private weak var familyCodeLabel: ScaledUILabel!
     
     // MARK: Family Lock
-    @IBOutlet private weak var isLockedLabel: ScaledUILabel!
-    @IBOutlet private weak var isLockedSwitch: UISwitch!
+    @IBOutlet private weak var familyIsLockedLabel: ScaledUILabel!
+    @IBOutlet private weak var familyIsLockedSwitch: UISwitch!
     @IBAction private func didToggleIsLocked(_ sender: Any) {
         
         // assume request will go through and update values
-        let initalIsLocked = FamilyConfiguration.isLocked
-        FamilyConfiguration.isLocked = isLockedSwitch.isOn
+        let initalIsLocked = FamilyInformation.familyIsLocked
+        FamilyInformation.familyIsLocked = familyIsLockedSwitch.isOn
         updateIsLockedLabel()
         
-        let body = [KeyConstant.isLocked.rawValue: isLockedSwitch.isOn]
+        let body = [KeyConstant.familyIsLocked.rawValue: familyIsLockedSwitch.isOn]
         FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // request failed so we revert
-                FamilyConfiguration.isLocked = initalIsLocked
+                FamilyInformation.familyIsLocked = initalIsLocked
                 self.updateIsLockedLabel()
-                self.isLockedSwitch.setOn(initalIsLocked, animated: true)
+                self.familyIsLockedSwitch.setOn(initalIsLocked, animated: true)
             }
         }
     }
     
     private func updateIsLockedLabel() {
-        isLockedLabel.text = "Lock: "
-        if FamilyConfiguration.isLocked == true {
+        familyIsLockedLabel.text = "Lock: "
+        if FamilyInformation.familyIsLocked == true {
             // locked emoji
-            isLockedLabel.text?.append("🔐")
+            familyIsLockedLabel.text?.append("🔐")
         }
         else {
             // unlocked emoji
-            isLockedLabel.text?.append("🔓")
+            familyIsLockedLabel.text?.append("🔓")
         }
     }
     
@@ -249,12 +249,12 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return FamilyConfiguration.familyMembers.count
+        return FamilyInformation.familyMembers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let familyMember = FamilyConfiguration.familyMembers[indexPath.row]
+        let familyMember = FamilyInformation.familyMembers[indexPath.row]
         // family members is sorted to have the family head as its first element
         if indexPath.row == 0, let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyHeadTableViewCell", for: indexPath) as? SettingsFamilyHeadTableViewCell {
             cell.setup(forDisplayFullName: familyMember.displayFullName, userId: familyMember.userId)
@@ -276,12 +276,12 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         // the first row is the family head who should be able to be selected
         if indexPath.row != 0 {
             // construct the alert controller which will confirm if the user wants to kick the family member
-            let familyMember = FamilyConfiguration.familyMembers[indexPath.row]
+            let familyMember = FamilyInformation.familyMembers[indexPath.row]
             kickFamilyMemberAlertController = GeneralUIAlertController(title: "Do you want to kick \(familyMember.displayFullName) from your family?", message: nil, preferredStyle: .alert)
             
             let kickAlertAction = UIAlertAction(title: "Kick \(familyMember.displayFullName)", style: .destructive) { _ in
                 // the user wants to kick the family member so query the server
-                let body = [KeyConstant.kickUserId.rawValue: familyMember.userId]
+                let body = [KeyConstant.familyKickUserId.rawValue: familyMember.userId]
                 RequestUtils.beginRequestIndictator()
                 FamilyRequest.delete(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                     RequestUtils.endRequestIndictator {
@@ -306,16 +306,16 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     
     @IBAction private func didClickLeaveFamily(_ sender: Any) {
         
-        guard FamilyConfiguration.isUserFamilyHead else {
+        guard FamilyInformation.isUserFamilyHead else {
             // The user isn't the family head, so we don't need to check for the status of the family subscription
             AlertManager.enqueueAlertForPresentation(leaveFamilyAlertController)
             return
         }
         
-        let activeSubscription = FamilyConfiguration.activeFamilySubscription
+        let familyActiveSubscription = FamilyInformation.activeFamilySubscription
         
         // Check to make sure either the family has the default free subsription or they have an active subscription that isn't auto-renewing. So that if they leave the family, they won't be charged for subscription that isn't attached to anything
-        guard activeSubscription.product == ClassConstant.SubscriptionConstant.defaultSubscriptionProduct || (activeSubscription.product != ClassConstant.SubscriptionConstant.defaultSubscriptionProduct && activeSubscription.isAutoRenewing == false) else {
+        guard familyActiveSubscription.product == ClassConstant.SubscriptionConstant.defaultSubscriptionProduct || (familyActiveSubscription.product != ClassConstant.SubscriptionConstant.defaultSubscriptionProduct && familyActiveSubscription.isAutoRenewing == false) else {
             ErrorConstant.FamilyResponseError.leaveSubscriptionActive.alert()
             return
         }

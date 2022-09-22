@@ -16,15 +16,15 @@ enum CheckManager {
         // slight delay so it pops once some things are done
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
             
-            guard let lastUserAskedToReviewHoundDate = LocalConfiguration.datesUserShownBannerToReviewHound.last else {
-                LocalConfiguration.datesUserShownBannerToReviewHound.append(Date())
+            guard let lastUserAskedToReviewHoundDate = LocalConfiguration.localPreviousDatesUserShownBannerToReviewHound.last else {
+                LocalConfiguration.localPreviousDatesUserShownBannerToReviewHound.append(Date())
                 return
             }
             
             let isEligibleForBannerToReviewHound: Bool = {
                 // We want to ask the user in increasing intervals of time for a review on Hound. The function below increases the number of days between reviews and help ensure that reviews get asked at different times of day.
                 let numberOfDaysToWaitForNextReview: Double = {
-                    let count = LocalConfiguration.datesUserShownBannerToReviewHound.count
+                    let count = LocalConfiguration.localPreviousDatesUserShownBannerToReviewHound.count
                     guard count >= 5 else {
                         // Count == 1: Been asked zero times before (first Date() is a placeholder). We ask 9.2 days after the inital install.
                         // Count == 2: asked one time; 18.4 days since last ask; 27.6 days since beginning
@@ -54,13 +54,13 @@ enum CheckManager {
             
             let isEligibleForReviewRequest: Bool = {
                 // You can request a maximum of three reviews through StoreKit a year. If < 3, then the user is eligible to be asked.
-                guard LocalConfiguration.datesUserReviewRequested.count >= 3 else {
+                guard LocalConfiguration.localPreviousDatesUserReviewRequested.count >= 3 else {
                     return true
                 }
                 
                 // User has been asked >= 3 times through StoreKit for review
                 // Must cast array slice to array. Doesn't give compile error if you don't but [0] will crash below if slicing an array that isn't equal to suffix value
-                let lastThreeDates = Array(LocalConfiguration.datesUserReviewRequested.suffix(3))
+                let lastThreeDates = Array(LocalConfiguration.localPreviousDatesUserReviewRequested.suffix(3))
                 
                 // If the first element in this array (of the last three items) is > 1 year ago, then we can give the option to use the built in app review method. This is because we aren't exceeding our 3 a year limit anymore
                 let timeWaitedSinceLastRate = lastThreeDates[0].distance(to: Date())
@@ -87,11 +87,11 @@ enum CheckManager {
                 
                 AppDelegate.generalLogger.notice("Asking user to rate Hound")
                 SKStoreReviewController.requestReview(in: window)
-                LocalConfiguration.datesUserReviewRequested.append(Date())
+                LocalConfiguration.localPreviousDatesUserReviewRequested.append(Date())
                 PersistenceManager.persistRateReviewRequestedDates()
             }
             
-            LocalConfiguration.datesUserShownBannerToReviewHound.append(Date())
+            LocalConfiguration.localPreviousDatesUserShownBannerToReviewHound.append(Date())
             
         })
         
@@ -106,7 +106,7 @@ enum CheckManager {
         }
         
         // make sure we haven't shown the release notes for this version before. To do this, we check to see if our array of app builds that we showed release notes for contains the app build of the current version. If the array does not contain the current app build, then we haven't shown release notes for this new version and we are ok to proceed.
-        guard LocalConfiguration.appVersionsWithReleaseNotesShown.contains(UIApplication.appVersion) == false && LocalConfiguration.appBuildsWithReleaseNotesShown.contains(UIApplication.appBuild) == false else {
+        guard LocalConfiguration.localAppVersionsWithReleaseNotesShown.contains(UIApplication.appVersion) == false && LocalConfiguration.localAppBuildsWithReleaseNotesShown.contains(UIApplication.appBuild) == false else {
             return
         }
         
@@ -130,8 +130,8 @@ enum CheckManager {
         }
         
         // we successfully showed the banner, so store the build we showed it for
-        LocalConfiguration.appVersionsWithReleaseNotesShown.append(UIApplication.appVersion)
-        LocalConfiguration.appBuildsWithReleaseNotesShown.append(UIApplication.appBuild)
+        LocalConfiguration.localAppVersionsWithReleaseNotesShown.append(UIApplication.appVersion)
+        LocalConfiguration.localAppBuildsWithReleaseNotesShown.append(UIApplication.appBuild)
     }
     
 }

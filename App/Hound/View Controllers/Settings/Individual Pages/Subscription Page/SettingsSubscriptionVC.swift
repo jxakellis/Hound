@@ -15,10 +15,10 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     
     @IBOutlet private weak var tableView: UITableView!
     
-    @IBOutlet private weak var activeSubscriptionTitleLabel: ScaledUILabel!
-    @IBOutlet private weak var activeSubscriptionDescriptionLabel: ScaledUILabel!
-    @IBOutlet private weak var activeSubscriptionPurchaseDateLabel: ScaledUILabel!
-    @IBOutlet private weak var activeSubscriptionExpirationLabel: ScaledUILabel!
+    @IBOutlet private weak var familyActiveSubscriptionTitleLabel: ScaledUILabel!
+    @IBOutlet private weak var familyActiveSubscriptionDescriptionLabel: ScaledUILabel!
+    @IBOutlet private weak var familyActiveSubscriptionPurchaseDateLabel: ScaledUILabel!
+    @IBOutlet private weak var familyActiveSubscriptionExpirationLabel: ScaledUILabel!
     
     @IBOutlet private weak var refreshButton: UIBarButtonItem!
     @IBAction private func willRefresh(_ sender: Any) {
@@ -51,7 +51,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     @IBOutlet private weak var restoreTransactionsButton: UIButton!
     @IBAction private func didClickRestoreTransactions(_ sender: Any) {
         // The user doesn't have permission to perform this action
-        guard FamilyConfiguration.isUserFamilyHead else {
+        guard FamilyInformation.isUserFamilyHead else {
             AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionSubtitle, forStyle: .danger)
             return
         }
@@ -116,13 +116,13 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     }
     
     private func setupActiveSubscriptionLabels() {
-        let activeSubscription = FamilyConfiguration.activeFamilySubscription
+        let familyActiveSubscription = FamilyInformation.activeFamilySubscription
         
-        activeSubscriptionTitleLabel.text = InAppPurchaseProduct.localizedTitleExpanded(forInAppPurchaseProduct: activeSubscription.product)
-        activeSubscriptionDescriptionLabel.text = InAppPurchaseProduct.localizedDescriptionExpanded(forInAppPurchaseProduct: activeSubscription.product)
+        familyActiveSubscriptionTitleLabel.text = InAppPurchaseProduct.localizedTitleExpanded(forInAppPurchaseProduct: familyActiveSubscription.product)
+        familyActiveSubscriptionDescriptionLabel.text = InAppPurchaseProduct.localizedDescriptionExpanded(forInAppPurchaseProduct: familyActiveSubscription.product)
         
         var purchaseDateString: String {
-            guard let purchaseDate = activeSubscription.purchaseDate else {
+            guard let purchaseDate = familyActiveSubscription.purchaseDate else {
                 return "Never"
             }
             let dateFormatter = DateFormatter()
@@ -130,10 +130,10 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
             return dateFormatter.string(from: purchaseDate)
         }
         
-        activeSubscriptionPurchaseDateLabel.text = "Purchased: \(purchaseDateString)"
+        familyActiveSubscriptionPurchaseDateLabel.text = "Purchased: \(purchaseDateString)"
         
         var expirationDateString: String {
-            guard let expirationDate = activeSubscription.expirationDate else {
+            guard let expirationDate = familyActiveSubscription.expirationDate else {
                 return "Never"
             }
             let dateFormatter = DateFormatter()
@@ -141,7 +141,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
             return dateFormatter.string(from: expirationDate)
         }
         
-        activeSubscriptionExpirationLabel.text = "Expires: \(expirationDateString)"
+        familyActiveSubscriptionExpirationLabel.text = "Expires: \(expirationDateString)"
     }
     
     private func reloadTableAndLabels() {
@@ -183,7 +183,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         tableView.deselectRow(at: indexPath, animated: true)
         
         // The user doesn't have permission to perform this action
-        guard FamilyConfiguration.isUserFamilyHead else {
+        guard FamilyInformation.isUserFamilyHead else {
             AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionSubtitle, forStyle: .danger)
             return
         }
@@ -192,7 +192,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
             return
         }
         
-        guard let indexOfActiveSubscription = InAppPurchaseProduct.allCases.firstIndex(of: FamilyConfiguration.activeFamilySubscription.product), let indexOfSelectedRow = InAppPurchaseProduct.allCases.firstIndex(of: cell.inAppPurchaseProduct) else {
+        guard let indexOfActiveSubscription = InAppPurchaseProduct.allCases.firstIndex(of: FamilyInformation.activeFamilySubscription.product), let indexOfSelectedRow = InAppPurchaseProduct.allCases.firstIndex(of: cell.inAppPurchaseProduct) else {
             return
         }
         

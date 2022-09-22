@@ -41,7 +41,7 @@ enum SubscriptionRequest: RequestProtocol {
             return receiptData.base64EncodedString(options: [])
         }
         
-        let body: [String: Any] = [KeyConstant.base64EncodedAppStoreReceiptURL.rawValue: base64EncodedReceiptString ?? VisualConstant.TextConstant.unknownText]
+        let body: [String: Any] = [KeyConstant.appStoreReceiptURL.rawValue: base64EncodedReceiptString ?? VisualConstant.TextConstant.unknownText]
         return InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
@@ -64,9 +64,9 @@ extension SubscriptionRequest {
             case .successResponse:
                 if let result = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]] {
                     
-                    FamilyConfiguration.clearAllFamilySubscriptions()
+                    FamilyInformation.clearAllFamilySubscriptions()
                     for subscription in result {
-                        FamilyConfiguration.addFamilySubscription(forSubscription: Subscription(fromBody: subscription))
+                        FamilyInformation.addFamilySubscription(forSubscription: Subscription(fromBody: subscription))
                     }
                     
                     completionHandler(true, responseStatus)
@@ -94,8 +94,8 @@ extension SubscriptionRequest {
             switch responseStatus {
             case .successResponse:
                 if let result = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
-                    let activeSubscription = Subscription(fromBody: result)
-                    FamilyConfiguration.addFamilySubscription(forSubscription: activeSubscription)
+                    let familyActiveSubscription = Subscription(fromBody: result)
+                    FamilyInformation.addFamilySubscription(forSubscription: familyActiveSubscription)
                     
                     // purchaseDate
                     completionHandler(true, responseStatus)

@@ -78,7 +78,7 @@ enum VisualConstant {
         
         static let invalidSubscriptionFamilyShareTitle = "Unable to share your Hound family! "
         static var invalidSubscriptionFamilyShareSubtitle: String {
-            let familyMembers = FamilyConfiguration.activeFamilySubscription.numberOfFamilyMembers
+            let familyMembers = FamilyInformation.activeFamilySubscription.numberOfFamilyMembers
             return "Currently, your Hound family is limited to \(familyMembers) family member\(familyMembers == 1 ? "" : "s") and doesn't have space for more members. To increase this limit, please visit the Subscriptions page and upgrade your family."
         }
         

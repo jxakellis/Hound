@@ -73,12 +73,12 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
         }
         // a user generated custom name
         else {
-            customCell.label.text = ReminderAction.custom.displayActionName(reminderCustomActionName: LocalConfiguration.reminderCustomActionNames[indexPath.row - ReminderAction.allCases.count], isShowingAbreviatedCustomActionName: false)
+            customCell.label.text = ReminderAction.custom.displayActionName(reminderCustomActionName: LocalConfiguration.localPreviousReminderCustomActionNames[indexPath.row - ReminderAction.allCases.count], isShowingAbreviatedCustomActionName: false)
         }
     }
     
     func numberOfRows(forSection: Int, dropDownUIViewIdentifier: String) -> Int {
-        return ReminderAction.allCases.count + LocalConfiguration.reminderCustomActionNames.count
+        return ReminderAction.allCases.count + LocalConfiguration.localPreviousReminderCustomActionNames.count
     }
     
     func numberOfSections(dropDownUIViewIdentifier: String) -> Int {
@@ -99,9 +99,9 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
         }
         // a user generated custom name
         else {
-            reminderActionLabel.text = ReminderAction.custom.displayActionName(reminderCustomActionName: LocalConfiguration.reminderCustomActionNames[indexPath.row - ReminderAction.allCases.count], isShowingAbreviatedCustomActionName: false)
+            reminderActionLabel.text = ReminderAction.custom.displayActionName(reminderCustomActionName: LocalConfiguration.localPreviousReminderCustomActionNames[indexPath.row - ReminderAction.allCases.count], isShowingAbreviatedCustomActionName: false)
             selectedReminderAction = ReminderAction.custom
-            reminderCustomActionNameTextField.text = LocalConfiguration.reminderCustomActionNames[indexPath.row - ReminderAction.allCases.count]
+            reminderCustomActionNameTextField.text = LocalConfiguration.localPreviousReminderCustomActionNames[indexPath.row - ReminderAction.allCases.count]
         }
         
         dismissKeyboardAndDropDown()

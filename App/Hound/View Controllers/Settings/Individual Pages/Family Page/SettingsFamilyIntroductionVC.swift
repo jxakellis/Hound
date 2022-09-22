@@ -44,7 +44,7 @@ class SettingsFamilyIntroductionViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore = true
+        LocalConfiguration.localHasCompletedSettingsFamilyIntroductionViewController = true
     }
     
     // MARK: - Functions
@@ -58,17 +58,17 @@ class SettingsFamilyIntroductionViewController: UIViewController {
     private func repeatableSetup() {
         let formatter = NumberFormatter()
         formatter.numberStyle = .spellOut
-        let activeSubscription = FamilyConfiguration.activeFamilySubscription
+        let familyActiveSubscription = FamilyInformation.activeFamilySubscription
         
-        let spelledOutNumberOfFamilyMembers = formatter.string(from: activeSubscription.numberOfFamilyMembers as NSNumber) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionSpelledOutNumberOfFamilyMembers
-        let familyMembersPlurality = activeSubscription.numberOfFamilyMembers == 1
+        let spelledOutNumberOfFamilyMembers = formatter.string(from: familyActiveSubscription.numberOfFamilyMembers as NSNumber) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionSpelledOutNumberOfFamilyMembers
+        let familyMembersPlurality = familyActiveSubscription.numberOfFamilyMembers == 1
         ? "family member"
         : "family members"
         // "one family member " "two family members "
         let attributedFamilyMembersText = NSAttributedString(string: "\(spelledOutNumberOfFamilyMembers) \(familyMembersPlurality) ", attributes: [.font: VisualConstant.FontConstant.regularLabelEmphaziedTextFont])
         
-        let spelledOutNumberOfDogs = formatter.string(from: activeSubscription.numberOfDogs as NSNumber) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionSpelledOutNumberOfDogs
-        let dogsPlurality = activeSubscription.numberOfDogs == 1
+        let spelledOutNumberOfDogs = formatter.string(from: familyActiveSubscription.numberOfDogs as NSNumber) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionSpelledOutNumberOfDogs
+        let dogsPlurality = familyActiveSubscription.numberOfDogs == 1
         ? "dog"
         : "dogs"
         // "one dog. " "two dogs. "
@@ -87,7 +87,7 @@ class SettingsFamilyIntroductionViewController: UIViewController {
         // "Your family is currently limited to one family member and two dogs. If you would like to increase these limits, have your family head visit the Subscriptions page to upgrade your subscription. The first week of any subscription tier is free!"
         message.append(NSAttributedString(
             string:
-                "If you would like to increase these limits, \(FamilyConfiguration.isUserFamilyHead == false ? "have your family head" : "") visit the Subscriptions page to upgrade your family. The first week of any subscription tier is free!",
+                "If you would like to increase these limits, \(FamilyInformation.isUserFamilyHead == false ? "have your family head" : "") visit the Subscriptions page to upgrade your family. The first week of any subscription tier is free!",
             attributes: [.font: VisualConstant.FontConstant.regularLabelRegularTextFont]
         ))
         

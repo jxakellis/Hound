@@ -68,12 +68,12 @@ async function getAllInAppSubscriptionsForFamilyId(databaseConnection, familyId)
     [familyId],
   );
 
-  // Don't use .activeSubscription property: Want to make sure this function always returns the most updated/accurate information
-  const activeSubscription = await getActiveInAppSubscriptionForFamilyId(databaseConnection, familyId);
+  // Don't use .familyActiveSubscription property: Want to make sure this function always returns the most updated/accurate information
+  const familyActiveSubscription = await getActiveInAppSubscriptionForFamilyId(databaseConnection, familyId);
 
   for (let i = 0; i < transactionsHistory.length; i += 1) {
     const subscription = transactionsHistory[i];
-    subscription.isActive = subscription.transactionId === activeSubscription.transactionId;
+    subscription.isActive = subscription.transactionId === familyActiveSubscription.transactionId;
   }
 
   return transactionsHistory;

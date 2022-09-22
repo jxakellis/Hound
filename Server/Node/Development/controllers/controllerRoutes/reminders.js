@@ -19,13 +19,13 @@ Known:
 async function getReminders(req, res) {
   try {
     const { dogId, reminderId } = req.params;
-    const { lastDogManagerSynchronization } = req.query;
+    const { userConfigurationPreviousDogManagerSynchronization } = req.query;
 
     const result = areAllDefined(reminderId)
     // reminderId was provided, look for single reminder
-      ? await getReminderForReminderId(req.databaseConnection, reminderId, lastDogManagerSynchronization)
+      ? await getReminderForReminderId(req.databaseConnection, reminderId, userConfigurationPreviousDogManagerSynchronization)
     // look for multiple reminders
-      : await getAllRemindersForDogId(req.databaseConnection, dogId, lastDogManagerSynchronization);
+      : await getAllRemindersForDogId(req.databaseConnection, dogId, userConfigurationPreviousDogManagerSynchronization);
 
     return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }

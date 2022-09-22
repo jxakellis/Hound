@@ -42,7 +42,7 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
     func setup(forProduct product: SKProduct?) {
         
         self.product = product
-        let activeFamilySubscriptionProduct = FamilyConfiguration.activeFamilySubscription.product
+        let activeFamilySubscriptionProduct = FamilyInformation.activeFamilySubscription.product
         
         guard let product: SKProduct = product, let productSubscriptionPeriod = product.subscriptionPeriod else {
             self.inAppPurchaseProduct = .default
@@ -69,7 +69,7 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
         }
         
         // Check to see if the family has bought a subscription
-        let hasBoughtSubscriptionBefore: Bool = FamilyConfiguration.familySubscriptions.contains { subscription in
+        let hasBoughtSubscriptionBefore: Bool = FamilyInformation.familySubscriptions.contains { subscription in
             return subscription.transactionId != nil
         }
         

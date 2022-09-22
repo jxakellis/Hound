@@ -11,7 +11,7 @@ Known:
 async function getFamily(req, res) {
   try {
     const { familyId } = req.params;
-    const result = await getAllFamilyInformationForFamilyId(req.databaseConnection, familyId, req.activeSubscription);
+    const result = await getAllFamilyInformationForFamilyId(req.databaseConnection, familyId, req.familyActiveSubscription);
 
     return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
@@ -35,8 +35,8 @@ async function createFamily(req, res) {
 async function updateFamily(req, res) {
   try {
     const { userId, familyId } = req.params;
-    const { familyCode, isLocked } = req.body;
-    await updateFamilyForUserIdFamilyId(req.databaseConnection, userId, familyId, familyCode, isLocked);
+    const { familyCode, familyIsLocked } = req.body;
+    await updateFamilyForUserIdFamilyId(req.databaseConnection, userId, familyId, familyCode, familyIsLocked);
     return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {
@@ -47,8 +47,8 @@ async function updateFamily(req, res) {
 async function deleteFamily(req, res) {
   try {
     const { userId, familyId } = req.params;
-    const { kickUserId } = req.body;
-    await deleteFamilyForUserIdFamilyId(req.databaseConnection, userId, familyId, kickUserId, req.activeSubscription);
+    const { familyKickUserId } = req.body;
+    await deleteFamilyForUserIdFamilyId(req.databaseConnection, userId, familyId, familyKickUserId, req.familyActiveSubscription);
     return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {

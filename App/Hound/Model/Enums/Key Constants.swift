@@ -28,32 +28,31 @@ enum KeyConstant: String {
     case familyActiveSubscription
     case familyMembers
     case familyHeadIsUser
-    case familyPreviousMembers
+    case previousFamilyMembers
     
     // MARK: User Information
     
     // client and server
+    case userId
     case userIdentifier
     case userApplicationUsername
-    case userNotificationToken
-    case userId
     case userEmail
     case userFirstName
     case userLastName
-    case userPreviousDogManagerSynchronization
+    case userNotificationToken
     
     // MARK: User Configuration
     
     // client and server
-    case userConfigurationLogsInterfaceScale
-    case userConfigurationRemindersInterfaceScale
-    case userConfigurationInterfaceStyle
-    case userConfigurationMaximumNumberOfLogsDisplayed
-    case userConfigurationSnoozeLength
-    case userConfigurationIsNotificationAuthorized
     case userConfigurationIsNotificationEnabled
     case userConfigurationIsLoudNotification
+    case userConfigurationInterfaceStyle
+    case userConfigurationSnoozeLength
     case userConfigurationNotificationSound
+    case userConfigurationLogsInterfaceScale
+    case userConfigurationRemindersInterfaceScale
+    case userConfigurationMaximumNumberOfLogsDisplayed
+    case userConfigurationPreviousDogManagerSynchronization
     case userConfigurationSilentModeIsEnabled
     case userConfigurationSilentModeStartUTCHour
     case userConfigurationSilentModeEndUTCHour
@@ -64,14 +63,14 @@ enum KeyConstant: String {
     
     // client and server
     case appStoreReceiptURL
-    case subscriptionTransactionId
-    case subscriptionProductId
-    case subscriptionPurchaseDate
-    case subscriptionExpirationDate
-    case subscriptionNumberOfFamilyMembers
-    case subscriptionNumberOfDogs
-    case subscriptionIsActive
-    case subscriptionIsAutoRenewing
+    case transactionId
+    case productId
+    case purchaseDate
+    case expirationDate
+    case numberOfFamilyMembers
+    case numberOfDogs
+    case isActive
+    case isAutoRenewing
     
     // MARK: Dog Manager
     
@@ -175,10 +174,12 @@ enum KeyConstant: String {
     // client and server
     case oneTimeDate
     
-    // MARK: Local Configuration
+    // MARK: Local
     
     // client
     case localDogIcons
+    
+    case localIsNotificationAuthorized
     
     case localPreviousLogCustomActionNames
     case localPreviousReminderCustomActionNames

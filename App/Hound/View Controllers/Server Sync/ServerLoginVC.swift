@@ -142,8 +142,8 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
     
     private func oneTimeSetup() {
         // we want the user to have a fresh login experience, so we reset the introduction pages
-        LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore = false
-        LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
+        LocalConfiguration.localHasCompletedHoundIntroductionViewController = false
+        LocalConfiguration.localHasCompletedRemindersIntroductionViewController = false
         
         // all other information tracks something important and shouldn't be modified, we simply do this so the user is greeted
         

@@ -147,7 +147,7 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
                 // we got the user information back and have setup the user config based off of that info
                 // user has family
                 if familyId != nil {
-                    self.getFamilyConfiguration()
+                    self.getFamilyInformation()
                 }
                 // no family for user
                 else {
@@ -175,7 +175,7 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
         
     }
     
-    private func getFamilyConfiguration() {
+    private func getFamilyInformation() {
         getFamilyProgress = FamilyRequest.get(invokeErrorManager: true) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
@@ -213,7 +213,7 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
                 ServerSyncViewController.dogManager = newDogManager
                 
                 // hasn't shown configuration to create/update dog
-                if LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore == false {
+                if LocalConfiguration.localHasCompletedHoundIntroductionViewController == false {
                     // Created family, no dogs present
                     // OR joined family, no dogs present
                     // OR joined family, dogs already present

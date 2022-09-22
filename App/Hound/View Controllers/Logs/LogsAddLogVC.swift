@@ -79,7 +79,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             // a user generated custom name
             else {
                 customCell.label.text = LogAction.custom.displayActionName(
-                    logCustomActionName: LocalConfiguration.logCustomActionNames[indexPath.row - LogAction.allCases.count],
+                    logCustomActionName: LocalConfiguration.localPreviousLogCustomActionNames[indexPath.row - LogAction.allCases.count],
                     isShowingAbreviatedCustomActionName: false
                 )
             }
@@ -91,7 +91,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             return dogManager.dogs.count
         }
         else if dropDownUIViewIdentifier == "DropDownLogAction"{
-            return LogAction.allCases.count + LocalConfiguration.logCustomActionNames.count
+            return LogAction.allCases.count + LocalConfiguration.localPreviousLogCustomActionNames.count
         }
         else {
             return 0
@@ -157,11 +157,11 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             // a user generated custom name
             else {
                 logActionLabel.text = LogAction.custom.displayActionName(
-                    logCustomActionName: LocalConfiguration.logCustomActionNames[indexPath.row - LogAction.allCases.count],
+                    logCustomActionName: LocalConfiguration.localPreviousLogCustomActionNames[indexPath.row - LogAction.allCases.count],
                     isShowingAbreviatedCustomActionName: false
                 )
                 selectedLogAction = LogAction.custom
-                logCustomActionNameTextField.text = LocalConfiguration.logCustomActionNames[indexPath.row - LogAction.allCases.count]
+                logCustomActionNameTextField.text = LocalConfiguration.localPreviousLogCustomActionNames[indexPath.row - LogAction.allCases.count]
             }
             
             // set selectedLogAction to correct value
@@ -548,7 +548,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 pageTitle?.title = "Edit Log"
                 removeLogBarButton.isEnabled = true
                 
-                familyMemberNameLabel.text = FamilyConfiguration.findFamilyMember(forUserId: logToUpdate.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
+                familyMemberNameLabel.text = FamilyInformation.findFamilyMember(forUserId: logToUpdate.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
                 
                 if let dog = dogManager.findDog(forDogId: parentDogIdToUpdate) {
                     parentDogLabel.text = dog.dogName
@@ -569,7 +569,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 pageTitle?.title = "Create Log"
                 removeLogBarButton.isEnabled = false
                 
-                familyMemberNameLabel.text = FamilyConfiguration.findFamilyMember(forUserId: UserInformation.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
+                familyMemberNameLabel.text = FamilyInformation.findFamilyMember(forUserId: UserInformation.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
                 
                 parentDogIdsSelected = {
                     dogManager.dogs.map { dog in

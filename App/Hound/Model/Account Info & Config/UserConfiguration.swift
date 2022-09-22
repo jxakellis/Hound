@@ -12,43 +12,43 @@ import UIKit
 enum UserConfiguration {
     /// Sets the UserConfiguration values equal to all the values found in the body. The key for the each body value must match the name of the UserConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
-        if let logsInterfaceScaleString = body[KeyConstant.logsInterfaceScale.rawValue] as? String, let logsInterfaceScale = LogsInterfaceScale(rawValue: logsInterfaceScaleString) {
+        if let logsInterfaceScaleString = body[KeyConstant.userConfigurationLogsInterfaceScale.rawValue] as? String, let logsInterfaceScale = LogsInterfaceScale(rawValue: logsInterfaceScaleString) {
             self.logsInterfaceScale = logsInterfaceScale
         }
-        if let remindersInterfaceScaleString = body[KeyConstant.remindersInterfaceScale.rawValue] as? String, let remindersInterfaceScale = RemindersInterfaceScale(rawValue: remindersInterfaceScaleString) {
+        if let remindersInterfaceScaleString = body[KeyConstant.userConfigurationRemindersInterfaceScale.rawValue] as? String, let remindersInterfaceScale = RemindersInterfaceScale(rawValue: remindersInterfaceScaleString) {
             self.remindersInterfaceScale = remindersInterfaceScale
         }
-        if let interfaceStyleInt = body[KeyConstant.interfaceStyle.rawValue] as? Int, let interfaceStyle = UIUserInterfaceStyle(rawValue: interfaceStyleInt) {
+        if let interfaceStyleInt = body[KeyConstant.userConfigurationInterfaceStyle.rawValue] as? Int, let interfaceStyle = UIUserInterfaceStyle(rawValue: interfaceStyleInt) {
             self.interfaceStyle = interfaceStyle
         }
-        if let maximumNumberOfLogsDisplayed = body[KeyConstant.maximumNumberOfLogsDisplayed.rawValue] as? Int {
+        if let maximumNumberOfLogsDisplayed = body[KeyConstant.userConfigurationMaximumNumberOfLogsDisplayed.rawValue] as? Int {
             self.maximumNumberOfLogsDisplayed = maximumNumberOfLogsDisplayed
         }
-        if let snoozeLength = body[KeyConstant.snoozeLength.rawValue] as? TimeInterval {
+        if let snoozeLength = body[KeyConstant.userConfigurationSnoozeLength.rawValue] as? TimeInterval {
             self.snoozeLength = snoozeLength
         }
-        if let isNotificationEnabled = body[KeyConstant.isNotificationEnabled.rawValue] as? Bool {
+        if let isNotificationEnabled = body[KeyConstant.userConfigurationIsNotificationEnabled.rawValue] as? Bool {
             self.isNotificationEnabled = isNotificationEnabled
         }
-        if let isLoudNotification = body[KeyConstant.isLoudNotification.rawValue] as? Bool {
+        if let isLoudNotification = body[KeyConstant.userConfigurationIsLoudNotification.rawValue] as? Bool {
             self.isLoudNotification = isLoudNotification
         }
-        if let notificationSoundString = body[KeyConstant.notificationSound.rawValue] as? String, let notificationSound = NotificationSound(rawValue: notificationSoundString) {
+        if let notificationSoundString = body[KeyConstant.userConfigurationNotificationSound.rawValue] as? String, let notificationSound = NotificationSound(rawValue: notificationSoundString) {
             self.notificationSound = notificationSound
         }
-        if let silentModeIsEnabled = body[KeyConstant.silentModeIsEnabled.rawValue] as? Bool {
+        if let silentModeIsEnabled = body[KeyConstant.userConfigurationSilentModeIsEnabled.rawValue] as? Bool {
             self.silentModeIsEnabled = silentModeIsEnabled
         }
-        if let silentModeStartUTCHour = body[KeyConstant.silentModeStartUTCHour.rawValue] as? Int {
+        if let silentModeStartUTCHour = body[KeyConstant.userConfigurationSilentModeStartUTCHour.rawValue] as? Int {
             self.silentModeStartUTCHour = silentModeStartUTCHour
         }
-        if let silentModeEndUTCHour = body[KeyConstant.silentModeEndUTCHour.rawValue] as? Int {
+        if let silentModeEndUTCHour = body[KeyConstant.userConfigurationSilentModeEndUTCHour.rawValue] as? Int {
             self.silentModeEndUTCHour = silentModeEndUTCHour
         }
-        if let silentModeStartUTCMinute = body[KeyConstant.silentModeStartUTCMinute.rawValue] as? Int {
+        if let silentModeStartUTCMinute = body[KeyConstant.userConfigurationSilentModeStartUTCMinute.rawValue] as? Int {
             self.silentModeStartUTCMinute = silentModeStartUTCMinute
         }
-        if let silentModeEndUTCMinute = body[KeyConstant.silentModeEndUTCMinute.rawValue] as? Int {
+        if let silentModeEndUTCMinute = body[KeyConstant.userConfigurationSilentModeEndUTCMinute.rawValue] as? Int {
             self.silentModeEndUTCMinute = silentModeEndUTCMinute
         }
     }
@@ -142,20 +142,20 @@ extension UserConfiguration {
     /// Returns an array literal of the user configurations's properties. This is suitable to be used as the JSON body for a HTTP request
     static func createBody(addingOntoBody body: [String: Any]?) -> [String: Any] {
         var body: [String: Any] = body ?? [:]
-        body[KeyConstant.logsInterfaceScale.rawValue] = UserConfiguration.logsInterfaceScale.rawValue
-        body[KeyConstant.remindersInterfaceScale.rawValue] = UserConfiguration.remindersInterfaceScale.rawValue
-        body[KeyConstant.interfaceStyle.rawValue] = UserConfiguration.interfaceStyle.rawValue
-        body[KeyConstant.maximumNumberOfLogsDisplayed.rawValue] = UserConfiguration.maximumNumberOfLogsDisplayed
-        body[KeyConstant.snoozeLength.rawValue] = UserConfiguration.snoozeLength
-        body[KeyConstant.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
-        body[KeyConstant.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
-        body[KeyConstant.notificationSound.rawValue] = UserConfiguration.notificationSound.rawValue
+        body[KeyConstant.userConfigurationLogsInterfaceScale.rawValue] = UserConfiguration.logsInterfaceScale.rawValue
+        body[KeyConstant.userConfigurationRemindersInterfaceScale.rawValue] = UserConfiguration.remindersInterfaceScale.rawValue
+        body[KeyConstant.userConfigurationInterfaceStyle.rawValue] = UserConfiguration.interfaceStyle.rawValue
+        body[KeyConstant.userConfigurationMaximumNumberOfLogsDisplayed.rawValue] = UserConfiguration.maximumNumberOfLogsDisplayed
+        body[KeyConstant.userConfigurationSnoozeLength.rawValue] = UserConfiguration.snoozeLength
+        body[KeyConstant.userConfigurationIsNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
+        body[KeyConstant.userConfigurationIsLoudNotification.rawValue] = UserConfiguration.isLoudNotification
+        body[KeyConstant.userConfigurationNotificationSound.rawValue] = UserConfiguration.notificationSound.rawValue
         
-        body[KeyConstant.silentModeIsEnabled.rawValue] = UserConfiguration.silentModeIsEnabled
-        body[KeyConstant.silentModeStartUTCHour.rawValue] = UserConfiguration.silentModeStartUTCHour
-        body[KeyConstant.silentModeEndUTCHour.rawValue] = UserConfiguration.silentModeEndUTCHour
-        body[KeyConstant.silentModeStartUTCMinute.rawValue] = UserConfiguration.silentModeStartUTCMinute
-        body[KeyConstant.silentModeEndUTCMinute.rawValue] = UserConfiguration.silentModeEndUTCMinute
+        body[KeyConstant.userConfigurationSilentModeIsEnabled.rawValue] = UserConfiguration.silentModeIsEnabled
+        body[KeyConstant.userConfigurationSilentModeStartUTCHour.rawValue] = UserConfiguration.silentModeStartUTCHour
+        body[KeyConstant.userConfigurationSilentModeEndUTCHour.rawValue] = UserConfiguration.silentModeEndUTCHour
+        body[KeyConstant.userConfigurationSilentModeStartUTCMinute.rawValue] = UserConfiguration.silentModeStartUTCMinute
+        body[KeyConstant.userConfigurationSilentModeEndUTCMinute.rawValue] = UserConfiguration.silentModeEndUTCMinute
         return body
     }
 }

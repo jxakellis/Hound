@@ -86,7 +86,7 @@ extension FamilyRequest {
             case .successResponse:
                 if let result = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
                     // set up family configuration
-                    FamilyConfiguration.setup(fromBody: result)
+                    FamilyInformation.setup(fromBody: result)
                     
                     completionHandler(true, responseStatus)
                 }

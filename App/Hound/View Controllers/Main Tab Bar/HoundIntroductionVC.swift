@@ -95,7 +95,7 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
                 // go to next page if dog good
                 dog.dogId = dogId
                 self.dogManager.addDog(forDog: dog)
-                LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore = true
+                LocalConfiguration.localHasCompletedHoundIntroductionViewController = true
                 self.performSegueOnceInWindowHierarchy(segueIdentifier: "MainTabBarViewController")
             }
         }
@@ -107,7 +107,7 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
                 LocalDogIcon.addIcon(forDogId: dogManager.dogs[0].dogId, forDogIcon: icon)
             }
             // close page because updated
-            LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore = true
+            LocalConfiguration.localHasCompletedHoundIntroductionViewController = true
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "MainTabBarViewController")
             continueButton.isEnabled = true
         }

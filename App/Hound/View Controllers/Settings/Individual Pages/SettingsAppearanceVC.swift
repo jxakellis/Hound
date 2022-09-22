@@ -96,7 +96,7 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
         // selected segement index is in the same order as all cases
         UserConfiguration.logsInterfaceScale = LogsInterfaceScale.allCases[logsInterfaceScaleSegmentedControl.selectedSegmentIndex]
         
-        let body = [KeyConstant.logsInterfaceScale.rawValue: UserConfiguration.logsInterfaceScale.rawValue]
+        let body = [KeyConstant.userConfigurationLogsInterfaceScale.rawValue: UserConfiguration.logsInterfaceScale.rawValue]
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
@@ -117,7 +117,7 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
         // selected segement index is in the same order as all cases
         UserConfiguration.remindersInterfaceScale = RemindersInterfaceScale.allCases[remindersInterfaceScaleSegmentedControl.selectedSegmentIndex]
         
-        let body = [KeyConstant.remindersInterfaceScale.rawValue: UserConfiguration.remindersInterfaceScale.rawValue]
+        let body = [KeyConstant.userConfigurationRemindersInterfaceScale.rawValue: UserConfiguration.remindersInterfaceScale.rawValue]
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
@@ -149,7 +149,7 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
         // selected segement index is in the same order as all cases
         UserConfiguration.maximumNumberOfLogsDisplayed = UserConfiguration.maximumNumberOfLogsDisplayedOptions[row]
         
-        let body = [KeyConstant.maximumNumberOfLogsDisplayed.rawValue: UserConfiguration.maximumNumberOfLogsDisplayed]
+        let body = [KeyConstant.userConfigurationMaximumNumberOfLogsDisplayed.rawValue: UserConfiguration.maximumNumberOfLogsDisplayed]
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             guard requestWasSuccessful else {
                 // error, revert to previous

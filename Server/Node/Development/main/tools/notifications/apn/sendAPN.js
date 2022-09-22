@@ -20,39 +20,39 @@ function sendAPN(userNotificationConfiguration, category, forAlertTitle, forAler
   }
 
   const userNotificationToken = formatString(userNotificationConfiguration.userNotificationToken);
-  const notificationSound = formatString(userNotificationConfiguration.notificationSound);
-  const silentModeIsEnabled = formatBoolean(userNotificationConfiguration.silentModeIsEnabled);
-  const silentModeStartUTCHour = formatNumber(userNotificationConfiguration.silentModeStartUTCHour);
-  const silentModeEndUTCHour = formatNumber(userNotificationConfiguration.silentModeEndUTCHour);
-  const silentModeStartUTCMinute = formatNumber(userNotificationConfiguration.silentModeStartUTCMinute);
-  const silentModeEndUTCMinute = formatNumber(userNotificationConfiguration.silentModeEndUTCMinute);
+  const userConfigurationNotificationSound = formatString(userNotificationConfiguration.userConfigurationNotificationSound);
+  const userConfigurationSilentModeIsEnabled = formatBoolean(userNotificationConfiguration.userConfigurationSilentModeIsEnabled);
+  const userConfigurationSilentModeStartUTCHour = formatNumber(userNotificationConfiguration.userConfigurationSilentModeStartUTCHour);
+  const userConfigurationSilentModeEndUTCHour = formatNumber(userNotificationConfiguration.userConfigurationSilentModeEndUTCHour);
+  const userConfigurationSilentModeStartUTCMinute = formatNumber(userNotificationConfiguration.userConfigurationSilentModeStartUTCMinute);
+  const userConfigurationSilentModeEndUTCMinute = formatNumber(userNotificationConfiguration.userConfigurationSilentModeEndUTCMinute);
   const alertTitle = formatString(forAlertTitle, global.constant.notification.length.ALERT_TITLE_LIMIT);
   const alertBody = formatString(forAlertBody, global.constant.notification.length.ALERT_BODY_LIMIT);
 
   apnLogger.debug(`sendAPN ${userNotificationConfiguration}, ${category}, ${alertTitle}, ${alertBody}`);
 
-  // notificationSound optional, depends on isLoudNotification
-  if (areAllDefined(userNotificationToken, notificationSound, silentModeIsEnabled, silentModeStartUTCHour, silentModeEndUTCHour, silentModeStartUTCMinute, silentModeEndUTCMinute, category, alertTitle, alertBody, customPayload) === false) {
+  // userConfigurationNotificationSound optional, depends on userConfigurationIsLoudNotification
+  if (areAllDefined(userNotificationToken, userConfigurationNotificationSound, userConfigurationSilentModeIsEnabled, userConfigurationSilentModeStartUTCHour, userConfigurationSilentModeEndUTCHour, userConfigurationSilentModeStartUTCMinute, userConfigurationSilentModeEndUTCMinute, category, alertTitle, alertBody, customPayload) === false) {
     return;
   }
 
-  // Check that we aren't inside of silentMode hours. If we are inside the silent mode hours, then return as we don't want to send notifications during silent mode
-  if (silentModeIsEnabled === true) {
+  // Check that we aren't inside of userConfigurationSilentMode hours. If we are inside the silent mode hours, then return as we don't want to send notifications during silent mode
+  if (userConfigurationSilentModeIsEnabled === true) {
     const date = new Date();
     // 2:30:45 PM -> 14.5125
     const currentUTCHour = date.getUTCHours() + (date.getUTCMinutes() / 60) + (date.getUTCSeconds() / 3600);
-    const silentModeStart = silentModeStartUTCHour + (silentModeStartUTCMinute / 60);
-    const silentModeEnd = silentModeEndUTCHour + (silentModeEndUTCMinute / 60);
+    const userConfigurationSilentModeStart = userConfigurationSilentModeStartUTCHour + (userConfigurationSilentModeStartUTCMinute / 60);
+    const userConfigurationSilentModeEnd = userConfigurationSilentModeEndUTCHour + (userConfigurationSilentModeEndUTCMinute / 60);
 
     // Two ways the silent mode start and end could be setup:
     // One the same day: 8.5 -> 20.5 (silent mode during day time)
-    if (silentModeStart <= silentModeEnd && (currentUTCHour >= silentModeStart && currentUTCHour <= silentModeEnd)) {
+    if (userConfigurationSilentModeStart <= userConfigurationSilentModeEnd && (currentUTCHour >= userConfigurationSilentModeStart && currentUTCHour <= userConfigurationSilentModeEnd)) {
       // WOULD RETURN: silent mode start 8.5 -> 20.5 AND currentUTCHour 14.5125
       // WOULDN'T RETURN: silent mode start 8.5 -> 20.5 AND currentUTCHour 6.0
       return;
     }
     // Overlapping two days: 20.5 -> 8.5 (silent mode during night time)
-    if (silentModeStart >= silentModeEnd && (currentUTCHour >= silentModeStart || currentUTCHour <= silentModeEnd)) {
+    if (userConfigurationSilentModeStart >= userConfigurationSilentModeEnd && (currentUTCHour >= userConfigurationSilentModeStart || currentUTCHour <= userConfigurationSilentModeEnd)) {
       // WOULD RETURN: silent mode start 20.5 -> 8.5 AND currentUTCHour 6.0
       // WOULDN'T RETURN: silent mode start 20.5 -> 8.5 AND currentUTCHour 14.5125
       return;
@@ -110,8 +110,8 @@ function sendAPN(userNotificationConfiguration, category, forAlertTitle, forAler
   // if there is a sound for the reminder alarm alert, then we add it to the rawPayload
   if (
     (category === global.constant.notification.category.reminder.PRIMARY)
-  && areAllDefined(notificationSound, notification, notification.rawPayload, notification.rawPayload.aps)) {
-    notification.rawPayload.aps.sound = `${notificationSound}30.wav`;
+  && areAllDefined(userConfigurationNotificationSound, notification, notification.rawPayload, notification.rawPayload.aps)) {
+    notification.rawPayload.aps.sound = `${userConfigurationNotificationSound}30.wav`;
   }
 
   // add customPayload into rawPayload

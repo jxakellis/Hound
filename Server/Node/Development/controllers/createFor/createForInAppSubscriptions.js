@@ -10,17 +10,17 @@ const { getActiveInAppSubscriptionForFamilyId } = require('../getFor/getForInApp
 const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
 
 /**
- *  Contacts Apple's server to retrieve records of any transaction, given the base64EncodedAppStoreReceiptURL
+ *  Contacts Apple's server to retrieve records of any transaction, given the appStoreReceiptURL
  *  Queries the database to update all transaction records, so that all transactions returned by Apple are stored correctly.
  *  If the query is successful, then returns the active subscription for the family.
  *  If a problem is encountered, creates and throws custom error
  */
 async function createInAppSubscriptionForUserIdFamilyIdRecieptId(databaseConnection, userId, familyId, forBase64EncodedAppStoreReceiptURL) {
   // Takes a base64 encoded appStoreReceiptURL from a user
-  const base64EncodedAppStoreReceiptURL = formatBase64EncodedString(forBase64EncodedAppStoreReceiptURL);
+  const appStoreReceiptURL = formatBase64EncodedString(forBase64EncodedAppStoreReceiptURL);
 
-  if (areAllDefined(databaseConnection, userId, familyId, base64EncodedAppStoreReceiptURL) === false) {
-    throw new ValidationError('databaseConnection, userId, familyId, or base64EncodedAppStoreReceiptURL missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, userId, familyId, appStoreReceiptURL) === false) {
+    throw new ValidationError('databaseConnection, userId, familyId, or appStoreReceiptURL missing', global.constant.error.value.MISSING);
   }
 
   const familyHeadUserId = await getFamilyHeadUserIdForFamilyId(databaseConnection, familyId);
@@ -31,7 +31,7 @@ async function createInAppSubscriptionForUserIdFamilyIdRecieptId(databaseConnect
 
   const requestBody = {
     // (Required) The Base64-encoded receipt data.
-    'receipt-data': base64EncodedAppStoreReceiptURL,
+    'receipt-data': appStoreReceiptURL,
     // password (string): Your app’s shared secret, which is a hexadecimal string. For more information about the shared secret, see Generate a Receipt Validation Code.
     password: houndSharedSecret,
     // Set this value to true for the response to include only the latest renewal transaction for any subscriptions. Use this field only for app receipts that contain auto-renewable subscriptions.
@@ -72,7 +72,7 @@ async function createInAppSubscriptionForUserIdFamilyIdRecieptId(databaseConnect
   // update the records stored for all receipts returned
   await updateReceiptRecords(databaseConnection, userId, familyId, receipts);
 
-  // Can't user .activeSubscription property as subscription was updated. Therefore, get the most recent subscription to return to the user
+  // Can't user .familyActiveSubscription property as subscription was updated. Therefore, get the most recent subscription to return to the user
   return getActiveInAppSubscriptionForFamilyId(databaseConnection, familyId);
 }
 

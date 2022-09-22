@@ -15,7 +15,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         // figure out where to go next, if the user is new and has no reminders for their dog (aka probably no family yet either) then we help them make their first reminder
         
         // hasn't shown configuration to create reminders
-        if LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore == false {
+        if LocalConfiguration.localHasCompletedRemindersIntroductionViewController == false {
             // Created family with no reminders
             // Joined family with no reminders
             // Joined family with reminders
@@ -226,7 +226,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
         
-        if FamilyConfiguration.isUserFamilyHead {
+        if FamilyInformation.isUserFamilyHead {
             InAppPurchaseManager.initalizeInAppPurchaseManager()
             InAppPurchaseManager.showPriceConsentIfNeeded()
         }

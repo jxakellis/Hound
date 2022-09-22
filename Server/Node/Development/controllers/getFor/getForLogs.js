@@ -11,18 +11,18 @@ const dogLogsColumns = 'logId, userId, logDate, logNote, logAction, logCustomAct
  *  If the query is successful, returns the log for the dogId.
  *  If a problem is encountered, creates and throws custom error
 */
-async function getLogForLogId(databaseConnection, logId, forLastDogManagerSynchronization) {
+async function getLogForLogId(databaseConnection, logId, forUserConfigurationPreviousDogManagerSynchronization) {
   if (areAllDefined(databaseConnection, logId) === false) {
     throw new ValidationError('databaseConnection or logId missing', global.constant.error.value.MISSING);
   }
 
-  const lastDogManagerSynchronization = formatDate(forLastDogManagerSynchronization);
+  const userConfigurationPreviousDogManagerSynchronization = formatDate(forUserConfigurationPreviousDogManagerSynchronization);
 
-  let result = areAllDefined(lastDogManagerSynchronization)
+  let result = areAllDefined(userConfigurationPreviousDogManagerSynchronization)
     ? await databaseQuery(
       databaseConnection,
       `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND logId = ? LIMIT 1`,
-      [lastDogManagerSynchronization, logId],
+      [userConfigurationPreviousDogManagerSynchronization, logId],
     )
     : await databaseQuery(
       databaseConnection,
@@ -38,18 +38,18 @@ async function getLogForLogId(databaseConnection, logId, forLastDogManagerSynchr
  *  If the query is successful, returns an array of all the logs for the dogId. Errors not handled
  *  If a problem is encountered, creates and throws custom error
  */
-async function getAllLogsForDogId(databaseConnection, dogId, forLastDogManagerSynchronization) {
+async function getAllLogsForDogId(databaseConnection, dogId, forUserConfigurationPreviousDogManagerSynchronization) {
   if (areAllDefined(databaseConnection, dogId) === false) {
     throw new ValidationError('databaseConnection or dogId missing', global.constant.error.value.MISSING);
   }
 
-  const lastDogManagerSynchronization = formatDate(forLastDogManagerSynchronization);
+  const userConfigurationPreviousDogManagerSynchronization = formatDate(forUserConfigurationPreviousDogManagerSynchronization);
 
-  const result = areAllDefined(lastDogManagerSynchronization)
+  const result = areAllDefined(userConfigurationPreviousDogManagerSynchronization)
     ? await databaseQuery(
       databaseConnection,
       `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND dogId = ? LIMIT 18446744073709551615`,
-      [lastDogManagerSynchronization, dogId],
+      [userConfigurationPreviousDogManagerSynchronization, dogId],
     )
     : await databaseQuery(
       databaseConnection,

@@ -16,21 +16,21 @@ const { createFamilyMemberLeaveNotification } = require('../../main/tools/notifi
  *  If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-async function deleteFamilyForUserIdFamilyId(databaseConnection, userId, familyId, forKickUserId, activeSubscription) {
-  const kickUserId = formatSHA256Hash(forKickUserId);
+async function deleteFamilyForUserIdFamilyId(databaseConnection, userId, familyId, forKickUserId, familyActiveSubscription) {
+  const familyKickUserId = formatSHA256Hash(forKickUserId);
 
-  // kickUserId is optional
+  // familyKickUserId is optional
   if (areAllDefined(databaseConnection, userId, familyId) === false) {
     throw new ValidationError('databaseConnection, userId, or familyId missing', global.constant.error.value.MISSING);
   }
 
   // This will only store the userId, familyId, userFirstName, and userLastName of any one in the family that has left / been kicked
   // Therefore, when trying to see who created a log (even if they have left the family), you can still see a corresponding name.
-  if (areAllDefined(kickUserId)) {
-    await kickFamilyMember(databaseConnection, userId, familyId, kickUserId);
+  if (areAllDefined(familyKickUserId)) {
+    await kickFamilyMember(databaseConnection, userId, familyId, familyKickUserId);
   }
   else {
-    await deleteFamily(databaseConnection, userId, familyId, activeSubscription);
+    await deleteFamily(databaseConnection, userId, familyId, familyActiveSubscription);
   }
 }
 
@@ -38,9 +38,9 @@ async function deleteFamilyForUserIdFamilyId(databaseConnection, userId, familyI
  * Helper method for deleteFamilyForUserIdFamilyId, goes through checks to remove a user from their family
  * If the user is the head of the family (and there are no other family members), we delete the family
  */
-async function deleteFamily(databaseConnection, userId, familyId, activeSubscription) {
-  if (areAllDefined(databaseConnection, userId, familyId, activeSubscription) === false) {
-    throw new ValidationError('databaseConnection, userId, familyId, or activeSubscription missing', global.constant.error.value.MISSING);
+async function deleteFamily(databaseConnection, userId, familyId, familyActiveSubscription) {
+  if (areAllDefined(databaseConnection, userId, familyId, familyActiveSubscription) === false) {
+    throw new ValidationError('databaseConnection, userId, familyId, or familyActiveSubscription missing', global.constant.error.value.MISSING);
   }
 
   let promises = [
@@ -75,8 +75,8 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
 
       Only accept if there is no active subscription or the active subscription isn't auto-renewing
     */
-    if (activeSubscription.productId !== global.constant.subscription.DEFAULT_SUBSCRIPTION_PRODUCT_ID
-      && (areAllDefined(activeSubscription.isAutoRenewing) === false || activeSubscription.isAutoRenewing === true)) {
+    if (familyActiveSubscription.productId !== global.constant.subscription.DEFAULT_SUBSCRIPTION_PRODUCT_ID
+      && (areAllDefined(familyActiveSubscription.isAutoRenewing) === false || familyActiveSubscription.isAutoRenewing === true)) {
       throw new ValidationError('Family still has an auto-renewing, active subscription', global.constant.error.family.leave.SUBSCRIPTION_ACTIVE);
     }
 
@@ -169,14 +169,14 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
  * Helper method for deleteFamilyForUserIdFamilyId, goes through checks to attempt to kick a user from the family
  */
 async function kickFamilyMember(databaseConnection, userId, familyId, forKickUserId) {
-  const kickUserId = formatSHA256Hash(forKickUserId);
+  const familyKickUserId = formatSHA256Hash(forKickUserId);
 
   // have to specify who to kick from the family
-  if (areAllDefined(databaseConnection, userId, familyId, kickUserId) === false) {
-    throw new ValidationError('databaseConnection, userId, familyId, or kickUserId missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, userId, familyId, familyKickUserId) === false) {
+    throw new ValidationError('databaseConnection, userId, familyId, or familyKickUserId missing', global.constant.error.value.MISSING);
   }
   // a user cannot kick themselves
-  if (userId === kickUserId) {
+  if (userId === familyKickUserId) {
     throw new ValidationError("You can't kick yourself from your family", global.constant.error.value.INVALID);
   }
   const familyHeadUserId = await getFamilyHeadUserIdForFamilyId(databaseConnection, familyId);
@@ -186,30 +186,30 @@ async function kickFamilyMember(databaseConnection, userId, familyId, forKickUse
     throw new ValidationError('You are not the family head. Only the family head can kick family members', global.constant.error.family.permission.INVALID);
   }
 
-  const kickedUserFullName = await getUserFirstNameLastNameForUserId(databaseConnection, kickUserId);
+  const kickedUserFullName = await getUserFirstNameLastNameForUserId(databaseConnection, familyKickUserId);
   const { userFirstName, userLastName } = kickedUserFullName;
 
   const promises = [
-    // kickUserId is valid, kickUserId is different then the requester, requester is the family head so everything is valid
+    // familyKickUserId is valid, familyKickUserId is different then the requester, requester is the family head so everything is valid
   // kick the user by deleting them from the family
     databaseQuery(
       databaseConnection,
       'DELETE FROM familyMembers WHERE userId = ?',
-      [kickUserId],
+      [familyKickUserId],
     ),
     // keep a record of user kicked
     databaseQuery(
       databaseConnection,
       'INSERT INTO previousFamilyMembers(userId, familyId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
-      [kickUserId, familyId, userFirstName, userLastName, new Date(), 'userKicked'],
+      [familyKickUserId, familyId, userFirstName, userLastName, new Date(), 'userKicked'],
     ),
   ];
 
   await Promise.all(promises);
 
   // The alarm notifications retrieve the notification tokens of familyMembers right as they fire, so the user will not be included
-  createFamilyMemberLeaveNotification(kickUserId, familyId);
-  createUserKickedNotification(kickUserId);
+  createFamilyMemberLeaveNotification(familyKickUserId, familyId);
+  createUserKickedNotification(familyKickUserId);
 }
 
 module.exports = { deleteFamilyForUserIdFamilyId };
