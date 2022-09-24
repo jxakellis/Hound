@@ -28,13 +28,10 @@ async function updateReminderForDogIdReminder(databaseConnection, dogId, reminde
   const reminderLastModified = dogLastModified;
 
   // snooze components
-  const snoozeIsEnabled = formatBoolean(reminder.snoozeIsEnabled);
   const snoozeExecutionInterval = formatNumber(reminder.snoozeExecutionInterval);
-  const snoozeIntervalElapsed = formatNumber(reminder.snoozeIntervalElapsed);
 
   // countdown components
   const countdownExecutionInterval = formatNumber(reminder.countdownExecutionInterval);
-  const countdownIntervalElapsed = formatNumber(reminder.countdownIntervalElapsed);
 
   // weekly components
   const weeklyUTCHour = formatNumber(reminder.weeklyUTCHour);
@@ -64,13 +61,10 @@ async function updateReminderForDogIdReminder(databaseConnection, dogId, reminde
   else if (reminderType !== 'countdown' && reminderType !== 'weekly' && reminderType !== 'monthly' && reminderType !== 'oneTime') {
     throw new ValidationError('reminderType invalid', global.constant.error.value.INVALID);
   }
-  // snooze
-  else if (areAllDefined(snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed) === false) {
-    throw new ValidationError('snoozeIsEnabled, snoozeExecutionInterval, or snoozeIntervalElapsed missing', global.constant.error.value.MISSING);
-  }
+  // snoozeExecutionInterval optional
   // countdown
-  else if (areAllDefined(countdownExecutionInterval, countdownIntervalElapsed) === false) {
-    throw new ValidationError('countdownExecutionInterval or countdownIntervalElapsed missing', global.constant.error.value.MISSING);
+  else if (areAllDefined(countdownExecutionInterval) === false) {
+    throw new ValidationError('countdownExecutionInterval missing', global.constant.error.value.MISSING);
   }
   // weekly
   else if (areAllDefined(weeklyUTCHour, weeklyUTCMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday) === false) {
@@ -87,11 +81,11 @@ async function updateReminderForDogIdReminder(databaseConnection, dogId, reminde
 
   await databaseQuery(
     databaseConnection,
-    'UPDATE dogReminders SET reminderAction = ?, reminderCustomActionName = ?, reminderType = ?, reminderIsEnabled = ?, reminderExecutionBasis = ?, reminderExecutionDate = ?, reminderLastModified = ?, snoozeIsEnabled = ?, snoozeExecutionInterval = ?, snoozeIntervalElapsed = ?, countdownExecutionInterval = ?, countdownIntervalElapsed = ?, weeklyUTCHour = ?, weeklyUTCMinute = ?, weeklySunday = ?, weeklyMonday = ?, weeklyTuesday = ?, weeklyWednesday = ?, weeklyThursday = ?, weeklyFriday = ?, weeklySaturday = ?, weeklySkippedDate = ?, monthlyUTCDay = ?, monthlyUTCHour = ?, monthlyUTCMinute = ?, monthlySkippedDate = ?, oneTimeDate = ? WHERE reminderId = ?',
+    'UPDATE dogReminders SET reminderAction = ?, reminderCustomActionName = ?, reminderType = ?, reminderIsEnabled = ?, reminderExecutionBasis = ?, reminderExecutionDate = ?, reminderLastModified = ?, snoozeExecutionInterval = ?, countdownExecutionInterval = ?, weeklyUTCHour = ?, weeklyUTCMinute = ?, weeklySunday = ?, weeklyMonday = ?, weeklyTuesday = ?, weeklyWednesday = ?, weeklyThursday = ?, weeklyFriday = ?, weeklySaturday = ?, weeklySkippedDate = ?, monthlyUTCDay = ?, monthlyUTCHour = ?, monthlyUTCMinute = ?, monthlySkippedDate = ?, oneTimeDate = ? WHERE reminderId = ?',
     [
       reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified,
-      snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed,
-      countdownExecutionInterval, countdownIntervalElapsed,
+      snoozeExecutionInterval,
+      countdownExecutionInterval,
       weeklyUTCHour, weeklyUTCMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklySkippedDate,
       monthlyUTCDay, monthlyUTCHour, monthlyUTCMinute, monthlySkippedDate,
       oneTimeDate,

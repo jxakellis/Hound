@@ -111,7 +111,7 @@ final class Log: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        logId = aDecoder.decodeObject(forKey: KeyConstant.logId.rawValue) as? Int ?? logId
+        logId = aDecoder.decodeInteger(forKey: KeyConstant.logId.rawValue)
         userId = aDecoder.decodeObject(forKey: KeyConstant.userId.rawValue) as? String ?? userId
         logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: KeyConstant.logAction.rawValue) as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue) ?? logAction
         logCustomActionName = aDecoder.decodeObject(forKey: KeyConstant.logCustomActionName.rawValue) as? String ?? logCustomActionName

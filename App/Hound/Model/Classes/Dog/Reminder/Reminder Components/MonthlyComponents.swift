@@ -25,13 +25,10 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     
     required init?(coder aDecoder: NSCoder) {
         // <= build 8000 "UTCDay"
-        UTCDay = aDecoder.decodeObject(forKey: KeyConstant.monthlyUTCDay.rawValue) as? Int ?? aDecoder.decodeObject(forKey: "UTCDay") as? Int ?? UTCDay
-        // <= build 8000 "UTCHour"
-        UTCHour = aDecoder.decodeObject(forKey: KeyConstant.monthlyUTCHour.rawValue) as? Int ?? aDecoder.decodeObject(forKey: "UTCHour") as? Int ?? UTCHour
-        // <= build 8000 "UTCMinute"
-        UTCMinute = aDecoder.decodeObject(forKey: KeyConstant.monthlyUTCMinute.rawValue) as? Int ?? aDecoder.decodeObject(forKey: "UTCMinute") as? Int ?? UTCMinute
-        // <= build 8000 "skippedDate"
-        skippedDate = aDecoder.decodeObject(forKey: KeyConstant.monthlySkippedDate.rawValue) as? Date ?? aDecoder.decodeObject(forKey: "skippedDate") as? Date ?? skippedDate
+        UTCDay = aDecoder.decodeInteger(forKey: KeyConstant.monthlyUTCDay.rawValue)
+        UTCHour = aDecoder.decodeInteger(forKey: KeyConstant.monthlyUTCHour.rawValue)
+        UTCMinute = aDecoder.decodeInteger(forKey: KeyConstant.monthlyUTCMinute.rawValue)
+        skippedDate = aDecoder.decodeObject(forKey: KeyConstant.monthlySkippedDate.rawValue) as? Date ?? skippedDate
     }
     
     func encode(with aCoder: NSCoder) {

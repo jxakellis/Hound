@@ -12,7 +12,7 @@ async function updateUserForUserId(
   databaseConnection,
   userId,
   userNotificationToken,
-  forIsNotificationEnabled,
+  forUserConfigurationIsNotificationEnabled,
   forUserConfigurationIsLoudNotification,
   forUserConfigurationInterfaceStyle,
   forUserConfigurationSnoozeLength,
@@ -29,7 +29,7 @@ async function updateUserForUserId(
   if (areAllDefined(databaseConnection, userId) === false) {
     throw new ValidationError('databaseConnection or userId missing', global.constant.error.value.MISSING);
   }
-  const isNotificationEnabled = formatBoolean(forIsNotificationEnabled);
+  const userConfigurationIsNotificationEnabled = formatBoolean(forUserConfigurationIsNotificationEnabled);
   const userConfigurationIsLoudNotification = formatBoolean(forUserConfigurationIsLoudNotification);
   const userConfigurationInterfaceStyle = formatNumber(forUserConfigurationInterfaceStyle);
   const userConfigurationSnoozeLength = formatNumber(forUserConfigurationSnoozeLength);
@@ -46,7 +46,7 @@ async function updateUserForUserId(
   // checks to see that all needed components are provided
   if (atLeastOneDefined(
     userNotificationToken,
-    isNotificationEnabled,
+    userConfigurationIsNotificationEnabled,
     userConfigurationIsLoudNotification,
     userConfigurationInterfaceStyle,
     userConfigurationSnoozeLength,
@@ -60,7 +60,7 @@ async function updateUserForUserId(
     userConfigurationSilentModeStartUTCMinute,
     userConfigurationSilentModeEndUTCMinute,
   ) === false) {
-    throw new ValidationError('No userNotificationToken, isNotificationEnabled, userConfigurationIsLoudNotification, userConfigurationInterfaceStyle, userConfigurationSnoozeLength, userConfigurationNotificationSound, userConfigurationLogsInterfaceScale, userConfigurationRemindersInterfaceScale, userConfigurationMaximumNumberOfLogsDisplayed, userConfigurationSilentModeIsEnabled, userConfigurationSilentModeStartUTCHour, userConfigurationSilentModeEndUTCHour, userConfigurationSilentModeStartUTCMinute, or userConfigurationSilentModeEndUTCMinute, provided', global.constant.error.value.MISSING);
+    throw new ValidationError('No userNotificationToken, userConfigurationIsNotificationEnabled, userConfigurationIsLoudNotification, userConfigurationInterfaceStyle, userConfigurationSnoozeLength, userConfigurationNotificationSound, userConfigurationLogsInterfaceScale, userConfigurationRemindersInterfaceScale, userConfigurationMaximumNumberOfLogsDisplayed, userConfigurationSilentModeIsEnabled, userConfigurationSilentModeStartUTCHour, userConfigurationSilentModeEndUTCHour, userConfigurationSilentModeStartUTCMinute, or userConfigurationSilentModeEndUTCMinute, provided', global.constant.error.value.MISSING);
   }
 
   const promises = [];
@@ -71,11 +71,11 @@ async function updateUserForUserId(
       [userNotificationToken, userId],
     ));
   }
-  if (areAllDefined(isNotificationEnabled)) {
+  if (areAllDefined(userConfigurationIsNotificationEnabled)) {
     promises.push(databaseQuery(
       databaseConnection,
-      'UPDATE userConfiguration SET isNotificationEnabled = ? WHERE userId = ?',
-      [isNotificationEnabled, userId],
+      'UPDATE userConfiguration SET userConfigurationIsNotificationEnabled = ? WHERE userId = ?',
+      [userConfigurationIsNotificationEnabled, userId],
     ));
   }
   if (areAllDefined(userConfigurationIsLoudNotification)) {

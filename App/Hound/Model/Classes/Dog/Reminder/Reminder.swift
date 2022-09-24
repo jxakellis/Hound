@@ -119,7 +119,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         copy.storedReminderType = self.reminderType
         
         copy.hasAlarmPresentationHandled = self.hasAlarmPresentationHandled
-        copy.storedReminderExecutionBasis = self.reminderExecutionBasis
+        copy.reminderExecutionBasis = self.reminderExecutionBasis
         copy.timer = self.timer
         
         copy.reminderIsEnabled = self.reminderIsEnabled
@@ -132,7 +132,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     required init?(coder aDecoder: NSCoder) {
         super.init()
         
-        reminderId = aDecoder.decodeObject(forKey: KeyConstant.reminderId.rawValue) as? Int ?? reminderId
+        reminderId = aDecoder.decodeInteger(forKey: KeyConstant.reminderId.rawValue)
         reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: KeyConstant.reminderAction.rawValue) as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue) ?? reminderAction
         
         reminderCustomActionName = aDecoder.decodeObject(forKey: KeyConstant.reminderCustomActionName.rawValue) as? String ?? reminderCustomActionName
@@ -145,9 +145,9 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         
         storedReminderType = ReminderType(rawValue: aDecoder.decodeObject(forKey: KeyConstant.reminderType.rawValue) as? String ?? ClassConstant.ReminderConstant.defaultReminderType.rawValue) ?? storedReminderType
         
-        storedReminderExecutionBasis = aDecoder.decodeObject(forKey: KeyConstant.reminderExecutionBasis.rawValue) as? Date ?? storedReminderExecutionBasis
+        reminderExecutionBasis = aDecoder.decodeObject(forKey: KeyConstant.reminderExecutionBasis.rawValue) as? Date ?? reminderExecutionBasis
         
-        reminderIsEnabled = aDecoder.decodeObject(forKey: KeyConstant.reminderIsEnabled.rawValue) as? Bool ?? reminderIsEnabled
+        reminderIsEnabled = aDecoder.decodeBool(forKey: KeyConstant.reminderIsEnabled.rawValue)
     }
     
     func encode(with aCoder: NSCoder) {
@@ -162,7 +162,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         aCoder.encode(snoozeComponents, forKey: KeyConstant.snoozeComponents.rawValue)
         aCoder.encode(storedReminderType.rawValue, forKey: KeyConstant.reminderType.rawValue)
         
-        aCoder.encode(storedReminderExecutionBasis, forKey: KeyConstant.reminderExecutionBasis.rawValue)
+        aCoder.encode(reminderExecutionBasis, forKey: KeyConstant.reminderExecutionBasis.rawValue)
         
         aCoder.encode(reminderIsEnabled, forKey: KeyConstant.reminderIsEnabled.rawValue)
     }
@@ -186,16 +186,11 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             self.reminderAction = reminderAction
             self.reminderCustomActionName = reminderCustomActionName
             self.storedReminderType = reminderType
-            self.storedReminderExecutionBasis = reminderExecutionBasis
+            self.reminderExecutionBasis = reminderExecutionBasis
             self.reminderIsEnabled = reminderIsEnabled
         }
     
     convenience init(fromBody body: [String: Any]) {
-        
-        // if reminder was deleted, then return nil and don't create object
-        // guard body[KeyConstant.reminderIsDeleted.rawValue] as? Bool ?? false == false else {
-        //     return nil
-        // }
         
         let reminderId = body[KeyConstant.reminderId.rawValue] as? Int ?? ClassConstant.ReminderConstant.defaultReminderId
         let reminderAction = ReminderAction(rawValue: body[KeyConstant.reminderAction.rawValue] as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue) ?? ClassConstant.ReminderConstant.defaultReminderAction
@@ -212,12 +207,11 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         reminderIsDeleted = body[KeyConstant.reminderIsDeleted.rawValue] as? Bool ?? false
         
         // snooze
-        snoozeComponents = SnoozeComponents(snoozeIsEnabled: body[KeyConstant.snoozeIsEnabled.rawValue] as? Bool, executionInterval: body[KeyConstant.snoozeExecutionInterval.rawValue] as? TimeInterval, intervalElapsed: body[KeyConstant.snoozeIntervalElapsed.rawValue] as? TimeInterval)
+        snoozeComponents = SnoozeComponents(executionInterval: body[KeyConstant.snoozeExecutionInterval.rawValue] as? TimeInterval)
         
         // countdown
         countdownComponents = CountdownComponents(
-            executionInterval: body[KeyConstant.countdownExecutionInterval.rawValue] as? TimeInterval,
-            intervalElapsed: body[KeyConstant.countdownIntervalElapsed.rawValue] as? TimeInterval)
+            executionInterval: body[KeyConstant.countdownExecutionInterval.rawValue] as? TimeInterval)
         
         // weekly
         var weeklySkippedDate: Date?
@@ -298,21 +292,8 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         }
     }
     
-    private var storedReminderExecutionBasis: Date = ClassConstant.ReminderConstant.defaultReminderExecutionBasis
     /// This is what the reminder should base its timing off it. This is either the last time a user responded to a reminder alarm or the last time a user changed a timing related property of the reminder. For example, 5 minutes into the timer you change the countdown from 30 minutes to 15. To start the timer fresh, having it count down from the moment it was changed, reset reminderExecutionBasis to Date()
-    var reminderExecutionBasis: Date {
-        get {
-            return storedReminderExecutionBasis
-        }
-        set (newReminderExecutionBasis) {
-            // If resetting the reminderExecutionBasis to the current time (and not changing it to another reminderExecutionBasis of some other reminder) then resets interval elasped as timers would have to be fresh
-            countdownComponents.intervalElapsed = 0.0
-            snoozeComponents.intervalElapsed = 0.0
-            
-            storedReminderExecutionBasis = newReminderExecutionBasis
-        }
-        
-    }
+    var reminderExecutionBasis: Date = ClassConstant.ReminderConstant.defaultReminderExecutionBasis
     
     // Enable
     
@@ -347,9 +328,9 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     
     var snoozeComponents: SnoozeComponents = SnoozeComponents()
     
-    /// Factors in snoozeIsEnabled into reminderType to produce a current mode. For example, a reminder might be countdown but if its snoozed then this will return .snooze
+    /// Factors in snoozeComponents into reminderType to produce a current mode. For example, a reminder might be countdown but if its snoozed then this will return .snooze
     var currentReminderMode: ReminderMode {
-        if snoozeComponents.snoozeIsEnabled == true {
+        if snoozeComponents.executionInterval != nil {
             return .snooze
         }
         else if reminderType == .countdown {
@@ -377,7 +358,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             return Date().distance(to: oneTimeComponents.oneTimeDate)
         case .countdown:
             // the time is supposed to countdown for minus the time it has countdown
-            return countdownComponents.executionInterval - countdownComponents.intervalElapsed
+            return countdownComponents.executionInterval
         case .weekly:
             if self.reminderExecutionBasis.distance(to: self.weeklyComponents.previousExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)) > 0 {
                 return nil
@@ -395,7 +376,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             }
         case .snooze:
             // the time is supposed to countdown for minus the time it has countdown
-            return snoozeComponents.executionInterval - snoozeComponents.intervalElapsed
+            return snoozeComponents.executionInterval
         }
     }
     
@@ -414,13 +395,13 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         case .oneTime:
             return oneTimeComponents.oneTimeDate
         case .countdown:
-            return Date.reminderExecutionDate(lastExecution: reminderExecutionBasis, interval: intervalRemaining)
+            return Date(timeInterval: intervalRemaining, since: reminderExecutionBasis)
         case .weekly:
             return weeklyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)
         case .monthly:
             return monthlyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)
         case .snooze:
-            return Date.reminderExecutionDate(lastExecution: reminderExecutionBasis, interval: intervalRemaining)
+            return Date(timeInterval: intervalRemaining, since: reminderExecutionBasis)
         }
     }
     
@@ -434,19 +415,10 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         
         hasAlarmPresentationHandled = false
         
-        snoozeComponents.changeSnoozeIsEnabled(forSnoozeIsEnabled: false)
-        snoozeComponents.intervalElapsed = 0.0
+        snoozeComponents.executionInterval = nil
         
-        if reminderType == .countdown {
-            countdownComponents.intervalElapsed = 0.0
-        }
-        else if reminderType == .weekly {
-            weeklyComponents.skippedDate = nil
-        }
-        else if reminderType == .monthly {
-            monthlyComponents.skippedDate = nil
-        }
-        
+        weeklyComponents.skippedDate = nil
+        monthlyComponents.skippedDate = nil
     }
     
     /// Finds the date which the reminder should be transformed from isSkipping to not isSkipping. This is the date at which the skipped reminder would have occured.
@@ -536,13 +508,7 @@ extension Reminder {
             return false
         }
         // snooze
-        else if snoozeComponents.snoozeIsEnabled != reminder.snoozeComponents.snoozeIsEnabled {
-            return false
-        }
         else if snoozeComponents.executionInterval != reminder.snoozeComponents.executionInterval {
-            return false
-        }
-        else if snoozeComponents.intervalElapsed != reminder.snoozeComponents.intervalElapsed {
             return false
         }
         // reminder types (countdown, weekly, monthly, one time)
@@ -554,9 +520,6 @@ extension Reminder {
         switch reminderType {
         case .countdown:
             if countdownComponents.executionInterval != reminder.countdownComponents.executionInterval {
-                return false
-            }
-            else if countdownComponents.intervalElapsed != reminder.countdownComponents.intervalElapsed {
                 return false
             }
             else {
@@ -628,13 +591,10 @@ extension Reminder {
         body[KeyConstant.reminderIsEnabled.rawValue] = reminderIsEnabled
         
         // snooze
-        body[KeyConstant.snoozeIsEnabled.rawValue] = snoozeComponents.snoozeIsEnabled
         body[KeyConstant.snoozeExecutionInterval.rawValue] = snoozeComponents.executionInterval
-        body[KeyConstant.snoozeIntervalElapsed.rawValue] = snoozeComponents.intervalElapsed
         
         // countdown
         body[KeyConstant.countdownExecutionInterval.rawValue] = countdownComponents.executionInterval
-        body[KeyConstant.countdownIntervalElapsed.rawValue] = countdownComponents.intervalElapsed
         
         // weekly
         body[KeyConstant.weeklyUTCHour.rawValue] = weeklyComponents.UTCHour

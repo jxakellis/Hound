@@ -181,7 +181,7 @@ final class AlarmManager {
         // update information
         reminder.prepareForNextAlarm()
         
-        reminder.snoozeComponents.changeSnoozeIsEnabled(forSnoozeIsEnabled: true)
+        reminder.snoozeComponents.executionInterval = UserConfiguration.snoozeLength
         
         // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
         RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in

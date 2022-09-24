@@ -14,26 +14,18 @@ final class SnoozeComponents: NSObject, NSCoding, NSCopying {
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = SnoozeComponents()
-        copy.snoozeIsEnabled = snoozeIsEnabled
         copy.executionInterval = executionInterval
-        copy.intervalElapsed = intervalElapsed
         return copy
     }
     
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        snoozeIsEnabled = aDecoder.decodeObject(forKey: KeyConstant.snoozeIsEnabled.rawValue) as? Bool ?? snoozeIsEnabled
-        // <= build 8000 "executionInterval"
-        executionInterval = aDecoder.decodeObject(forKey: KeyConstant.snoozeExecutionInterval.rawValue) as? Double ?? aDecoder.decodeObject(forKey: "executionInterval") as? Double ?? executionInterval
-        // <= build 8000 "intervalElapsed"
-        intervalElapsed = aDecoder.decodeObject(forKey: KeyConstant.snoozeIntervalElapsed.rawValue) as? Double ?? aDecoder.decodeObject(forKey: "intervalElapsed") as? Double ?? intervalElapsed
+        executionInterval = aDecoder.decodeDouble(forKey: KeyConstant.snoozeExecutionInterval.rawValue)
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(snoozeIsEnabled, forKey: KeyConstant.snoozeIsEnabled.rawValue)
         aCoder.encode(executionInterval, forKey: KeyConstant.snoozeExecutionInterval.rawValue)
-        aCoder.encode(intervalElapsed, forKey: KeyConstant.snoozeIntervalElapsed.rawValue)
     }
     
     // MARK: Main
@@ -42,30 +34,14 @@ final class SnoozeComponents: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
-    convenience init(snoozeIsEnabled: Bool?, executionInterval: TimeInterval?, intervalElapsed: TimeInterval?) {
+    convenience init(executionInterval: TimeInterval?) {
         self.init()
         
-        self.snoozeIsEnabled = snoozeIsEnabled ?? self.snoozeIsEnabled
         self.executionInterval = executionInterval ?? self.executionInterval
-        self.intervalElapsed = intervalElapsed ?? self.intervalElapsed
     }
     
     // MARK: - Properties
     
-    /// Bool on whether or not the parent reminder is snoozed
-    private(set) var snoozeIsEnabled: Bool = false
-    /// Change snoozeIsEnabled to new status and does accompanying changes
-    func changeSnoozeIsEnabled(forSnoozeIsEnabled: Bool) {
-        if forSnoozeIsEnabled == true {
-            executionInterval = UserConfiguration.snoozeLength
-        }
-        
-        snoozeIsEnabled = forSnoozeIsEnabled
-    }
-    
-    /// Interval at which a timer should be triggered for reminder
-    var executionInterval: TimeInterval = UserConfiguration.snoozeLength
-    
-    /// How much time of the interval of been used up, this is used for when a timer is paused and then unpaused and have to calculate remaining time
-    var intervalElapsed: TimeInterval = TimeInterval(0)
+    /// Interval at which a timer should be triggered for reminder. If this value isn't nil, then the reminder is snoozing. 
+    var executionInterval: TimeInterval?
 }

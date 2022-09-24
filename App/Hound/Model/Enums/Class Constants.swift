@@ -65,24 +65,15 @@ enum ClassConstant {
             let reminder = Reminder()
             reminder.reminderAction = .feed
             reminder.reminderType = .weekly
-            var date = Date()
-            // 7:00 AM local time
-            date = Calendar.localCalendar.date(bySettingHour: ReminderComponentConstant.defaultUTCHour, minute: ReminderComponentConstant.defaultUTCMinute, second: 0, of: date) ?? DateConstant.default1970Date
-            
-            reminder.weeklyComponents.changeUTCHour(forDate: date)
-            reminder.weeklyComponents.changeUTCMinute(forDate: date)
             return reminder
         }
         private static var defaultReminderThree: Reminder {
             let reminder = Reminder()
             reminder.reminderAction = .feed
             reminder.reminderType = .weekly
-            var date = Date()
-            // 7:00 AM local time
-            date = Calendar.localCalendar.date(bySettingHour: ReminderComponentConstant.defaultUTCHour, minute: ReminderComponentConstant.defaultUTCMinute, second: 0, of: date) ?? DateConstant.default1970Date
+            var date = reminder.reminderExecutionDate ?? DateConstant.default1970Date
             // 5:00 PM local time
             date = Calendar.localCalendar.date(byAdding: .hour, value: 10, to: date) ?? DateConstant.default1970Date
-            
             reminder.weeklyComponents.changeUTCHour(forDate: date)
             reminder.weeklyComponents.changeUTCMinute(forDate: date)
             return reminder
@@ -91,11 +82,7 @@ enum ClassConstant {
             let reminder = Reminder()
             reminder.reminderAction = .medicine
             reminder.reminderType = .monthly
-            var date = Date()
-            // 1st of month
-            date = Calendar.localCalendar.date(bySetting: .day, value: ReminderComponentConstant.defaultUTCDay, of: date) ?? DateConstant.default1970Date
-            // 7:00 AM local time
-            date = Calendar.localCalendar.date(bySettingHour: ReminderComponentConstant.defaultUTCHour, minute: ReminderComponentConstant.defaultUTCMinute, second: 0, of: date) ?? DateConstant.default1970Date
+            var date = reminder.reminderExecutionDate ?? DateConstant.default1970Date
             // 9:00 AM local time
             date = Calendar.localCalendar.date(byAdding: .hour, value: 2, to: date) ?? DateConstant.default1970Date
             reminder.monthlyComponents.changeUTCDay(forDate: date)
@@ -113,28 +100,36 @@ enum ClassConstant {
         /// Hour 7 of the day in the user's local time zone, but adjusted so that hour 7 is in UTC hours (e.g. UTC-5 so localHour is 7 and UTCHour is 12)
         static var defaultUTCHour: Int {
             // We want hour 7 of the day in the users local timezone
-            let defaultUTCHour = 7
+            let defaultLocalHour = 7
             let hoursFromUTC = Calendar.localCalendar.timeZone.secondsFromGMT() / 3600
-            var localHour = defaultUTCHour + hoursFromUTC
-            // localHour could be negative, so roll over into positive
-            localHour += 24
-            // Make sure localHour [0, 23]
-            localHour = localHour % 24
             
-            return localHour
+            // UTCHour + hoursFromUTC = localHour
+            // UTCHour = localHour - hoursFromUTC
+            
+            var UTCHour = defaultLocalHour - hoursFromUTC
+            // UTCHour could be negative, so roll over into positive
+            UTCHour += 24
+            // Make sure UTCHour [0, 23]
+            UTCHour = UTCHour % 24
+            
+            return UTCHour
         }
         
         /// Minute 0 of the hour in the user's local time zone, but adjusted so that minute 0  is in UTC hours (e.g. UTC-0:30 so localMinute is 0 and UTCMinute is 30)
         static var defaultUTCMinute: Int {
-            let defaultUTCMinute = 0
+            let defaultLocalMinute = 0
             let minutesFromUTC = (Calendar.localCalendar.timeZone.secondsFromGMT() % 3600) / 60
-            var localMinute = defaultUTCMinute + minutesFromUTC
-            // localMinute could be negative, so roll over into positive
-            localMinute += 60
-            // Make sure localMinute [0, 59]
-            localMinute = localMinute % 60
             
-            return localMinute
+            // UTCMinute + minutesFromUTC = localMinute
+            // UTCMinute = localMinute - minutesFromUTC
+            
+            var UTCMinute = defaultLocalMinute - minutesFromUTC
+            // UTCMinute could be negative, so roll over into positive
+            UTCMinute += 60
+            // Make sure UTCMinute [0, 59]
+            UTCMinute = UTCMinute % 60
+            
+            return UTCMinute
         }
     }
     

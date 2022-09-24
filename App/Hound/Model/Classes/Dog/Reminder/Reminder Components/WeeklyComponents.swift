@@ -25,16 +25,10 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        
-        // <= build 8000 "weekdays"
-        weekdays = aDecoder.decodeObject(forKey: KeyConstant.weeklyWeekdays.rawValue) as? [Int] ?? aDecoder.decodeObject(forKey: "weekdays") as? [Int] ?? weekdays
-        // <= build 8000 "UTCHour"
-        UTCHour = aDecoder.decodeObject(forKey: KeyConstant.weeklyUTCHour.rawValue) as? Int ?? aDecoder.decodeObject(forKey: "UTCHour") as? Int ?? UTCHour
-        // <= build 8000 "UTCMinute"
-        UTCMinute = aDecoder.decodeObject(forKey: KeyConstant.weeklyUTCMinute.rawValue) as? Int ?? aDecoder.decodeObject(forKey: "UTCMinute") as? Int ?? UTCMinute
-        // <= build 8000 "skippedDate"
-        skippedDate = aDecoder.decodeObject(forKey: KeyConstant.weeklySkippedDate.rawValue) as? Date ?? aDecoder.decodeObject(forKey: "skippedDate") as? Date
-        
+        weekdays = aDecoder.decodeObject(forKey: KeyConstant.weeklyWeekdays.rawValue) as? [Int] ?? weekdays
+        UTCHour = aDecoder.decodeInteger(forKey: KeyConstant.weeklyUTCHour.rawValue)
+        UTCMinute = aDecoder.decodeInteger(forKey: KeyConstant.weeklyUTCMinute.rawValue)
+        skippedDate = aDecoder.decodeObject(forKey: KeyConstant.weeklySkippedDate.rawValue) as? Date
     }
     
     func encode(with aCoder: NSCoder) {
@@ -103,6 +97,7 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     /// UTCHour but converted to the hour in the user's timezone
     var localHour: Int {
         let hoursFromUTC = Calendar.localCalendar.timeZone.secondsFromGMT() / 3600
+        
         var localHour = UTCHour + hoursFromUTC
         // localHour could be negative, so roll over into positive
         localHour += 24

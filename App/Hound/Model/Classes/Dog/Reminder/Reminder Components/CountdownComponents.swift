@@ -15,22 +15,17 @@ final class CountdownComponents: NSObject, NSCoding, NSCopying {
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = CountdownComponents()
         copy.executionInterval = executionInterval
-        copy.intervalElapsed = intervalElapsed
         return copy
     }
     
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        // <= build 8000 "executionInterval"
-        executionInterval = aDecoder.decodeObject(forKey: KeyConstant.countdownExecutionInterval.rawValue) as? Double ?? aDecoder.decodeObject(forKey: "executionInterval") as? Double ?? executionInterval
-        // <= build 8000 "intervalElapsed"
-        intervalElapsed = aDecoder.decodeObject(forKey: KeyConstant.countdownIntervalElapsed.rawValue) as? Double ?? aDecoder.decodeObject(forKey: "intervalElapsed") as? Double ?? intervalElapsed
+        executionInterval = aDecoder.decodeDouble(forKey: KeyConstant.countdownExecutionInterval.rawValue)
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(executionInterval, forKey: KeyConstant.countdownExecutionInterval.rawValue)
-        aCoder.encode(intervalElapsed, forKey: KeyConstant.countdownIntervalElapsed.rawValue)
     }
     
     // MARK: - Main
@@ -39,21 +34,15 @@ final class CountdownComponents: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
-    convenience init(executionInterval: TimeInterval?, intervalElapsed: TimeInterval?) {
+    convenience init(executionInterval: TimeInterval?) {
         self.init()
         
         if let executionInterval = executionInterval {
             self.executionInterval = executionInterval
         }
-        if let intervalElapsed = intervalElapsed {
-            self.intervalElapsed = intervalElapsed
-        }
     }
     
     /// Interval at which a timer should be triggered for reminder
     var executionInterval: TimeInterval = ClassConstant.ReminderComponentConstant.defaultCountdownExecutionInterval
-    
-    /// How much time of the interval of been used up, this is used for when a timer is paused and then unpaused and have to calculate remaining time
-    var intervalElapsed: TimeInterval = TimeInterval(0)
     
 }

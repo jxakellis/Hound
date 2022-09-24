@@ -188,7 +188,7 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
         if Date().distance(to: executionDate) <= 0 {
             nextAlarmLabel.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font: nextAlarmHeaderFont])
         }
-        else if reminder.snoozeComponents.snoozeIsEnabled == true {
+        else if reminder.snoozeComponents.executionInterval != nil {
             // special message for snoozing time
             let timeLeftText = String.convertToReadable(fromTimeInterval: Date().distance(to: executionDate))
             

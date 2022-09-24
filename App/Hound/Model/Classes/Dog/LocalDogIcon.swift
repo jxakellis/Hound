@@ -14,7 +14,7 @@ final class LocalDogIcon: NSObject, NSCoding {
     
     required init?(coder aDecoder: NSCoder) {
         super.init()
-        dogId = aDecoder.decodeObject(forKey: KeyConstant.dogId.rawValue) as? Int ?? dogId
+        dogId = aDecoder.decodeInteger(forKey: KeyConstant.dogId.rawValue)
         dogIcon = aDecoder.decodeObject(forKey: KeyConstant.dogIcon.rawValue) as? UIImage ?? dogIcon
     }
     

@@ -16,10 +16,10 @@ async function getUserToken(userId) {
   if (areAllDefined(userId) === false) {
     return [];
   }
-  // retrieve userNotificationToken, userConfigurationNotificationSound, and isLoudNotificaiton of a user with the userId, non-null userNotificationToken, and isNotificationEnabled
+  // retrieve userNotificationToken, userConfigurationNotificationSound, and isLoudNotificaiton of a user with the userId, non-null userNotificationToken, and userConfigurationIsNotificationEnabled
   const result = await databaseQuery(
     databaseConnectionForGeneral,
-    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 1`,
+    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.userConfigurationIsNotificationEnabled = 1 LIMIT 1`,
     [userId],
   );
 
@@ -38,7 +38,7 @@ async function getAllFamilyMemberTokens(familyId) {
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
     databaseConnectionForGeneral,
-    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
+    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.userConfigurationIsNotificationEnabled = 1 LIMIT 18446744073709551615`,
     [familyId],
   );
 
@@ -57,7 +57,7 @@ async function getOtherFamilyMemberTokens(userId, familyId) {
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
     databaseConnectionForGeneral,
-    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE users.userId != ? AND familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
+    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE users.userId != ? AND familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.userConfigurationIsNotificationEnabled = 1 LIMIT 18446744073709551615`,
     [userId, familyId],
   );
 

@@ -4,7 +4,7 @@ const { databaseQuery } = require('../../database/databaseQuery');
 
 const { schedule } = require('./schedules');
 
-const { formatDate, formatBoolean } = require('../../format/formatObject');
+const { formatDate } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 const { sendNotificationForFamily } = require('../apn/sendNotification');
 
@@ -67,7 +67,7 @@ async function sendAPNNotificationForFamily(familyId, reminderId) {
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
     let reminder = await databaseQuery(
       databaseConnectionForAlarms,
-      'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderLastModified, dogReminders.snoozeIsEnabled FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
+      'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderLastModified, dogReminders.snoozeExecutionInterval FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );
     [reminder] = reminder;
@@ -84,8 +84,8 @@ async function sendAPNNotificationForFamily(familyId, reminderId) {
     // Maximum possible length of message: 19 (raw) + 32 (variable) = 51 (<= ALERT_BODY_LIMIT)
     let alertBody = `Lend a hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
-    const snoozeIsEnabled = formatBoolean(reminder.snoozeIsEnabled);
-    if (areAllDefined(snoozeIsEnabled) === true && snoozeIsEnabled === true) {
+    const snoozeExecutionInterval = formatDate(reminder.snoozeExecutionInterval);
+    if (areAllDefined(snoozeExecutionInterval)) {
       // Maximum possible length of message: 47 (raw) + 32 (variable) = 79 (<= ALERT_BODY_LIMIT)
       alertBody = `It's been a bit, remember to lend a hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
     }

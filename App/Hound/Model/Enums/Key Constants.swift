@@ -128,9 +128,7 @@ enum KeyConstant: String {
     // client
     case snoozeComponents
     // client and server
-    case snoozeIsEnabled
     case snoozeExecutionInterval
-    case snoozeIntervalElapsed
     
     // MARK: Countdown Components
     
@@ -138,7 +136,6 @@ enum KeyConstant: String {
     case countdownComponents
     // client and server
     case countdownExecutionInterval
-    case countdownIntervalElapsed
     
     // MARK: Weekly Components
     

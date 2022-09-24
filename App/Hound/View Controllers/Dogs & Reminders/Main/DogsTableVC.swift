@@ -267,14 +267,11 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
             guard reminder.reminderIsEnabled == true else {
                 return false
             }
-            // Yes I know these if statements are redundent and terrible coding but it's whatever, used to do something different but has to modify
-            if reminder.currentReminderMode == .snooze || reminder.currentReminderMode == .countdown {
-                return false
-            }
-            else if reminder.reminderType == .weekly && reminder.weeklyComponents.isSkipping == true {
+            
+            if reminder.currentReminderMode == .weekly && reminder.weeklyComponents.isSkipping == true {
                 return true
             }
-            else if reminder.reminderType == .monthly && reminder.monthlyComponents.isSkipping == true {
+            else if reminder.currentReminderMode == .monthly && reminder.monthlyComponents.isSkipping == true {
                 return true
             }
             else {

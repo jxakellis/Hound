@@ -21,7 +21,7 @@ async function createUserForUserIdentifier(
   forUserLastName,
   forUserNotificationToken,
   // userAccountCreationDate,
-  forIsNotificationEnabled,
+  forUserConfigurationIsNotificationEnabled,
   forUserConfigurationIsLoudNotification,
   forUserConfigurationInterfaceStyle,
   forUserConfigurationSnoozeLength,
@@ -48,7 +48,7 @@ async function createUserForUserIdentifier(
   const userLastName = formatString(forUserLastName, 32);
   const userNotificationToken = formatString(forUserNotificationToken, 100);
 
-  const isNotificationEnabled = formatBoolean(forIsNotificationEnabled);
+  const userConfigurationIsNotificationEnabled = formatBoolean(forUserConfigurationIsNotificationEnabled);
   const userConfigurationIsLoudNotification = formatBoolean(forUserConfigurationIsLoudNotification);
   const userConfigurationInterfaceStyle = formatNumber(forUserConfigurationInterfaceStyle);
   const userConfigurationSnoozeLength = formatNumber(forUserConfigurationSnoozeLength);
@@ -70,7 +70,7 @@ async function createUserForUserIdentifier(
     // userLastName
     // userNotificationToken
     userAccountCreationDate,
-    isNotificationEnabled,
+    userConfigurationIsNotificationEnabled,
     userConfigurationIsLoudNotification,
     userConfigurationInterfaceStyle,
     userConfigurationSnoozeLength,
@@ -84,7 +84,7 @@ async function createUserForUserIdentifier(
     userConfigurationSilentModeStartUTCMinute,
     userConfigurationSilentModeEndUTCMinute,
   ) === false) {
-    throw new ValidationError('userId, userIdentifier, userEmail, userAccountCreationDate, isNotificationEnabled, userConfigurationIsLoudNotification, userConfigurationInterfaceStyle, userConfigurationSnoozeLength, userConfigurationNotificationSound, userConfigurationLogsInterfaceScale, userConfigurationRemindersInterfaceScale, userConfigurationMaximumNumberOfLogsDisplayed, userConfigurationSilentModeIsEnabled, userConfigurationSilentModeStartUTCHour, userConfigurationSilentModeEndUTCHour, userConfigurationSilentModeStartUTCMinute, or userConfigurationSilentModeEndUTCMinute, missing', global.constant.error.value.MISSING);
+    throw new ValidationError('userId, userIdentifier, userEmail, userAccountCreationDate, userConfigurationIsNotificationEnabled, userConfigurationIsLoudNotification, userConfigurationInterfaceStyle, userConfigurationSnoozeLength, userConfigurationNotificationSound, userConfigurationLogsInterfaceScale, userConfigurationRemindersInterfaceScale, userConfigurationMaximumNumberOfLogsDisplayed, userConfigurationSilentModeIsEnabled, userConfigurationSilentModeStartUTCHour, userConfigurationSilentModeEndUTCHour, userConfigurationSilentModeStartUTCMinute, or userConfigurationSilentModeEndUTCMinute, missing', global.constant.error.value.MISSING);
   }
 
   const promises = [
@@ -95,9 +95,9 @@ async function createUserForUserIdentifier(
     ),
     databaseQuery(
       databaseConnection,
-      'INSERT INTO userConfiguration(userId, isNotificationEnabled, userConfigurationIsLoudNotification, userConfigurationSnoozeLength, userConfigurationNotificationSound, userConfigurationLogsInterfaceScale, userConfigurationRemindersInterfaceScale, userConfigurationInterfaceStyle, userConfigurationMaximumNumberOfLogsDisplayed, userConfigurationSilentModeIsEnabled, userConfigurationSilentModeStartUTCHour, userConfigurationSilentModeEndUTCHour, userConfigurationSilentModeStartUTCMinute, userConfigurationSilentModeEndUTCMinute) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+      'INSERT INTO userConfiguration(userId, userConfigurationIsNotificationEnabled, userConfigurationIsLoudNotification, userConfigurationSnoozeLength, userConfigurationNotificationSound, userConfigurationLogsInterfaceScale, userConfigurationRemindersInterfaceScale, userConfigurationInterfaceStyle, userConfigurationMaximumNumberOfLogsDisplayed, userConfigurationSilentModeIsEnabled, userConfigurationSilentModeStartUTCHour, userConfigurationSilentModeEndUTCHour, userConfigurationSilentModeStartUTCMinute, userConfigurationSilentModeEndUTCMinute) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
       [userId,
-        isNotificationEnabled,
+        userConfigurationIsNotificationEnabled,
         userConfigurationIsLoudNotification,
         userConfigurationSnoozeLength,
         userConfigurationNotificationSound,

@@ -5,7 +5,7 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 // Select every column except for dogId, reminderExecutionDate, and reminderLastModified (by not transmitting, increases network efficiency)
 // dogId is already known, reminderExecutionDate is calculated client-side and server-side is only used for notification sending, and reminderLastModified has no use client-side
-const dogRemindersColumns = 'reminderId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderIsDeleted, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed, countdownExecutionInterval, countdownIntervalElapsed, weeklyUTCHour, weeklyUTCMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklySkippedDate, monthlyUTCDay, monthlyUTCHour, monthlyUTCMinute, monthlySkippedDate, oneTimeDate';
+const dogRemindersColumns = 'reminderId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderIsDeleted, snoozeExecutionInterval, countdownExecutionInterval, weeklyUTCHour, weeklyUTCMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklySkippedDate, monthlyUTCDay, monthlyUTCHour, monthlyUTCMinute, monthlySkippedDate, oneTimeDate';
 
 /**
  *  If the query is successful, returns the reminder for the reminderId.

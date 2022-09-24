@@ -27,12 +27,7 @@ final class Dog: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         super.init()
-        // TO DO NOW test that decodeInteger, decodeBool, decodeDoulbe into decodeObject as? Int/Bool/Double works
-        print(aDecoder.decodeInteger(forKey: KeyConstant.dogId.rawValue))
-        print(aDecoder.decodeObject(forKey: KeyConstant.dogId.rawValue))
-        print(aDecoder.decodeObject(forKey: KeyConstant.dogId.rawValue) as? Int)
-        
-        dogId = aDecoder.decodeObject(forKey: KeyConstant.dogId.rawValue) as? Int ?? dogId
+        dogId = aDecoder.decodeInteger(forKey: KeyConstant.dogId.rawValue)
         dogName = aDecoder.decodeObject(forKey: KeyConstant.dogName.rawValue) as? String ?? dogName
         dogIcon = aDecoder.decodeObject(forKey: KeyConstant.dogIcon.rawValue) as? UIImage ?? dogIcon
         dogLogs = aDecoder.decodeObject(forKey: KeyConstant.dogLogs.rawValue) as? LogManager ?? dogLogs

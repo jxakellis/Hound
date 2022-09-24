@@ -65,7 +65,6 @@ async function createReminderForDogIdReminder(databaseConnection, dogId, reminde
     throw new ValidationError('reminderType invalid', global.constant.error.value.INVALID);
   }
   // no need to check snooze components as a newly created reminder can't be snoozed yet
-  // no need to check for countdownIntervalElapsed as newly created reminder couldn't have elapsed time
   else if (areAllDefined(countdownExecutionInterval) === false) {
     throw new ValidationError('countdownExecutionInterval missing', global.constant.error.value.MISSING);
   }
@@ -84,11 +83,11 @@ async function createReminderForDogIdReminder(databaseConnection, dogId, reminde
   const promises = [
     databaseQuery(
       databaseConnection,
-      'INSERT INTO dogReminders(dogId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed, countdownExecutionInterval, countdownIntervalElapsed, weeklyUTCHour, weeklyUTCMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklySkippedDate, monthlyUTCDay, monthlyUTCHour, monthlyUTCMinute, monthlySkippedDate, oneTimeDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO dogReminders(dogId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified, snoozeExecutionInterval, countdownExecutionInterval, weeklyUTCHour, weeklyUTCMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklySkippedDate, monthlyUTCDay, monthlyUTCHour, monthlyUTCMinute, monthlySkippedDate, oneTimeDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         dogId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified,
-        false, 0, 0,
-        countdownExecutionInterval, 0,
+        undefined,
+        countdownExecutionInterval,
         weeklyUTCHour, weeklyUTCMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, undefined,
         monthlyUTCDay, monthlyUTCHour, monthlyUTCMinute, undefined,
         oneTimeDate,

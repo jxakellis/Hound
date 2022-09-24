@@ -63,6 +63,7 @@ enum PersistenceManager {
         
         LocalConfiguration.lastDogManagerSynchronization = UserDefaults.standard.value(forKey: KeyConstant.userConfigurationPreviousDogManagerSynchronization.rawValue) as? Date ?? LocalConfiguration.lastDogManagerSynchronization
         
+        // TO DO NOW can't store dogIcons in user defaults. causes issues beause it uses too much storage
         // <= build 8000 dogIcons
         if let dataDogIcons: Data = UserDefaults.standard.data(forKey: KeyConstant.localDogIcons.rawValue) ?? UserDefaults.standard.data(forKey: "dogIcons"), let unarchiver = try? NSKeyedUnarchiver.init(forReadingFrom: dataDogIcons) {
             unarchiver.requiresSecureCoding = false
