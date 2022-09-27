@@ -127,7 +127,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
                 return "Never"
             }
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: EnumConstant.DevelopmentConstant.subscriptionDateFormatTemplate, options: 0, locale: Calendar.localCalendar.locale)
+            dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: DevelopmentConstant.subscriptionDateFormatTemplate, options: 0, locale: Calendar.localCalendar.locale)
             return dateFormatter.string(from: purchaseDate)
         }
         
@@ -138,7 +138,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
                 return "Never"
             }
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: EnumConstant.DevelopmentConstant.subscriptionDateFormatTemplate, options: 0, locale: Calendar.localCalendar.locale)
+            dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: DevelopmentConstant.subscriptionDateFormatTemplate, options: 0, locale: Calendar.localCalendar.locale)
             return dateFormatter.string(from: expirationDate)
         }
         

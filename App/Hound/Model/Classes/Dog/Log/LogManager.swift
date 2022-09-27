@@ -8,15 +8,7 @@
 
 import Foundation
 
-final class LogManager: NSObject, NSCoding, NSCopying {
-    
-    // MARK: - NSCopying
-    func copy(with zone: NSZone? = nil) -> Any {
-        let copy = LogManager()
-        copy.logs = logs
-        copy.uniqueLogActionsResult = uniqueLogActionsResult
-        return copy
-    }
+final class LogManager: NSObject, NSCoding {
     
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {

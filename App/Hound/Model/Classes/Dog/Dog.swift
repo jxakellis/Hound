@@ -8,21 +8,7 @@
 
 import UIKit
 
-final class Dog: NSObject, NSCoding, NSCopying {
-    
-    // MARK: - NSCopying
-    
-    func copy(with zone: NSZone? = nil) -> Any {
-        guard let copy = try? Dog(dogName: self.dogName) else {
-            return Dog()
-        }
-        copy.dogId = self.dogId
-        copy.dogName = self.dogName
-        copy.dogIcon = self.dogIcon
-        copy.dogReminders = self.dogReminders.copy() as? ReminderManager ?? ReminderManager()
-        copy.dogLogs = self.dogLogs.copy() as? LogManager ?? LogManager()
-        return copy
-    }
+final class Dog: NSObject, NSCoding {
     
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {

@@ -91,7 +91,7 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
         
         setupWeekdays()
         
-        timeOfDayDatePicker.minuteInterval = EnumConstant.DevelopmentConstant.reminderMinuteInterval
+        timeOfDayDatePicker.minuteInterval = DevelopmentConstant.reminderMinuteInterval
         
         // keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
         if let passedTimeOfDay = passedTimeOfDay {

@@ -10,18 +10,7 @@ import UIKit
 
 // TO DO BUG PRIO: LOW reminders and logs disappearing. Happens primarily when involved with other users / when sourced from other users. Typically disppears with lifecycle, e.g. goes to background then opens later and its missing.
 // For example: the new log/reminder is synced to the device, so the server won't return it anymore. Then it appears the new log/reminder isn't persisted so when the user opens the app again, the new log/reminder is missing. The issue can be solved by hitting Redownload Data
-final class DogManager: NSObject, NSCopying, NSCoding {
-    
-    // MARK: - NSCopying
-    func copy(with zone: NSZone? = nil) -> Any {
-        let copy = DogManager()
-        for dog in dogs {
-            if let dogCopy = dog.copy() as? Dog {
-                copy.dogs.append(dogCopy)
-            }
-        }
-        return copy
-    }
+final class DogManager: NSObject, NSCoding {
     
     // MARK: - NSCoding
     
@@ -137,6 +126,8 @@ final class DogManager: NSObject, NSCopying, NSCoding {
         }
         
         dogs.remove(at: matchingDogIndex)
+        
+        LocalDogIcon.removeIcon(forDogId: dogId)
     }
     
     /// Removes a dog at the given index
@@ -146,12 +137,16 @@ final class DogManager: NSObject, NSCopying, NSCoding {
             return
         }
         
+        let dog = dogs[index]
+        
         // make sure we invalidate all the timers associated. this isn't technically necessary but its easier to tie up lose ends here
-        for reminder in dogs[index].dogReminders.reminders {
+        for reminder in dog.dogReminders.reminders {
             reminder.timer?.invalidate()
         }
         
         dogs.remove(at: index)
+        
+        LocalDogIcon.removeIcon(forDogId: dog.dogId)
     }
     
 }

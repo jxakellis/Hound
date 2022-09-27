@@ -22,7 +22,7 @@ final class FamilyMember: NSObject {
     
     /// Assume array of family properties
     convenience init(fromBody body: [String: Any], familyHeadUserId: String?) {
-        let userId = body[KeyConstant.userId.rawValue] as? String ?? EnumConstant.HashConstant.defaultSHA256Hash
+        let userId = body[KeyConstant.userId.rawValue] as? String ?? Hash.defaultSHA256Hash
         let firstName = body[KeyConstant.userFirstName.rawValue] as? String
         let lastName = body[KeyConstant.userLastName.rawValue] as? String
         self.init(userId: userId, firstName: firstName, lastName: lastName, isUserFamilyHead: familyHeadUserId == userId)

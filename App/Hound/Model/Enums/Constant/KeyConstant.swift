@@ -174,8 +174,6 @@ enum KeyConstant: String {
     // MARK: Local
     
     // client
-    case localDogIcons
-    
     case localIsNotificationAuthorized
     
     case localPreviousLogCustomActionNames

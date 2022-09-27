@@ -46,7 +46,7 @@ final class DogsReminderCountdownViewController: UIViewController, UIGestureReco
     
     override func viewDidLoad() {
         
-        countdown.minuteInterval = EnumConstant.DevelopmentConstant.reminderMinuteInterval
+        countdown.minuteInterval = DevelopmentConstant.reminderMinuteInterval
         
         // keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
         if let passedInterval = passedInterval {

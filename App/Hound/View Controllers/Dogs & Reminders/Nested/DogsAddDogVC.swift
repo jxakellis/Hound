@@ -9,9 +9,7 @@
 import UIKit
 
 protocol DogsAddDogViewControllerDelegate: AnyObject {
-    func didAddDog(sender: Sender, newDog: Dog)
-    func didUpdateDog(sender: Sender, updatedDog: Dog)
-    func didRemoveDog(sender: Sender, dogId: Int)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
     /// Reinitalizes timers that were possibly destroyed
     func didCancel(sender: Sender)
 }
@@ -71,6 +69,18 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         
         // make sure the result is under dogNameCharacterLimit
         return updatedText.count <= ClassConstant.DogConstant.dogNameCharacterLimit
+    }
+    
+    // MARK: - DogManagerControlFlowProtocol
+    
+    private var dogManager: DogManager = DogManager()
+    
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
+        
+        if !(sender.localized is DogsViewController) {
+            delegate.didUpdateDogManager(sender: sender, forDogManager: dogManager)
+        }
     }
     
     // MARK: - IB
@@ -149,7 +159,8 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
                 // all tasks completed successfully
                 self.addDogButton.endQuerying()
                 self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
-                self.delegate.didUpdateDog(sender: Sender(origin: self, localized: self), updatedDog: dog)
+                self.dogManager.updateDog(forDog: dog)
+                self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                 self.navigationController?.popViewController(animated: true)
             } failureCompletionHandler: {
                 // something failed
@@ -221,9 +232,6 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
                 // If the user created countdown reminder(s) and then sat on the create a dog page, those countdown reminders will be 'counting down' as time has passed from their reminderExecutionBasis's. Therefore we must reset their executionBasis so they are fresh.
                 let createdReminders = self.modifiableDogReminders.reminders
                 createdReminders.forEach { reminder in
-                    guard reminder.reminderType == .countdown else {
-                        return
-                    }
                     reminder.prepareForNextAlarm()
                 }
                 
@@ -233,7 +241,10 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
                     if let reminders = reminders {
                         // dog and reminders successfully created, so we can proceed
                         dog.dogReminders.addReminders(forReminders: reminders)
-                        self.delegate.didAddDog(sender: Sender(origin: self, localized: self), newDog: dog)
+                        
+                        self.dogManager.addDog(forDog: dog)
+                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                        
                         self.navigationController?.popViewController(animated: true)
                     }
                     else {
@@ -259,7 +270,10 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             DogsRequest.delete(invokeErrorManager: true, forDogId: dogToUpdate.dogId) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
-                    self.delegate.didRemoveDog(sender: Sender(origin: self, localized: self), dogId: dogToUpdate.dogId)
+                    
+                    self.dogManager.removeDog(forDogId: dogToUpdate.dogId)
+                    self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    
                     self.navigationController?.popViewController(animated: true)
                 }
                 

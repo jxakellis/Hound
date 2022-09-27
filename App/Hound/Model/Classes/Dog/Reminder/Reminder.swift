@@ -25,81 +25,6 @@ enum ReminderType: String, CaseIterable {
     case monthly
 }
 
-enum ReminderMode {
-    case oneTime
-    case countdown
-    case weekly
-    case monthly
-    case snooze
-}
-
-enum ReminderAction: String, CaseIterable {
-    
-    init?(rawValue: String) {
-        for action in ReminderAction.allCases where action.rawValue.lowercased() == rawValue.lowercased() {
-            self = action
-            return
-        }
-        
-        self = ReminderAction.feed
-        return
-    }
-    // common
-    case feed = "Feed"
-    case water = "Fresh Water"
-    case potty = "Potty"
-    case walk = "Walk"
-    // next common
-    case brush = "Brush"
-    case bathe = "Bathe"
-    case medicine = "Medicine"
-    
-    // more common than previous but probably used less by user as weird action
-    case sleep = "Sleep"
-    case trainingSession = "Training Session"
-    case doctor = "Doctor Visit"
-    
-    case custom = "Custom"
-    
-    /// Returns the name of the current reminderAction with an appropiate emoji appended. If non-nil, non-"" reminderCustomActionName is provided, then then that is returned, e.g. displayActionName(nil, valueDoesNotMatter) -> 'Feed 🍗'; displayActionName(nil, valueDoesNotMatter) -> 'Custom 📝'; displayActionName('someCustomName', true) -> 'someCustomName'; displayActionName('someCustomName', false) -> 'Custom 📝: someCustomName'
-    func displayActionName(reminderCustomActionName: String?, isShowingAbreviatedCustomActionName: Bool) -> String {
-        switch self {
-        case .feed:
-            return self.rawValue.appending(" 🍗")
-        case .water:
-            return self.rawValue.appending(" 💧")
-        case .potty:
-            return self.rawValue.appending(" 💦💩")
-        case .walk:
-            return self.rawValue.appending(" 🦮")
-        case .brush:
-            return self.rawValue.appending(" 💈")
-        case .bathe:
-            return self.rawValue.appending(" 🛁")
-        case .medicine:
-            return self.rawValue.appending(" 💊")
-        case .sleep:
-            return self.rawValue.appending(" 💤")
-        case .trainingSession:
-            return self.rawValue.appending(" 🐾")
-        case .doctor:
-            return self.rawValue.appending(" 🩺")
-        case .custom:
-            if let reminderCustomActionName = reminderCustomActionName, reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                if isShowingAbreviatedCustomActionName == true {
-                    return reminderCustomActionName
-                }
-                else {
-                    return self.rawValue.appending(" 📝: \(reminderCustomActionName)")
-                }
-            }
-            else {
-                return self.rawValue.appending(" 📝")
-            }
-        }
-    }
-}
-
 final class Reminder: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
@@ -328,32 +253,17 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     
     var snoozeComponents: SnoozeComponents = SnoozeComponents()
     
-    /// Factors in snoozeComponents into reminderType to produce a current mode. For example, a reminder might be countdown but if its snoozed then this will return .snooze
-    var currentReminderMode: ReminderMode {
-        if snoozeComponents.executionInterval != nil {
-            return .snooze
-        }
-        else if reminderType == .countdown {
-            return .countdown
-        }
-        else if reminderType == .weekly {
-            return .weekly
-        }
-        else if reminderType == .monthly {
-            return .monthly
-        }
-        else {
-            return .oneTime
-        }
-    }
-    
     // MARK: - Timing
     
     /// When an alert from this reminder is enqueued to be presented, this property is true. This prevents multiple alerts for the same reminder being requeued everytime timing manager refreshes.
     var hasAlarmPresentationHandled: Bool = false
     
     var intervalRemaining: TimeInterval? {
-        switch currentReminderMode {
+        guard snoozeComponents.executionInterval == nil else {
+            return snoozeComponents.executionInterval
+        }
+        
+        switch reminderType {
         case .oneTime:
             return Date().distance(to: oneTimeComponents.oneTimeDate)
         case .countdown:
@@ -374,9 +284,6 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             else {
                 return Date().distance(to: self.monthlyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis))
             }
-        case .snooze:
-            // the time is supposed to countdown for minus the time it has countdown
-            return snoozeComponents.executionInterval
         }
     }
     
@@ -391,7 +298,11 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             return Date()
         }
         
-        switch currentReminderMode {
+        guard snoozeComponents.executionInterval == nil else {
+            return Date(timeInterval: intervalRemaining, since: reminderExecutionBasis)
+        }
+        
+        switch reminderType {
         case .oneTime:
             return oneTimeComponents.oneTimeDate
         case .countdown:
@@ -400,8 +311,6 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             return weeklyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)
         case .monthly:
             return monthlyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)
-        case .snooze:
-            return Date(timeInterval: intervalRemaining, since: reminderExecutionBasis)
         }
     }
     
@@ -423,10 +332,14 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     
     /// Finds the date which the reminder should be transformed from isSkipping to not isSkipping. This is the date at which the skipped reminder would have occured.
     func unskipDate() -> Date? {
-        if currentReminderMode == .monthly && monthlyComponents.isSkipping == true {
+        guard reminderIsEnabled && snoozeComponents.executionInterval == nil else {
+            return nil
+        }
+        
+        if reminderType == .monthly && monthlyComponents.isSkipping == true {
             return monthlyComponents.notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         }
-        else if currentReminderMode == .weekly && weeklyComponents.isSkipping == true {
+        else if reminderType == .weekly && weeklyComponents.isSkipping == true {
             return weeklyComponents.notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         }
         else {

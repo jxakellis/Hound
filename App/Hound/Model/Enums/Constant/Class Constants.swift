@@ -31,7 +31,7 @@ enum ClassConstant {
     enum LogConstant {
         static let defaultLogId: Int = -1
         static var defaultUserId: String {
-            return UserInformation.userId ?? EnumConstant.HashConstant.defaultSHA256Hash
+            return UserInformation.userId ?? Hash.defaultSHA256Hash
         }
         static let defaultLogAction = LogAction.feed
         static let defaultLogCustomActionName: String? = nil
@@ -46,7 +46,7 @@ enum ClassConstant {
     enum ReminderConstant {
         static let defaultReminderId: Int = -1
         static let defaultReminderAction = ReminderAction.feed
-        static let defaultReminderCustomActionName: String? = nil
+        static let defaultReminderCustomActionName: String = ""
         static let defaultReminderType = ReminderType.countdown
         static var defaultReminderExecutionBasis: Date { return Date() }
         static let defaultReminderIsEnabled = true

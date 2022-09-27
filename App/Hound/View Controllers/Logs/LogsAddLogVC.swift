@@ -179,8 +179,6 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     @IBOutlet private weak var containerForAll: UIView!
     @IBOutlet private weak var pageTitle: UINavigationItem!
     
-    @IBOutlet private weak var familyMemberNameLabel: BorderedUILabel!
-    
     @IBOutlet private weak var parentDogLabel: BorderedUILabel!
     
     @IBOutlet private weak var logActionLabel: BorderedUILabel!
@@ -328,7 +326,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             return
         }
         
-        let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete this log?", message: nil, preferredStyle: .alert)
+        let removeLogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete this log?", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             
@@ -351,10 +349,10 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
-        removeDogConfirmation.addAction(alertActionRemove)
-        removeDogConfirmation.addAction(alertActionCancel)
+        removeLogConfirmation.addAction(alertActionRemove)
+        removeLogConfirmation.addAction(alertActionCancel)
         
-        AlertManager.enqueueAlertForPresentation(removeDogConfirmation)
+        AlertManager.enqueueAlertForPresentation(removeLogConfirmation)
     }
     
     @IBOutlet private weak var cancelButton: ScaledUIButton!
@@ -548,8 +546,6 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 pageTitle?.title = "Edit Log"
                 removeLogBarButton.isEnabled = true
                 
-                familyMemberNameLabel.text = FamilyInformation.findFamilyMember(forUserId: logToUpdate.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
-                
                 if let dog = dogManager.findDog(forDogId: parentDogIdToUpdate) {
                     parentDogLabel.text = dog.dogName
                     parentDogIdsSelected = [dog.dogId]
@@ -568,8 +564,6 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             else {
                 pageTitle?.title = "Create Log"
                 removeLogBarButton.isEnabled = false
-                
-                familyMemberNameLabel.text = FamilyInformation.findFamilyMember(forUserId: UserInformation.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
                 
                 parentDogIdsSelected = {
                     dogManager.dogs.map { dog in
@@ -600,10 +594,6 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 parentDogLabel.isUserInteractionEnabled = dogManager.dogs.count <= 1 ? false : true
                 parentDogLabel.isEnabled = dogManager.dogs.count <= 1 ? false : true
             }
-            
-            // Don't let the user change the family member
-            familyMemberNameLabel.isUserInteractionEnabled = false
-            familyMemberNameLabel.isEnabled = false
             
             // this is for the label for the logAction dropdown, so we only want the names to be the defaults. I.e. if our log is "Custom" with "someCustomActionName", the logActionLabel should only show "Custom" and then the logCustomActionNameTextField should be "someCustomActionName".
             logActionLabel.text = logToUpdate?.logAction.displayActionName(logCustomActionName: nil, isShowingAbreviatedCustomActionName: false)

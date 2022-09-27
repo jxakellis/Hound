@@ -264,19 +264,11 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
         
         // DETERMINES IF ITS A LOG BUTTON OR UNDO LOG BUTTON
         let shouldUndoLog: Bool = {
-            guard reminder.reminderIsEnabled == true else {
+            guard reminder.reminderIsEnabled == true && reminder.snoozeComponents.executionInterval == nil else {
                 return false
             }
             
-            if reminder.currentReminderMode == .weekly && reminder.weeklyComponents.isSkipping == true {
-                return true
-            }
-            else if reminder.currentReminderMode == .monthly && reminder.monthlyComponents.isSkipping == true {
-                return true
-            }
-            else {
-                return false
-            }
+            return (reminder.reminderType == .weekly && reminder.weeklyComponents.isSkipping) || (reminder.reminderType == .monthly && reminder.monthlyComponents.isSkipping)
         }()
         
         // STORES LOG BUTTON(S)

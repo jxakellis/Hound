@@ -16,6 +16,11 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     
     // MARK: - Dual Delegate Implementation
     
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
+        setDogManager(sender: sender, forDogManager: forDogManager)
+        CheckManager.checkForReview()
+    }
+    
     func didCancel(sender: Sender) {
         setDogManager(sender: sender, forDogManager: dogManager)
     }
@@ -95,47 +100,6 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsIndependentReminderViewController")
             dogsIndependentReminderViewController.parentDogId = parentDogId
         }
-    }
-    
-    // MARK: - DogManagerControlFlowProtocol
-    
-    /// If the dog manager was updated in DogsTableViewController, this function is called to reflect that change here with this dogManager
-    func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
-        setDogManager(sender: sender, forDogManager: forDogManager)
-    }
-    
-    // MARK: - DogsAddDogViewControllerDelegate
-    
-    /// If a dog was added by the subview, this function is called with a delegate and is incorporated into the dog manager here
-    func didAddDog(sender: Sender, newDog: Dog) {
-        
-        // This makes it so when a dog is added all of its reminders start counting down at the same time (b/c same last execution) instead counting down from when the reminder was added to the dog.
-        for reminder in newDog.dogReminders.reminders {
-            reminder.reminderExecutionBasis = Date()
-        }
-        
-        dogManager.addDog(forDog: newDog)
-        setDogManager(sender: sender, forDogManager: dogManager)
-        
-        CheckManager.checkForReview()
-    }
-    
-    /// If a dog was updated, its former name (as its name could have been changed) and new dog instance is passed here, matching old dog is found and replaced with new
-    func didUpdateDog(sender: Sender, updatedDog: Dog) {
-        
-        // this function both can add new dogs or override old ones
-        dogManager.updateDog(forDog: updatedDog)
-        setDogManager(sender: sender, forDogManager: dogManager)
-        
-        CheckManager.checkForReview()
-    }
-    
-    func didRemoveDog(sender: Sender, dogId: Int) {
-        
-        dogManager.removeDog(forDogId: dogId)
-        setDogManager(sender: sender, forDogManager: dogManager)
-        
-        CheckManager.checkForReview()
     }
     
     // MARK: - DogManagerControlFlowProtocol

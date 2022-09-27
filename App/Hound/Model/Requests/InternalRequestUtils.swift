@@ -10,7 +10,7 @@ import UIKit
 
 /// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
 enum InternalRequestUtils {
-    static var baseURLWithoutParams: URL { return URL(string: EnumConstant.DevelopmentConstant.url + "/\(UIApplication.appBuild)") ?? URL(fileURLWithPath: "foo") }
+    static var baseURLWithoutParams: URL { return URL(string: DevelopmentConstant.url + "/\(UIApplication.appBuild)") ?? URL(fileURLWithPath: "foo") }
     
     private static var sessionConfig: URLSessionConfiguration {
         let sessionConfig = URLSessionConfiguration.default

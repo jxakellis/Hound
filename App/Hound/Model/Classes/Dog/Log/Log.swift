@@ -8,105 +8,7 @@
 
 import UIKit
 
-enum LogAction: String, CaseIterable {
-    
-    init?(rawValue: String) {
-        // regular
-        for action in LogAction.allCases where action.rawValue.lowercased() == rawValue.lowercased() {
-            self = action
-            return
-        }
-        
-        self = .custom
-    }
-    
-    case feed = "Feed"
-    case water = "Fresh Water"
-    
-    case treat = "Treat"
-    
-    case pee = "Potty: Pee"
-    case poo = "Potty: Poo"
-    case both = "Potty: Both"
-    case neither = "Potty: Didn't Go"
-    case accident = "Accident"
-    
-    case walk = "Walk"
-    case brush = "Brush"
-    case bathe = "Bathe"
-    case medicine = "Medicine"
-    
-    case wakeup = "Wake Up"
-    
-    case sleep = "Sleep"
-    
-    case crate = "Crate"
-    case trainingSession = "Training Session"
-    case doctor = "Doctor Visit"
-    
-    case custom = "Custom"
-    
-    /// Returns the name of the current logAction with an appropiate emoji appended. If non-nil, non-"" logCustomActionName is provided, then then that is returned, e.g. displayActionName(nil) -> 'Feed 🍗'; displayActionName(nil) -> 'Custom 📝'; displayActionName('someCustomName', true) -> 'someCustomName'; displayActionName('someCustomName', false) -> 'Custom 📝: someCustomName'
-    func displayActionName(logCustomActionName: String?, isShowingAbreviatedCustomActionName: Bool) -> String {
-        switch self {
-        case .feed:
-            return self.rawValue.appending(" 🍗")
-        case .water:
-            return self.rawValue.appending(" 💧")
-        case .treat:
-            return self.rawValue.appending(" 🦴")
-        case .pee:
-            return self.rawValue.appending(" 💦")
-        case .poo:
-            return self.rawValue.appending(" 💩")
-        case .both:
-            return self.rawValue.appending(" 💦💩")
-        case .neither:
-            return self.rawValue
-        case .accident:
-            return self.rawValue.appending(" ⚠️")
-        case .walk:
-            return self.rawValue.appending(" 🦮")
-        case .brush:
-            return self.rawValue.appending(" 💈")
-        case .bathe:
-            return self.rawValue.appending(" 🛁")
-        case .medicine:
-            return self.rawValue.appending(" 💊")
-        case .wakeup:
-            return self.rawValue.appending(" ☀️")
-        case .sleep:
-            return self.rawValue.appending(" 💤")
-        case .crate:
-            return self.rawValue.appending(" 🏡")
-        case .trainingSession:
-            return self.rawValue.appending(" 🐾")
-        case .doctor:
-            return self.rawValue.appending(" 🩺")
-        case .custom:
-            if let logCustomActionName = logCustomActionName, logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                if isShowingAbreviatedCustomActionName == true {
-                    return logCustomActionName
-                }
-                else {
-                    return self.rawValue.appending(" 📝: \(logCustomActionName)")
-                }
-            }
-            else {
-                return self.rawValue.appending(" 📝")
-            }
-        }
-    }
-}
-
-final class Log: NSObject, NSCoding, NSCopying {
-    
-    // MARK: - NSCopying
-    
-    func copy(with zone: NSZone? = nil) -> Any {
-        let copy = Log(logId: self.logId, logAction: self.logAction, logCustomActionName: self.logCustomActionName, logDate: self.logDate, logNote: self.logNote)
-        return copy
-    }
+final class Log: NSObject, NSCoding {
     
     // MARK: - NSCoding
     
@@ -156,7 +58,7 @@ final class Log: NSObject, NSCoding, NSCopying {
         
         let logId: Int = body[KeyConstant.logId.rawValue] as? Int ?? ClassConstant.LogConstant.defaultLogId
         // don't user ClassConstant.LogConstant.defaultUserId here. if we cannot decode the value, then just leave it as -1, as otherwise it would incorrectly display that this user created the log (as ClassConstant.LogConstant.defaultUserId defaults to UserInformation.userId first)
-        let userId: String = body[KeyConstant.userId.rawValue] as? String ?? EnumConstant.HashConstant.defaultSHA256Hash
+        let userId: String = body[KeyConstant.userId.rawValue] as? String ?? Hash.defaultSHA256Hash
         let logAction: LogAction = LogAction(rawValue: body[KeyConstant.logAction.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue) ?? ClassConstant.LogConstant.defaultLogAction
         let logCustomActionName: String? = body[KeyConstant.logCustomActionName.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogCustomActionName
         

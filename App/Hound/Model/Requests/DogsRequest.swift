@@ -185,8 +185,6 @@ extension DogsRequest {
                         }
                     }
                     
-                    LocalDogIcon.checkForExtraIcons(forDogs: newDogManager.dogs)
-                    
                     completionHandler(newDogManager, responseStatus)
                 }
                 else {

@@ -37,7 +37,7 @@ enum PersistenceManager {
         
         UserInformation.userIdentifier = keychain.get(KeyConstant.userIdentifier.rawValue)
         
-        if EnumConstant.DevelopmentConstant.isProductionDatabase == false {
+        if DevelopmentConstant.isProductionDatabase == false {
             UserInformation.userIdentifier = "18a324da0aea90d36451962667b664aeb168c8cee5033a5ff9e806342cdc54d0"
         }
         
@@ -49,7 +49,7 @@ enum PersistenceManager {
         
         UserInformation.userId = UserDefaults.standard.value(forKey: KeyConstant.userId.rawValue) as? String ?? UserInformation.userId
         
-        if EnumConstant.DevelopmentConstant.isProductionDatabase == false {
+        if DevelopmentConstant.isProductionDatabase == false {
             UserInformation.userId = "c461dda5297129dfcd92a69b47ba850fd573a656800930fd3e7fe0c940eeca1b"
         }
        
@@ -62,13 +62,6 @@ enum PersistenceManager {
         // MARK: Load Stored Local Configuration
         
         LocalConfiguration.lastDogManagerSynchronization = UserDefaults.standard.value(forKey: KeyConstant.userConfigurationPreviousDogManagerSynchronization.rawValue) as? Date ?? LocalConfiguration.lastDogManagerSynchronization
-        
-        // TO DO NOW can't store dogIcons in user defaults. causes issues beause it uses too much storage
-        // <= build 8000 dogIcons
-        if let dataDogIcons: Data = UserDefaults.standard.data(forKey: KeyConstant.localDogIcons.rawValue) ?? UserDefaults.standard.data(forKey: "dogIcons"), let unarchiver = try? NSKeyedUnarchiver.init(forReadingFrom: dataDogIcons) {
-            unarchiver.requiresSecureCoding = false
-            LocalConfiguration.dogIcons = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? [LocalDogIcon] ?? LocalConfiguration.dogIcons
-        }
         
         // if the user had a dogManager from pre Hound 2.0.0, then we must clear it. It will be incompatible and cause issues. Must start from scratch.
         if UIApplication.previousAppBuild ?? 3810 <= 3810 {
@@ -206,9 +199,6 @@ enum PersistenceManager {
         
         UserDefaults.standard.set(LocalConfiguration.lastDogManagerSynchronization, forKey: KeyConstant.userConfigurationPreviousDogManagerSynchronization.rawValue)
         
-        if let dataDogIcons = try? NSKeyedArchiver.archivedData(withRootObject: LocalConfiguration.dogIcons, requiringSecureCoding: false) {
-            UserDefaults.standard.set(dataDogIcons, forKey: KeyConstant.localDogIcons.rawValue)
-        }
         if let dataDogManager = try? NSKeyedArchiver.archivedData(withRootObject: MainTabBarViewController.staticDogManager, requiringSecureCoding: false) {
             UserDefaults.standard.set(dataDogManager, forKey: KeyConstant.dogManager.rawValue)
         }

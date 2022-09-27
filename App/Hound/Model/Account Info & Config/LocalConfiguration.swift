@@ -16,11 +16,6 @@ enum LocalConfiguration {
     // For our first every dogManager sync, we want to retrieve ever dog, reminder, and log (which can be a LOT of data as accounts accumlate logs over the years). To get everything the family has ever added, we set our last sync as far back in time as it will go. This will retrieve everything
     static var lastDogManagerSynchronization: Date = ClassConstant.DateConstant.default1970Date
     
-    // MARK: Dog Related
-    
-    /// This stores the icons for the dogs locally. If a dog is succesfully POST, PUT, or DELETE then we update this dictionary, otherwise it remains untouched.
-    static var dogIcons: [LocalDogIcon] = []
-    
     // MARK: Log Related
     
     /// An array storing the logCustomActionName input by the user. If the user selects a log as 'Custom' then puts in a custom name, it will be tracked here.
@@ -147,11 +142,6 @@ extension LocalConfiguration {
         
         LocalConfiguration.lastDogManagerSynchronization = ClassConstant.DateConstant.default1970Date
         UserDefaults.standard.set(LocalConfiguration.lastDogManagerSynchronization, forKey: KeyConstant.userConfigurationPreviousDogManagerSynchronization.rawValue)
-        
-        LocalConfiguration.dogIcons = []
-        if let dataDogIcons = try? NSKeyedArchiver.archivedData(withRootObject: LocalConfiguration.dogIcons, requiringSecureCoding: false) {
-            UserDefaults.standard.set(dataDogIcons, forKey: KeyConstant.localDogIcons.rawValue)
-        }
         
         // reset local dogManager to blank to clear what was saved from the last
         if let dataDogManager = try? NSKeyedArchiver.archivedData(withRootObject: DogManager(), requiringSecureCoding: false) {

@@ -8,8 +8,7 @@
 
 import Foundation
 
-enum EnumConstant {
-    enum DevelopmentConstant {
+enum DevelopmentConstant {
         /// True if the server we are contacting is our Ubuntu AWS instance, false if we are local hosting off personal computer
         static let isProductionServer: Bool = {
 #if DEBUG
@@ -51,8 +50,4 @@ enum EnumConstant {
         static let reminderMinuteInterval = isProductionDatabase ? 5 : 1
         /// If a subscription is bought on the production database / server, then we display the purchase/expiration date as the format: Thursday, August 18th, 2022. If it's not the production database, then we display it as Thursday, August 18th, 11:00 AM, 2022
         static let subscriptionDateFormatTemplate = isProductionDatabase ? "EEEE, MMMM d, yyyy" : "EEEE, MMMM d yyyy, h:mm a"
-    }
-    enum HashConstant {
-        static let defaultSHA256Hash: String = Hash.sha256Hash(forString: "-1")
-    }
 }
