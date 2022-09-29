@@ -99,7 +99,15 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     }
     
     func numberOfSections(dropDownUIViewIdentifier: String) -> Int {
-        return 1
+        if dropDownUIViewIdentifier == "DropDownParentDog"{
+            return 1
+        }
+        else if dropDownUIViewIdentifier == "DropDownLogAction"{
+            return 1
+        }
+        else {
+            return 0
+        }
     }
     
     func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
@@ -248,7 +256,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                     RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                         if requestWasSuccessful {
                             completionTracker.completedTask()
-                            self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                         }
                         else {
                             completionTracker.failedTask()
@@ -274,7 +282,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                         
                         self.dogManager.findDog(forDogId: dogId)?.dogLogs.addLog(forLog: newLog)
                         
-                        self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                         
                         completionTracker.completedTask()
                     }
@@ -307,7 +315,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                     
                     self.dogManager.findDog(forDogId: parentDogIdToUpdate)?.dogLogs.addLog(forLog: logToUpdate)
                     
-                    self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                     
                     self.navigationController?.popViewController(animated: true)
                 }
@@ -339,7 +347,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                         }
                     }
                     
-                    self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                     
                     self.navigationController?.popViewController(animated: true)
                 }
@@ -386,9 +394,19 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         dismissKeyboard()
     }
     
-    // MARK: - Properties
+    // MARK: - Dog Manager
     
-    var dogManager: DogManager! = nil
+    private(set) var dogManager = DogManager()
+    
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
+        
+        if !(sender.localized is LogsViewController) {
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
+        }
+    }
+    
+    // MARK: - Properties
     
     /// This is the parentDogId of a log if the user is updating an existing log instead of creating a new one
     var parentDogIdToUpdate: Int?

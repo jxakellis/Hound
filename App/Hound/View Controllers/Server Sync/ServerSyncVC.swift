@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class ServerSyncViewController: UIViewController, ServerFamilyViewControllerDelegate, DogManagerControlFlowProtocol {
+final class ServerSyncViewController: UIViewController, ServerFamilyViewControllerDelegate {
     
     // MARK: - ServerFamilyViewControllerDelegate
     
@@ -28,6 +28,14 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
         else if troubleshootLoginButton.tag == VisualConstant.ViewTagConstant.serverSyncViewControllerGoToLoginPage {
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "ServerLoginViewController")
         }
+    }
+    
+    // MARK: - Dog Manager
+    
+    static var dogManager = DogManager()
+    
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        ServerSyncViewController.dogManager = forDogManager
     }
     
     // MARK: - Main
@@ -68,13 +76,6 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
     }
     
     // MARK: - Properties
-    
-    /// DogManager that all of the retrieved information will be added too.
-    static var dogManager = DogManager()
-    
-    func setDogManager(sender: Sender, forDogManager: DogManager) {
-        ServerSyncViewController.dogManager = forDogManager
-    }
     
     /// What fraction of the loading/progress bar the user request is worth when completed
     private var getUserProgressFractionOfWhole = 0.2
@@ -210,7 +211,7 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
                     return
                 }
                 
-                ServerSyncViewController.dogManager = newDogManager
+                self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
                 
                 // hasn't shown configuration to create/update dog
                 if LocalConfiguration.localHasCompletedHoundIntroductionViewController == false {
@@ -270,7 +271,7 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
             mainTabBarViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: ServerSyncViewController.dogManager)
         }
         else if let houndIntroductionViewController: HoundIntroductionViewController = segue.destination as? HoundIntroductionViewController {
-            houndIntroductionViewController.dogManager = ServerSyncViewController.dogManager
+            houndIntroductionViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: ServerSyncViewController.dogManager)
         }
         else if let serverFamilyViewController: ServerFamilyViewController = segue.destination as? ServerFamilyViewController {
             serverFamilyViewController.delegate = self

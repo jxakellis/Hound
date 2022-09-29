@@ -18,10 +18,6 @@ final class SettingsFamilyMemberTableViewCell: UITableViewCell {
     @IBOutlet private weak var rightChevronLeadingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var rightChevronAspectRatio: NSLayoutConstraint!
     
-    // MARK: - Properties
-    
-    var userId: String!
-    
     // MARK: - Main
     
     override func awakeFromNib() {
@@ -36,9 +32,7 @@ final class SettingsFamilyMemberTableViewCell: UITableViewCell {
     
     // MARK: - Functions
     
-    func setup(forDisplayFullName displayFullName: String, userId: String) {
-        self.userId = userId
-        
+    func setup(forDisplayFullName displayFullName: String) {
         fullNameLabel.text = displayFullName
         
         let isUserFamilyHead = FamilyInformation.isUserFamilyHead

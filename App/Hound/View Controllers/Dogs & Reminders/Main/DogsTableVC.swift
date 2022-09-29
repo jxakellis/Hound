@@ -14,19 +14,11 @@ protocol DogsTableViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
-final class DogsTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsReminderDisplayTableViewCellDelegate {
+final class DogsTableViewController: UITableViewController {
     
-    // MARK: - DogsReminderDisplayTableViewCellDelegate
+    // MARK: - Dog Manager
     
-    func didUpdateReminderEnable(sender: Sender, parentDogId: Int, reminder: Reminder) {
-        
-        dogManager.findDog(forDogId: parentDogId)?.dogReminders.findReminder(forReminderId: reminder.reminderId)?.reminderIsEnabled = reminder.reminderIsEnabled
-        setDogManager(sender: sender, forDogManager: dogManager)
-    }
-    
-    // MARK: - DogManagerControlFlowProtocol
-    
-    private var dogManager: DogManager = DogManager()
+    private(set) var dogManager: DogManager = DogManager()
     
     func setDogManager(sender: Sender, forDogManager: DogManager) {
         dogManager = forDogManager
@@ -47,9 +39,6 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
         
         // start up loop timer, normally done in view will appear but sometimes view has appeared and doesn't need a loop but then it can get a dogManager update which requires a loop. This happens due to reminder added in DogsIntroduction page.
         if viewIsBeingViewed == true && loopTimer == nil {
-            guard  dogManager.hasEnabledReminder else {
-                return
-            }
             loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
             
             if let loopTimer = loopTimer {
@@ -57,32 +46,19 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
             }
         }
         
-        reloadTableConstraints()
-    }
-    
-    private func reloadTableConstraints() {
-        if dogManager.dogs.count > 0 {
-            tableView.allowsSelection = true
-            self.tableView.rowHeight = -1.0
-        }
-        else {
-            tableView.allowsSelection = false
-            self.tableView.rowHeight = 65.5
-        }
+        tableView.allowsSelection = dogManager.dogs.count > 0
+        tableView.rowHeight = dogManager.dogs.count > 0 ? -1.0 : 65.5
     }
     
     // MARK: - Properties
     
     weak var delegate: DogsTableViewControllerDelegate! = nil
     
-    var updatingSwitch: Bool = false
-    
     private var loopTimer: Timer?
     
     // MARK: - Main
     
     override func viewDidLoad() {
-        self.dogManager = MainTabBarViewController.staticDogManager
         super.viewDidLoad()
         
         if dogManager.dogs.count == 0 {
@@ -103,12 +79,10 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
         
         self.reloadTable()
         
-        if dogManager.hasEnabledReminder {
-            loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
-            
-            if let loopTimer = loopTimer {
-                RunLoop.main.add(loopTimer, forMode: .default)
-            }
+        loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
+        
+        if let loopTimer = loopTimer {
+            RunLoop.main.add(loopTimer, forMode: .default)
         }
         
     }
@@ -165,7 +139,9 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
         let dog: Dog = cell.dog
         let dogName = dog.dogName
         let dogId = dog.dogId
-        guard let section = self.dogManager.findIndex(forDogId: dogId) else {
+        guard let section = self.dogManager.dogs.firstIndex(where: { dog in
+            return dog.dogId == dogId
+        }) else {
             return
         }
         
@@ -355,7 +331,6 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
             if let customCell = cell as? DogsReminderDisplayTableViewCell {
                 customCell.setup(forParentDogId: dogManager.dogs[indexPath.section].dogId,
                                  forReminder: dogManager.dogs[indexPath.section].dogReminders.reminders[indexPath.row - 1])
-                customCell.delegate = self
             }
             
             return cell
@@ -436,12 +411,7 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        if self.dogManager.dogs.count == 0 {
-            return false
-        }
-        else {
-            return true
-        }
+        return dogManager.dogs.count >= 1
     }
     
 }

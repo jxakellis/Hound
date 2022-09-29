@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum DogsRequest: RequestProtocol {
+enum DogsRequest {
     
     static var baseURLWithoutParams: URL { return FamilyRequest.baseURLWithFamilyId.appendingPathComponent("/dogs") }
     
@@ -119,9 +119,6 @@ extension DogsRequest {
                     }
                     
                     newDog.combine(withOldDog: currentDog)
-                    // If we have an image stored locally for a dog, then we apply the icon.
-                    // If the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
-                    newDog.dogIcon = LocalDogIcon.getIcon(forDogId: newDog.dogId) ?? ClassConstant.DogConstant.defaultDogIcon
                     
                     // delete any newReminder with the marker that they should be deleted
                     for newReminder in newDog.dogReminders.reminders where newReminder.reminderIsDeleted == true {
@@ -171,6 +168,8 @@ extension DogsRequest {
                         // find any newDogs with the marker that they should be deleted, if they need to be, then no point to iterating through their logs/reminders
                         return dog.dogIsDeleted
                     }.forEach { deletedDog in
+                        // dog is offically removed so delete its icon as we have no reason to store it now
+                        DogIconManager.removeIcon(forDogId: deletedDog.dogId)
                         newDogManager.removeDog(forDogId: deletedDog.dogId)
                     }
                     
@@ -210,8 +209,11 @@ extension DogsRequest {
             case .successResponse:
                 if let dogId = responseBody?[KeyConstant.result.rawValue] as? Int {
                     // Successfully saved to server, so save dogIcon locally
-                    // add a localDogIcon that has the same dogId and dogIcon as the newly created dog
-                    LocalDogIcon.addIcon(forDogId: dogId, forDogIcon: dog.dogIcon)
+                    // remove dogIcon that was stored under placeholderId
+                    DogIconManager.removeIcon(forDogId: dog.dogId)
+                    
+                    // add a localDogIcon under offical dogId for newly created dog
+                    DogIconManager.addIcon(forDogId: dogId, forDogIcon: dog.dogIcon)
                     completionHandler(dogId, responseStatus)
                 }
                 else {
@@ -235,8 +237,8 @@ extension DogsRequest {
             switch responseStatus {
             case .successResponse:
                 // Successfully saved to server, so update dogIcon locally
-                // check to see if a localDogIcon exists for the dog
-                LocalDogIcon.addIcon(forDogId: dog.dogId, forDogIcon: dog.dogIcon)
+                // overwrite the locally stored dogIcon as user could have updated it
+                DogIconManager.addIcon(forDogId: dog.dogId, forDogIcon: dog.dogIcon)
                 completionHandler(true, responseStatus)
             case .failureResponse:
                 completionHandler(false, responseStatus)
@@ -255,7 +257,7 @@ extension DogsRequest {
             switch responseStatus {
             case .successResponse:
                 // Successfully saved to server, so remove the stored dogIcons that have the same dogId as the removed dog
-                LocalDogIcon.removeIcon(forDogId: dogId)
+                DogIconManager.removeIcon(forDogId: dogId)
                 completionHandler(true, responseStatus)
             case .failureResponse:
                 completionHandler(false, responseStatus)

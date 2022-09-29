@@ -68,7 +68,7 @@ final class BorderedUILabel: ScaledUILabel {
     }
     
     /// The ScaledUILabel placeholder text
-    override var placeholder: String? {
+    var placeholder: String? {
         get {
             var placeholderText: String?
             

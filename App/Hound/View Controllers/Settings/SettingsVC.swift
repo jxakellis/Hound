@@ -13,12 +13,12 @@ protocol SettingsViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
-final class SettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SettingsFamilyViewControllerDelegate, SettingsPersonalInformationViewControllerDelegate, DogManagerControlFlowProtocol {
+final class SettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SettingsPersonalInformationViewControllerDelegate {
     
-    // MARK: - SettingsFamilyViewControllerDelegate & SettingsPersonalInformationViewControllerDelegate
+    // MARK: - SettingsPersonalInformationViewControllerDelegate
     
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
-        setDogManager(sender: sender, forDogManager: forDogManager)
+        delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: forDogManager)
     }
     
     // MARK: - IB
@@ -29,13 +29,9 @@ final class SettingsViewController: UIViewController, UITableViewDelegate, UITab
     
     // 2 separators, 5 regulars pages, 1 separator, and 1 regular page to allow for proper edge insets
     private let numberOfTableViewCells = (2 + 5 + 1 + 1)
-    var settingsPersonalInformationViewController: SettingsPersonalInformationViewController?
-    var settingsFamilyViewController: SettingsFamilyViewController?
     var settingsSubscriptionViewController: SettingsSubscriptionViewController?
     private var subscriptionProducts: [SKProduct] = []
-    var settingsAppearanceViewController: SettingsAppearanceViewController?
     var settingsNotificationsViewController: SettingsNotificationsViewController?
-    var settingsAboutViewController: SettingsAboutViewController?
     weak var delegate: SettingsViewControllerDelegate!
     
     // MARK: - Main
@@ -52,26 +48,6 @@ final class SettingsViewController: UIViewController, UITableViewDelegate, UITab
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
-    }
-    
-    // MARK: - Dog Manager
-    
-    private var dogManager: DogManager = DogManager()
-    
-    func setDogManager(sender: Sender, forDogManager: DogManager) {
-        dogManager = forDogManager
-        
-        // pass down
-        if (sender.localized is SettingsFamilyViewController) == false {
-            settingsFamilyViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: forDogManager)
-        }
-        if (sender.localized is SettingsPersonalInformationViewControllerDelegate) == false {
-            settingsPersonalInformationViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: forDogManager)
-        }
-        // pass up
-        if (sender.localized is MainTabBarViewController) == false {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: forDogManager)
-        }
     }
     
     // MARK: - Settings Pages Table View Data Source
@@ -173,28 +149,14 @@ final class SettingsViewController: UIViewController, UITableViewDelegate, UITab
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let settingsPersonalInformationViewController = segue.destination as? SettingsPersonalInformationViewController {
-            self.settingsPersonalInformationViewController = settingsPersonalInformationViewController
-            
             settingsPersonalInformationViewController.delegate = self
-            settingsPersonalInformationViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
-        }
-        else if let settingsFamilyViewController = segue.destination as? SettingsFamilyViewController {
-            self.settingsFamilyViewController = settingsFamilyViewController
-            settingsFamilyViewController.delegate = self
-            settingsFamilyViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         }
         else if let settingsSubscriptionViewController = segue.destination as? SettingsSubscriptionViewController {
             self.settingsSubscriptionViewController = settingsSubscriptionViewController
             settingsSubscriptionViewController.subscriptionProducts = subscriptionProducts
         }
-        else if let settingsAppearanceViewController = segue.destination as? SettingsAppearanceViewController {
-            self.settingsAppearanceViewController = settingsAppearanceViewController
-        }
         else if let settingsNotificationsViewController = segue.destination as? SettingsNotificationsViewController {
             self.settingsNotificationsViewController = settingsNotificationsViewController
-        }
-        else if let settingsAboutViewController = segue.destination as? SettingsAboutViewController {
-            self.settingsAboutViewController = settingsAboutViewController
         }
     }
     

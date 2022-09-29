@@ -122,7 +122,9 @@ final class TimingManager {
             return
         }
         
-        let dogManager = MainTabBarViewController.staticDogManager
+        guard let dogManager = MainTabBarViewController.mainTabBarViewController?.dogManager else {
+            return
+        }
         
         let dog = dogManager.findDog(forDogId: dogId)
         let reminder = dog?.dogReminders.findReminder(forReminderId: passedReminderId)

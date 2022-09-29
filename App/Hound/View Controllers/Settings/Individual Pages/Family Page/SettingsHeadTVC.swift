@@ -14,10 +14,6 @@ final class SettingsFamilyHeadTableViewCell: UITableViewCell {
     
     @IBOutlet private weak var fullNameLabel: ScaledUILabel!
     
-    // MARK: - Properties
-    
-    var userId: String!
-    
     // MARK: - Main
     
     override func awakeFromNib() {
@@ -33,9 +29,7 @@ final class SettingsFamilyHeadTableViewCell: UITableViewCell {
     
     // MARK: - Functions
     
-    func setup(forDisplayFullName displayFullName: String, userId: String) {
-        self.userId = userId
-        
+    func setup(forDisplayFullName displayFullName: String) {
         fullNameLabel.text = displayFullName
     }
     

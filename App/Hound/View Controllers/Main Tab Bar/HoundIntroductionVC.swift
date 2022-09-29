@@ -20,7 +20,7 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         
-        if let dogIcon = ImageManager.processImage(forDogIcon: dogIcon, forInfo: info) {
+        if let dogIcon = DogIconManager.processDogIcon(forDogIconButton: dogIcon, forInfo: info) {
             self.dogIcon.setImage(dogIcon, for: .normal)
         }
         
@@ -82,7 +82,7 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
         }
         
         // no dogs so we create a new one for the user
-        if dogManager.hasCreatedDog == false, let dog = try? Dog(dogName: dogName ?? ClassConstant.DogConstant.defaultDogName, dogIcon: dogIcon ?? ClassConstant.DogConstant.defaultDogIcon) {
+        if dogManager.dogs.count == 0, let dog = try? Dog(dogName: dogName ?? ClassConstant.DogConstant.defaultDogName) {
             // can only fail if dogName == "", but already checked for that and corrected if there was a problem
             
             // contact server to make their dog
@@ -100,11 +100,10 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
             }
         }
         // updating the icon of an existing dog
-        else if dogManager.hasCreatedDog == true {
+        else if dogManager.dogs.count >= 1 {
             // if the user chose a dogIcon, then we apply
             if let icon = dogIcon {
                 dogManager.dogs[0].dogIcon = icon
-                LocalDogIcon.addIcon(forDogId: dogManager.dogs[0].dogId, forDogIcon: icon)
             }
             // close page because updated
             LocalConfiguration.localHasCompletedHoundIntroductionViewController = true
@@ -114,25 +113,30 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
         
     }
     
+    // MARK: - Dog Manager
+    
+    private(set) var dogManager = DogManager()
+    
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
+    }
+    
     // MARK: - Properties
     
     var imagePickMethodAlertController: GeneralUIAlertController!
-    
-    /// The existing dogManager of the user. If they are a new family, then the dogManager will have no dogs.
-    var dogManager: DogManager!
     
     // MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        dogNameHeader.text = (dogManager.hasCreatedDog == false) ? "What Is Your Dog's Name?" : "Your Dog"
+        dogNameHeader.text = (dogManager.dogs.count == 0) ? "What Is Your Dog's Name?" : "Your Dog"
         
-        dogNameDescription.text = (dogManager.hasCreatedDog == false) ? "We will generate a basic dog for you. Reminders will come later." : "It looks like your family has already created a dog. Although, if you want, you can add your own custom icon to it."
+        dogNameDescription.text = (dogManager.dogs.count == 0) ? "We will generate a basic dog for you. Reminders will come later." : "It looks like your family has already created a dog. Although, if you want, you can add your own custom icon to it."
         
         // Dog Name
         dogName.text = ""
-        if dogManager.hasCreatedDog == false {
+        if dogManager.dogs.count == 0 {
             dogName.placeholder = "Bella"
             dogName.delegate = self
             dogName.isEnabled = true
@@ -150,7 +154,7 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
         dogIcon.imageView?.layer.cornerRadius = dogIcon.frame.width / 2
         
         // Setup AlertController for dogIcon button now, increases responsiveness
-        let (picker, viewController) = ImageManager.setupDogIconImagePicker(forViewController: self)
+        let (picker, viewController) = DogIconManager.setupDogIconImagePicker(forViewController: self)
         picker.delegate = self
         imagePickMethodAlertController = viewController
         

@@ -13,11 +13,11 @@ protocol LogsTableViewControllerDelegate: AnyObject {
     func didSelectLog(parentDogId: Int, log: Log)
 }
 
-final class LogsTableViewController: UITableViewController, DogManagerControlFlowProtocol {
+final class LogsTableViewController: UITableViewController {
     
-    // MARK: - DogManagerControlFlowProtocol
+    // MARK: - Dog Manager
     
-    private var dogManager: DogManager = DogManager()
+    private(set) var dogManager: DogManager = DogManager()
     
     func setDogManager(sender: Sender, forDogManager: DogManager) {
         dogManager = forDogManager

@@ -68,30 +68,6 @@ extension FamilyMember {
         }
     }
     
-    /// The family member's initals name. Handles cases where the first name and/or last name may be ""
-    var displayInitals: String {
-        // get the first character of each string (using " " if nothing) then convert to single character string
-        let firstNameFirstLetter: String = String(firstName?.trimmingCharacters(in: .whitespacesAndNewlines).first ?? Character(""))
-        let lastNameFirstLetter: String = String(lastName?.trimmingCharacters(in: .whitespacesAndNewlines).first ?? Character(""))
-        
-        // check to see if anything is blank
-        if firstNameFirstLetter == "" && lastNameFirstLetter == "" {
-            return "UKN⚠️"
-        }
-        // we know one of OR both of the trimmedFirstName and trimmedLast name are != nil && != ""
-        else if firstNameFirstLetter == "" {
-            // no first name but has last name
-            return lastNameFirstLetter
-        }
-        else if firstNameFirstLetter == "" {
-            // no last name but has first name
-            return lastNameFirstLetter
-        }
-        else {
-            return "\(firstNameFirstLetter).\(lastNameFirstLetter)."
-        }
-    }
-    
     /// The family member's first name. Handles cases where the first name may be "", therefore trying to use the last name to substitute
     var displayFirstName: String {
         let trimmedFirstName = firstName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""

@@ -9,7 +9,7 @@
 import Foundation
 
 /// Static word needed to conform to protocol. Enum preferred to a class as you can't instance an enum that is all static
-enum AlertRequest: RequestProtocol {
+enum AlertRequest {
     
     static var baseURLWithoutParams: URL { return UserRequest.baseURLWithUserId.appendingPathComponent("/alert")}
     
@@ -18,7 +18,7 @@ enum AlertRequest: RequestProtocol {
     /**
      completionHandler returns a response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalCreate(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
+    private static func internalCreate(completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         return InternalRequestUtils.genericPostRequest(invokeErrorManager: false, forURL: baseURLWithoutParams.appendingPathComponent("/terminate"), forBody: [:]) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
@@ -34,8 +34,8 @@ extension AlertRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
-        _ = AlertRequest.internalCreate(invokeErrorManager: invokeErrorManager) { _, responseStatus in
+    static func create(completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
+        _ = AlertRequest.internalCreate { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)

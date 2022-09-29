@@ -9,7 +9,7 @@
 import Foundation
 
 /// Static word needed to conform to protocol. Enum preferred to a class as you can't instance an enum that is all static
-enum FamilyRequest: RequestProtocol {
+enum FamilyRequest {
     
     static var baseURLWithoutParams: URL { return UserRequest.baseURLWithUserId.appendingPathComponent("/family") }
     // UserRequest baseURL with the userId path param appended on

@@ -8,14 +8,13 @@
 
 import UIKit
 
-// TO DO BUG PRIO: LOW reminders and logs disappearing. Happens primarily when involved with other users / when sourced from other users. Typically disppears with lifecycle, e.g. goes to background then opens later and its missing.
-// For example: the new log/reminder is synced to the device, so the server won't return it anymore. Then it appears the new log/reminder isn't persisted so when the user opens the app again, the new log/reminder is missing. The issue can be solved by hitting Redownload Data
 final class DogManager: NSObject, NSCoding {
     
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
         dogs = aDecoder.decodeObject(forKey: KeyConstant.dogs.rawValue) as? [Dog] ?? dogs
+        // TO DO NOW convert old dog manager into new dogManager
     }
     
     func encode(with aCoder: NSCoder) {
@@ -42,9 +41,6 @@ final class DogManager: NSObject, NSCoding {
         // Array of dog JSON [{dog1:'foo'},{dog2:'bar'}]
         for dogBody in dogBodies {
             let dog = Dog(fromBody: dogBody)
-            // If we have an image stored locally for a dog, then we apply the icon.
-            // If the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
-            dog.dogIcon = LocalDogIcon.getIcon(forDogId: dog.dogId) ?? ClassConstant.DogConstant.defaultDogIcon
             dogArray.append(dog)
         }
         
@@ -63,7 +59,6 @@ final class DogManager: NSObject, NSCoding {
             }
             // we should combine the currentDog's reminders/logs into the new dog
             newDog.combine(withOldDog: oldDog)
-            newDog.dogIcon = oldDog.dogIcon
             
             return true
         }
@@ -112,12 +107,6 @@ final class DogManager: NSObject, NSCoding {
     
     /// Removes a dog with the given dogId
     func removeDog(forDogId dogId: Int) {
-        guard let matchingDogIndex = dogs.firstIndex(where: { dog in
-            return dog.dogId == dogId
-        }) else {
-            return
-        }
-        
         // make sure we invalidate all the timers associated. this isn't technically necessary but its easier to tie up lose ends here
         if let dog = findDog(forDogId: dogId) {
             for reminder in dog.dogReminders.reminders {
@@ -125,28 +114,9 @@ final class DogManager: NSObject, NSCoding {
             }
         }
         
-        dogs.remove(at: matchingDogIndex)
-        
-        LocalDogIcon.removeIcon(forDogId: dogId)
-    }
-    
-    /// Removes a dog at the given index
-    func removeDog(forIndex index: Int) {
-        // Make sure the index is valid
-        guard dogs.count > index else {
-            return
+        dogs.removeAll { dog in
+            return dog.dogId == dogId
         }
-        
-        let dog = dogs[index]
-        
-        // make sure we invalidate all the timers associated. this isn't technically necessary but its easier to tie up lose ends here
-        for reminder in dog.dogReminders.reminders {
-            reminder.timer?.invalidate()
-        }
-        
-        dogs.remove(at: index)
-        
-        LocalDogIcon.removeIcon(forDogId: dog.dogId)
     }
     
 }
@@ -164,15 +134,6 @@ extension DogManager {
         return nil
     }
     
-    /// Returns the index of a dog with the given dogId
-    func findIndex(forDogId dogId: Int) -> Int? {
-        for d in 0..<dogs.count where dogs[d].dogId == dogId {
-            return d
-        }
-        
-        return nil
-    }
-    
     // MARK: Information
     
     /// Returns true if ANY the dogs present has at least 1 CREATED reminder
@@ -181,42 +142,6 @@ extension DogManager {
             return true
         }
         return false
-    }
-    
-    /// Returns true if dogs.count > 0
-    var hasCreatedDog: Bool {
-        if dogs.count > 0 {
-            return true
-        }
-        else {
-            return false
-        }
-    }
-    
-    /// Returns true if ANY the dogs present has at least 1 ENABLED reminder
-    var hasEnabledReminder: Bool {
-        for dog in dogs {
-            for reminder in dog.dogReminders.reminders where reminder.reminderIsEnabled == true {
-                return true
-            }
-        }
-        return false
-    }
-    
-    /// Returns number of reminders that are enabled and therefore have a timer.
-    var enabledTimersCount: Int {
-        var count = 0
-        for dog in MainTabBarViewController.staticDogManager.dogs {
-            
-            for reminder in dog.dogReminders.reminders {
-                guard reminder.reminderIsEnabled == true else {
-                    continue
-                }
-                
-                count += 1
-            }
-        }
-        return count
     }
     
     /// Returns an array of tuples [(parentDogId, log]). This array has all the logs for all the dogs sorted chronologically, oldest log at index 0 and newest at end of array. Optionally filters by dictionary literal of [dogIds: [logActions]] provided
@@ -375,12 +300,5 @@ extension DogManager {
         dogs = oldDogManager.dogs
         sortDogs()
     }
-    
-}
-
-protocol DogManagerControlFlowProtocol {
-    
-    /// Sets DogManger equal to forDogManager, depending on sender will also call methods to propogate change.
-    func setDogManager(sender: Sender, forDogManager: DogManager)
     
 }

@@ -116,7 +116,7 @@ enum CheckManager {
         
         AppDelegate.generalLogger.notice("Showing Release Notes")
         
-        AlertManager.enqueueBannerForPresentation(forTitle: "Hound Updated to Version \(UIApplication.appVersion)", forSubtitle: "Tap to show release notes", forStyle: .info) {
+        AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.houndUpdatedTitle, forSubtitle: VisualConstant.BannerTextConstant.houndUpdatedSubtitle, forStyle: .info) {
             
             // If the user taps on the banner, then we show them the release notes
             

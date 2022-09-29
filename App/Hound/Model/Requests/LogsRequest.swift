@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum LogsRequest: RequestProtocol {
+enum LogsRequest {
     
     /// Need dogId for any request so we can't append '/logs' until we have dogId
     static var baseURLWithoutParams: URL { return DogsRequest.baseURLWithoutParams}
@@ -115,6 +115,7 @@ extension LogsRequest {
      completionHandler returns a possible array of logs and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
+    /*
     static func get(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping ([Log]?, ResponseStatus) -> Void) {
         
         _ = LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: nil) { responseBody, responseStatus in
@@ -139,6 +140,7 @@ extension LogsRequest {
             }
         }
     }
+     */
     
     /**
      completionHandler returns a possible logId and the ResponseStatus.

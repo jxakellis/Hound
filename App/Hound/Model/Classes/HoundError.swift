@@ -8,33 +8,16 @@
 
 import Foundation
 
-enum HoundErrorType {
-    case familyRequestError
-    case generalRequestError
-    case familyResponseError
-    case generalResponseError
-    case dogError
-    case inAppPurchaseError
-    case logError
-    case reminderError
-    case signInWithAppleError
-    case unknownError
-    case weeklyComponentsError
-}
-
 class HoundError: Error {
-    init(forName: String, forDescription: String, forType: HoundErrorType) {
+    init(forName: String, forDescription: String) {
         self.name = forName
         self.description = forDescription
-        self.type = forType
     }
     
     /// Constant name of error. When HoundErrors are accessed from the Error Constant enum, they calculated properties. That means each time a HoundError is accessed, it's description might have changed. However, it's name and type will always be the same.
     private(set) var name: String
     /// Dynamic descripton of error. When HoundErrors are accessed from the Error Constant enum, they calculated properties. That means each time a HoundError is accessed, it's description might have changed. However, it's name and type will always be the same.
     private(set) var description: String
-    /// Constant type of error. When HoundErrors are accessed from the Error Constant enum, they calculated properties. That means each time a HoundError is accessed, it's description might have changed. However, it's name and type will always be the same.
-    private(set) var type: HoundErrorType
     
     func alert() {
         AppDelegate.generalLogger.error("Alerting user for error: \(self.description)")

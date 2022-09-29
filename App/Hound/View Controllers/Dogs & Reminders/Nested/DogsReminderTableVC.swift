@@ -14,7 +14,7 @@ protocol DogsReminderTableViewControllerDelegate: AnyObject {
     func didRemoveReminder(reminderId: Int)
 }
 
-final class DogsReminderTableViewController: UITableViewController, ReminderManagerControlFlowProtocol, DogsNestedReminderViewControllerDelegate, DogsReminderTableViewCellDelegate {
+final class DogsReminderTableViewController: UITableViewController, DogsNestedReminderViewControllerDelegate, DogsReminderTableViewCellDelegate {
     
     // MARK: - Dogs Reminder Table View Cell
     
@@ -29,8 +29,6 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     }
     
     // MARK: - Dogs Nested Reminder
-    
-    var dogsNestedReminderViewController = DogsNestedReminderViewController()
     
     /// When this function is called through a delegate, it adds the information to the list of reminders and updates the cells to display it
     func didAddReminder(sender: Sender, forReminder reminder: Reminder) {
@@ -58,7 +56,7 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
         delegate.didRemoveReminder(reminderId: reminderId)
     }
     
-    // MARK: - Reminder Manager Control Flow Protocol
+    // MARK: - Reminder Manager
     
     private var reminderManager = ReminderManager()
     
@@ -66,24 +64,10 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
         reminderManager = newReminderManager
         
         if !(sender.origin is DogsReminderTableViewCell) && !(sender.origin is DogsReminderTableViewController) {
-            updateReminderManagerDependents()
+            reloadTable()
         }
         
-        reloadTableConstraints()
-        
-    }
-    
-    private func reloadTableConstraints() {
-        if reminderManager.reminders.count > 0 {
-            self.tableView.rowHeight = -1
-        }
-        else {
-            self.tableView.rowHeight = 65.5
-        }
-    }
-    
-    func updateReminderManagerDependents() {
-        self.reloadTable()
+        tableView.rowHeight = reminderManager.reminders.count > 0 ? -1 : 65.5
     }
     
     // MARK: - Properties
@@ -204,7 +188,6 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Links delegate to NestedReminder
         if let dogsNestedReminderViewController = segue.destination as? DogsNestedReminderViewController {
-            self.dogsNestedReminderViewController = dogsNestedReminderViewController
             dogsNestedReminderViewController.delegate = self
             
             dogsNestedReminderViewController.targetReminder = selectedReminder

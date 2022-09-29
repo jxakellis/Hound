@@ -251,8 +251,8 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     @IBOutlet private weak var notificationSoundLabel: BorderedUILabel!
     
     @objc private func willShowNotificationSoundDropDown(_ sender: Any) {
-        if dropDown.isDown == false, let notificationSoundIndexPath = NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound) {
-            self.dropDown.showDropDown(numberOfRowsToShow: 6.5, selectedIndexPath: IndexPath(row: notificationSoundIndexPath, section: 1))
+        if dropDown.isDown == false {
+            self.dropDown.showDropDown(numberOfRowsToShow: 6.5)
         }
         else {
             self.hideDropDown()

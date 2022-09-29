@@ -12,7 +12,7 @@ protocol SettingsPersonalInformationViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
-final class SettingsPersonalInformationViewController: UIViewController, UIGestureRecognizerDelegate, DogManagerControlFlowProtocol {
+final class SettingsPersonalInformationViewController: UIViewController, UIGestureRecognizerDelegate {
     
     // MARK: - UIGestureRecognizerDelegate
     
@@ -51,10 +51,11 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
                 AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.redownloadDataTitle, forSubtitle: VisualConstant.BannerTextConstant.redownloadDataSubtitle, forStyle: .success)
                 
                 // successful query to fully redownload the dogManager, no need to mess with lastDogManagerSynchronization as that is automatically handled
-                self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
+                self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
             }
         }
     }
+    
     // MARK: - Properties
     
     weak var delegate: SettingsPersonalInformationViewControllerDelegate!
@@ -70,18 +71,6 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
-    }
-    
-    // MARK: - Dog Manager
-    
-    private var dogManager: DogManager = DogManager()
-    
-    func setDogManager(sender: Sender, forDogManager: DogManager) {
-        dogManager = forDogManager
-        
-        if (sender.localized is SettingsViewController) == false {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: forDogManager)
-        }
     }
     
     // MARK: - Functions

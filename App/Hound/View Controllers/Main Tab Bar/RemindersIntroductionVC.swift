@@ -9,7 +9,7 @@
 import UIKit
 
 protocol RemindersIntroductionViewControllerDelegate: AnyObject {
-    func didComplete(sender: Sender, forDogManager dogManager: DogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager dogManager: DogManager)
 }
 
 final class RemindersIntroductionViewController: UIViewController {
@@ -45,7 +45,7 @@ final class RemindersIntroductionViewController: UIViewController {
             // wait the user to select an grant or deny notification permission (and for the server to response if situation requires the use of it) before continuing
             
             // Recheck to verify that the user is still eligible for default reminders, then check if reminders toggle switch could have been programically removed and deleted
-            guard self.dogManager.hasCreatedDog == true, self.dogManager.hasCreatedReminder == false, let remindersToggleSwitch = self.remindersToggleSwitch, remindersToggleSwitch.isOn == true else {
+            guard self.dogManager.dogs.count >= 1, self.dogManager.hasCreatedReminder == false, let remindersToggleSwitch = self.remindersToggleSwitch, remindersToggleSwitch.isOn == true else {
                 // the user has chosen to not add default reminders (or was blocked because their family already created reminders for some dog)
                 self.continueButton.isEnabled = true
                 LocalConfiguration.localHasCompletedRemindersIntroductionViewController = true
@@ -64,7 +64,6 @@ final class RemindersIntroductionViewController: UIViewController {
                 
                 // if we were able to add the reminders, then append to the dogManager
                 self.dogManager.dogs[0].dogReminders.addReminders(forReminders: reminders)
-                self.delegate.didComplete(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                 LocalConfiguration.localHasCompletedRemindersIntroductionViewController = true
                 self.dismiss(animated: true, completion: nil)
             }
@@ -72,11 +71,21 @@ final class RemindersIntroductionViewController: UIViewController {
         
     }
     
+    // MARK: - Dog Manager
+    
+    private(set) var dogManager = DogManager()
+    
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
+        
+        if !(sender.localized is MainTabBarViewController) {
+            self.delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
+        }
+    }
+    
     // MARK: - Properties
     
     weak var delegate: RemindersIntroductionViewControllerDelegate! = nil
-    
-    var dogManager: DogManager!
     
     // MARK: - Main
     
@@ -84,7 +93,7 @@ final class RemindersIntroductionViewController: UIViewController {
         super.viewDidLoad()
         
         // If the user's family has at least one dog and has no reminders, then they are in need of default reminders. If the user's family doesn't have a dog there is no place to put the default reminders, and if the user's family already created a reminder then its excessive to add the default reminders
-        let isEligibleForDefaultReminders = dogManager.hasCreatedDog == true && dogManager.hasCreatedReminder == false
+        let isEligibleForDefaultReminders = dogManager.dogs.count >= 1 && dogManager.hasCreatedReminder == false
         remindersBody.text = isEligibleForDefaultReminders ? "We'll create reminders that are useful for most dogs. Do you want to use them? You can always create more or edit reminders later." : "It appears that your family has already created a few reminders for your dog\(dogManager.dogs.count > 1 ? "s" : ""). Hopefully they cover everything you need. If not, you can always create more or edit reminders. Enjoy!"
         remindersToggleSwitch.isEnabled = isEligibleForDefaultReminders
         remindersToggleSwitch.isOn = isEligibleForDefaultReminders

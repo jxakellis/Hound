@@ -8,11 +8,7 @@
 
 import UIKit
 
-protocol SettingsFamilyViewControllerDelegate: AnyObject {
-    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
-}
-
-final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource, DogManagerControlFlowProtocol {
+final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - UIGestureRecognizerDelegate
     
@@ -57,8 +53,6 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     
     var kickFamilyMemberAlertController: GeneralUIAlertController!
     
-    weak var delegate: SettingsFamilyViewControllerDelegate!
-    
     private var familyCode: String {
         var code = FamilyInformation.familyCode
         code.insert("-", at: code.index(code.startIndex, offsetBy: 4))
@@ -82,18 +76,6 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
-    }
-    
-    // MARK: - Dog Manager
-    
-    private var dogManager: DogManager = DogManager()
-    
-    func setDogManager(sender: Sender, forDogManager: DogManager) {
-        dogManager = forDogManager
-        
-        if (sender.localized is SettingsViewController) == false {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: forDogManager)
-        }
     }
     
     // MARK: - Functions
@@ -257,12 +239,12 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         let familyMember = FamilyInformation.familyMembers[indexPath.row]
         // family members is sorted to have the family head as its first element
         if indexPath.row == 0, let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyHeadTableViewCell", for: indexPath) as? SettingsFamilyHeadTableViewCell {
-            cell.setup(forDisplayFullName: familyMember.displayFullName, userId: familyMember.userId)
+            cell.setup(forDisplayFullName: familyMember.displayFullName)
             
             return cell
         }
         else if let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsFamilyMemberTableViewCell", for: indexPath) as? SettingsFamilyMemberTableViewCell {
-            cell.setup(forDisplayFullName: familyMember.displayFullName, userId: familyMember.userId)
+            cell.setup(forDisplayFullName: familyMember.displayFullName)
             
             return cell
         }

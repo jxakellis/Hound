@@ -12,7 +12,7 @@ protocol DogsViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
-final class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsTableViewControllerDelegate, DogsIndependentReminderViewControllerDelegate {
+final class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate, DogsTableViewControllerDelegate, DogsIndependentReminderViewControllerDelegate {
     
     // MARK: - Dual Delegate Implementation
     
@@ -102,28 +102,6 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
         }
     }
     
-    // MARK: - DogManagerControlFlowProtocol
-    
-    private var dogManager = DogManager()
-    
-    func setDogManager(sender: Sender, forDogManager: DogManager) {
-        dogManager = forDogManager
-        
-        // possible senders
-        // DogsTableViewController
-        // DogsAddDogViewController
-        // MainTabBarViewController
-        
-        if !(sender.localized is DogsTableViewController) {
-            dogsMainScreenTableViewController.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
-        }
-        
-        if !(sender.localized is MainTabBarViewController) {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
-        }
-        
-    }
-    
     // MARK: - IB
     
     @IBOutlet private weak var refreshButton: UIBarButtonItem!
@@ -152,11 +130,33 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
         self.changeAddStatus(newAddStatus: !addStatus)
     }
     
+    // MARK: - Dog Manager
+    
+    private(set) var dogManager = DogManager()
+    
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
+        
+        // possible senders
+        // DogsTableViewController
+        // DogsAddDogViewController
+        // MainTabBarViewController
+        
+        if !(sender.localized is DogsTableViewController) {
+            dogsTableViewController.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
+        }
+        
+        if !(sender.localized is MainTabBarViewController) {
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
+        }
+        
+    }
+    
     // MARK: - Properties
     
     weak var delegate: DogsViewControllerDelegate! = nil
     
-    var dogsMainScreenTableViewController = DogsTableViewController()
+    var dogsTableViewController = DogsTableViewController()
     
     var dogsAddDogViewController = DogsAddDogViewController()
     
@@ -206,7 +206,6 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     
     // MARK: - Programmically Added Add Reminder To Dog / Add Dog Buttons
     
-    private var universalTapGesture: UITapGestureRecognizer!
     private var dimScreenView: UIView!
     private var dismissAddDogTap: UITapGestureRecognizer!
     
@@ -448,9 +447,9 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
             self.dogsAddDogViewController = dogsAddDogViewController
             dogsAddDogViewController.delegate = self
         }
-        else if let dogsMainScreenTableViewController = segue.destination as? DogsTableViewController {
-            self.dogsMainScreenTableViewController = dogsMainScreenTableViewController
-            dogsMainScreenTableViewController.delegate = self
+        else if let dogsTableViewController = segue.destination as? DogsTableViewController {
+            self.dogsTableViewController = dogsTableViewController
+            dogsTableViewController.delegate = self
         }
         else if let dogsIndependentReminderViewController = segue.destination as? DogsIndependentReminderViewController {
             self.dogsIndependentReminderViewController = dogsIndependentReminderViewController

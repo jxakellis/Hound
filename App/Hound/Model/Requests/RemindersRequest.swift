@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum RemindersRequest: RequestProtocol {
+enum RemindersRequest {
     
     /// Need dog id for any request so we can't append '/reminders' until we have dogId
     static var baseURLWithoutParams: URL { return DogsRequest.baseURLWithoutParams }
@@ -147,6 +147,7 @@ extension RemindersRequest {
      completionHandler returns a possible array of reminders and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
+    /*
     static func get(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping ([Reminder]?, ResponseStatus) -> Void) {
         
         _ = RemindersRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderId: nil) { responseBody, responseStatus in
@@ -170,6 +171,7 @@ extension RemindersRequest {
             }
         }
     }
+     */
     
     /**
      completionHandler returns a possible reminder and the ResponseStatus.

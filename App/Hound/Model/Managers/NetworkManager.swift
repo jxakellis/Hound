@@ -15,13 +15,13 @@ final class NetworkManager {
     private let queue = DispatchQueue.global()
     private let monitor: NWPathMonitor
     
-    public private(set) var isConnected: Bool = false
+    private(set) var isConnected: Bool = false
     
     private init() {
         monitor = NWPathMonitor()
     }
     
-    public func startMonitoring() {
+    func startMonitoring() {
         monitor.start(queue: queue)
         monitor.pathUpdateHandler = { [weak self] path in
             self?.isConnected = path.status == .satisfied

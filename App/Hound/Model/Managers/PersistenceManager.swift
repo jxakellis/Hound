@@ -12,18 +12,18 @@ import StoreKit
 
 enum PersistenceManager {
     /// Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
-    static func setup() {
+    static func applicationDidFinishLaunching() {
+        
+        // TO DO NOW review user defaults from Hound 1.3.5. Make sure to load ones that should be transferred (making sure their original key is added to be compatible with new user defaults keys
         
         // MARK: Log Launch
         
         AppDelegate.generalLogger.notice("\n-----Device Info-----\n Model: \(UIDevice.current.model) \n Name: \(UIDevice.current.name) \n System Name: \(UIDevice.current.systemName) \n System Version: \(UIDevice.current.systemVersion)")
         
-        // MARK: Save Certain Values
+        // MARK: Save App State Values
         
         // <= build 8000 appVersion
-        UIApplication.previousAppVersion = UserDefaults.standard.object(forKey: KeyConstant.localAppVersion.rawValue) as? String ?? UserDefaults.standard.object(forKey: "appVersion") as? String
-        // <= build 8000 appBuild
-        UIApplication.previousAppBuild = UserDefaults.standard.object(forKey: KeyConstant.localAppBuild.rawValue) as? Int ?? UserDefaults.standard.object(forKey: "appBuild") as? Int
+        UIApplication.previousAppVersion = UserDefaults.standard.object(forKey: KeyConstant.localAppVersion.rawValue) as? String ?? UserDefaults.standard.object(forKey: "appVersion") as? String ?? "1.3.5"
         
         UserDefaults.standard.setValue(UIApplication.appVersion, forKey: KeyConstant.localAppVersion.rawValue)
         UserDefaults.standard.setValue(UIApplication.appBuild, forKey: KeyConstant.localAppBuild.rawValue)
@@ -45,7 +45,7 @@ enum PersistenceManager {
         UserInformation.userFirstName = keychain.get(KeyConstant.userFirstName.rawValue) ?? UserInformation.userFirstName
         UserInformation.userLastName = keychain.get(KeyConstant.userLastName.rawValue) ?? UserInformation.userLastName
         
-        // MARK: Load Stored User Information
+        // MARK: Load User Information
         
         UserInformation.userId = UserDefaults.standard.value(forKey: KeyConstant.userId.rawValue) as? String ?? UserInformation.userId
         
@@ -55,18 +55,9 @@ enum PersistenceManager {
        
         UserInformation.familyId = UserDefaults.standard.value(forKey: KeyConstant.familyId.rawValue) as? String ?? UserInformation.familyId
         
-        // MARK: Load Stored User Configuration
-        
-        // Data is retrieved from the server, so no need to store/persist locally
-        
-        // MARK: Load Stored Local Configuration
+        // MARK: Load Local Configuration
         
         LocalConfiguration.lastDogManagerSynchronization = UserDefaults.standard.value(forKey: KeyConstant.userConfigurationPreviousDogManagerSynchronization.rawValue) as? Date ?? LocalConfiguration.lastDogManagerSynchronization
-        
-        // if the user had a dogManager from pre Hound 2.0.0, then we must clear it. It will be incompatible and cause issues. Must start from scratch.
-        if UIApplication.previousAppBuild ?? 3810 <= 3810 {
-            UserDefaults.standard.removeObject(forKey: KeyConstant.dogManager.rawValue)
-        }
         
         if let dataDogManager: Data = UserDefaults.standard.data(forKey: KeyConstant.dogManager.rawValue), let unarchiver = try? NSKeyedUnarchiver.init(forReadingFrom: dataDogManager) {
             unarchiver.requiresSecureCoding = false
@@ -153,12 +144,6 @@ enum PersistenceManager {
         UserDefaults.standard.value(forKey: KeyConstant.localHasCompletedSettingsFamilyIntroductionViewController.rawValue) as? Bool
         ?? UserDefaults.standard.value(forKey: "hasLoadedSettingsFamilyIntroductionViewControllerBefore") as? Bool
         ?? LocalConfiguration.localHasCompletedSettingsFamilyIntroductionViewController
-        
-        // MARK: Configure Other
-        
-        // For family Hound, always put the user on the logs of care page first. This is most likely the most pertinant information. There isn't much reason to visit the dogs/reminders page unless updating a dog/reminder (or logging a reminder early).
-        MainTabBarViewController.selectedEntryIndex = 0
-        
     }
     
     /// Called by App or Scene Delegate when entering the background, used to save information, can be called when terminating for a slightly modifed case.
@@ -171,7 +156,7 @@ enum PersistenceManager {
         if UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification {
             if isTerminating == true {
                 // Send notification to user that their loud notifications won't work
-                AlertRequest.create(invokeErrorManager: false, completionHandler: { _, _ in
+                AlertRequest.create(completionHandler: { _, _ in
                     //
                 })
             }
@@ -199,7 +184,7 @@ enum PersistenceManager {
         
         UserDefaults.standard.set(LocalConfiguration.lastDogManagerSynchronization, forKey: KeyConstant.userConfigurationPreviousDogManagerSynchronization.rawValue)
         
-        if let dataDogManager = try? NSKeyedArchiver.archivedData(withRootObject: MainTabBarViewController.staticDogManager, requiringSecureCoding: false) {
+        if let dogManager = MainTabBarViewController.mainTabBarViewController?.dogManager, let dataDogManager = try? NSKeyedArchiver.archivedData(withRootObject: dogManager, requiringSecureCoding: false) {
             UserDefaults.standard.set(dataDogManager, forKey: KeyConstant.dogManager.rawValue)
         }
         

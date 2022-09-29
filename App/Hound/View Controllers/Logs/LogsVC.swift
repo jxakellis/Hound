@@ -12,7 +12,7 @@ protocol LogsViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
-final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogManagerControlFlowProtocol, LogsTableViewControllerDelegate, DropDownUIViewDataSource, LogsAddLogViewControllerDelegate {
+final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, LogsTableViewControllerDelegate, DropDownUIViewDataSource, LogsAddLogViewControllerDelegate {
     
     // MARK: - UIGestureRecognizerDelegate
     
@@ -41,39 +41,6 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
         self.performSegueOnceInWindowHierarchy(segueIdentifier: "LogsAddLogViewController")
         selectedLog = nil
         parentDogIdOfSelectedLog = nil
-    }
-    
-    // MARK: - DogManagerControlFlowProtocol
-    
-    private var dogManager: DogManager = DogManager()
-    
-    func setDogManager(sender: Sender, forDogManager: DogManager) {
-        dogManager = forDogManager
-        
-        if (sender.localized is LogsTableViewController) == true {
-            // If LogsTableViewController deleted the last log of all the dog(s), then clear the filter and disable the logsFilter button
-            if familyHasAtLeastOneLog == false {
-                logsFilter = [:]
-                logsTableViewController?.logsFilter = logsFilter
-                filterButton.isEnabled = false
-            }
-        }
-        if (sender.localized is LogsTableViewController) == false {
-            logsTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
-            
-            // Since a VC that isn't LogsTableViewController made the change, we should clear the filter as external changes (e.g. add logs, update log...) could have made filter invalid.
-            logsFilter = [:]
-            logsTableViewController?.logsFilter = logsFilter
-            filterButton.isEnabled = familyHasAtLeastOneLog
-        }
-        if (sender.localized is MainTabBarViewController) == true {
-            // pop add log vc as the dog it could have been adding to is now deleted
-            logsAddLogViewController?.navigationController?.popViewController(animated: false)
-        }
-        // we dont want to update MainTabBarViewController with the delegate if its the one providing the update
-        if (sender.localized is MainTabBarViewController) == false {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
-        }
     }
     
     // MARK: - IB
@@ -134,6 +101,39 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             
         }
         dropDown.showDropDown(numberOfRowsToShow: CGFloat(numRowsDisplayed))
+    }
+    
+    // MARK: - Dog Manager
+    
+    private(set) var dogManager: DogManager = DogManager()
+    
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
+        
+        if (sender.localized is LogsTableViewController) == true {
+            // If LogsTableViewController deleted the last log of all the dog(s), then clear the filter and disable the logsFilter button
+            if familyHasAtLeastOneLog == false {
+                logsFilter = [:]
+                logsTableViewController?.logsFilter = logsFilter
+                filterButton.isEnabled = false
+            }
+        }
+        if (sender.localized is LogsTableViewController) == false {
+            logsTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
+            
+            // Since a VC that isn't LogsTableViewController made the change, we should clear the filter as external changes (e.g. add logs, update log...) could have made filter invalid.
+            logsFilter = [:]
+            logsTableViewController?.logsFilter = logsFilter
+            filterButton.isEnabled = familyHasAtLeastOneLog
+        }
+        if (sender.localized is MainTabBarViewController) == true {
+            // pop add log vc as the dog it could have been adding to is now deleted
+            logsAddLogViewController?.navigationController?.popViewController(animated: false)
+        }
+        // we dont want to update MainTabBarViewController with the delegate if its the one providing the update
+        if (sender.localized is MainTabBarViewController) == false {
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
+        }
     }
     
     // MARK: - Properties
@@ -444,7 +444,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             
             logsAddLogViewController.parentDogIdToUpdate = parentDogIdOfSelectedLog
             logsAddLogViewController.logToUpdate = selectedLog
-            logsAddLogViewController.dogManager = dogManager
+            logsAddLogViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
             logsAddLogViewController.delegate = self
         }
     }

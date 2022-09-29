@@ -8,11 +8,6 @@
 
 import UIKit
 
-protocol DogsReminderDisplayTableViewCellDelegate: AnyObject {
-    /// The reminder switch to toggle the enable status was flipped. The reminder was updated and the server queried.
-    func didUpdateReminderEnable(sender: Sender, parentDogId: Int, reminder: Reminder)
-}
-
 final class DogsReminderDisplayTableViewCell: UITableViewCell {
     
     // MARK: - IB
@@ -50,8 +45,6 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
     var reminder: Reminder!
     
     var parentDogId: Int!
-    
-    weak var delegate: DogsReminderDisplayTableViewCellDelegate! = nil
     
     // MARK: - Main
     

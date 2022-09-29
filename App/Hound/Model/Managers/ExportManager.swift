@@ -45,7 +45,5 @@ enum ExportManager {
         viewController.present(activityViewController, animated: true, completion: nil)
     }
     
-    static func shareLogs(forViewController viewController: UIViewController) {
-        // TO DO FUTURE add export logs button
-    }
+    // TO DO FUTURE add export logs button
 }

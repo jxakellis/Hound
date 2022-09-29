@@ -429,7 +429,7 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
     
     @objc private func reminderActionTapped() {
         dismissKeyboard()
-        dropDown.showDropDown(numberOfRowsToShow: 6.5, selectedIndexPath: selectedIndexPath)
+        dropDown.showDropDown(numberOfRowsToShow: 6.5)
     }
     
     @objc internal override func dismissKeyboard() {

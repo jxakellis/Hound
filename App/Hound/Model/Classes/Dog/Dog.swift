@@ -15,7 +15,6 @@ final class Dog: NSObject, NSCoding {
         super.init()
         dogId = aDecoder.decodeInteger(forKey: KeyConstant.dogId.rawValue)
         dogName = aDecoder.decodeObject(forKey: KeyConstant.dogName.rawValue) as? String ?? dogName
-        dogIcon = aDecoder.decodeObject(forKey: KeyConstant.dogIcon.rawValue) as? UIImage ?? dogIcon
         dogLogs = aDecoder.decodeObject(forKey: KeyConstant.dogLogs.rawValue) as? LogManager ?? dogLogs
         dogReminders = aDecoder.decodeObject(forKey: KeyConstant.dogReminders.rawValue) as? ReminderManager ?? dogReminders
     }
@@ -23,7 +22,6 @@ final class Dog: NSObject, NSCoding {
     func encode(with aCoder: NSCoder) {
         aCoder.encode(dogId, forKey: KeyConstant.dogId.rawValue)
         aCoder.encode(dogName, forKey: KeyConstant.dogName.rawValue)
-        aCoder.encode(dogIcon, forKey: KeyConstant.dogIcon.rawValue)
         aCoder.encode(dogLogs, forKey: KeyConstant.dogLogs.rawValue)
         aCoder.encode(dogReminders, forKey: KeyConstant.dogReminders.rawValue)
     }
@@ -36,13 +34,11 @@ final class Dog: NSObject, NSCoding {
     
     convenience init(
         dogId: Int = ClassConstant.DogConstant.defaultDogId,
-        dogName: String? = ClassConstant.DogConstant.defaultDogName,
-        dogIcon: UIImage = ClassConstant.DogConstant.defaultDogIcon) throws {
+        dogName: String? = ClassConstant.DogConstant.defaultDogName) throws {
             self.init()
             
             self.dogId = dogId
             try changeDogName(forDogName: dogName)
-            self.dogIcon = dogIcon
         }
     
     /// Assume array of dog properties
@@ -57,10 +53,10 @@ final class Dog: NSObject, NSCoding {
         let dogName = body[KeyConstant.dogName.rawValue] as? String ?? ClassConstant.DogConstant.defaultDogName
         
         do {
-            try self.init(dogId: dogId, dogName: dogName, dogIcon: LocalDogIcon.getIcon(forDogId: dogId) ?? ClassConstant.DogConstant.defaultDogIcon)
+            try self.init(dogId: dogId, dogName: dogName)
         }
         catch {
-            try! self.init(dogId: dogId, dogIcon: LocalDogIcon.getIcon(forDogId: dogId) ?? ClassConstant.DogConstant.defaultDogIcon) // swiftlint:disable:this force_try
+            try! self.init(dogId: dogId) // swiftlint:disable:this force_try
         }
         
         dogIsDeleted = body[KeyConstant.dogIsDeleted.rawValue] as? Bool ?? false
@@ -85,10 +81,14 @@ final class Dog: NSObject, NSCoding {
     
     // MARK: - Traits
     
-    var dogIcon: UIImage = ClassConstant.DogConstant.defaultDogIcon
-    
-    func resetIcon() {
-        dogIcon = ClassConstant.DogConstant.defaultDogIcon
+    var dogIcon: UIImage {
+        get {
+            let dogIcon = DogIconManager.getIcon(forDogId: dogId)
+            return dogIcon ?? ClassConstant.DogConstant.defaultDogIcon
+        }
+        set (newDogIcon) {
+            DogIconManager.addIcon(forDogId: self.dogId, forDogIcon: newDogIcon)
+        }
     }
     
     private(set) var dogName: String = ClassConstant.DogConstant.defaultDogName

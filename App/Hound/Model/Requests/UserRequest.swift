@@ -9,7 +9,7 @@
 import Foundation
 
 /// Static word needed to conform to protocol. Enum preferred to a class as you can't instance an enum that is all static
-enum UserRequest: RequestProtocol {
+enum UserRequest {
     
     static var baseURLWithoutParams: URL { return InternalRequestUtils.baseURLWithoutParams.appendingPathComponent("/user")}
     // UserRequest baseURL with the userId URL param appended on
@@ -44,17 +44,6 @@ enum UserRequest: RequestProtocol {
     private static func internalUpdate(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         return InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithUserId, forBody: body) { responseBody, responseStatus in
-            completionHandler(responseBody, responseStatus)
-        }
-        
-    }
-    
-    /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
-    private static func internalDelete(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
-        
-        return InternalRequestUtils.genericDeleteRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithUserId) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -136,23 +125,5 @@ extension UserRequest {
             }
         }
         
-    }
-    
-    /**
-     Deletes the user and their userConfiguration. If they are a familyMember leaves the family, If they are a familyHead and are the only member, deletes the family. If they are a familyHead and there are other familyMembers, the request fails.
-     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
-    static func delete(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
-        _ = UserRequest.internalDelete(invokeErrorManager: invokeErrorManager) { _, responseStatus in
-            switch responseStatus {
-            case .successResponse:
-                completionHandler(true, responseStatus)
-            case .failureResponse:
-                completionHandler(false, responseStatus)
-            case .noResponse:
-                completionHandler(false, responseStatus)
-            }
-        }
     }
 }

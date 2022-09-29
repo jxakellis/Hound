@@ -83,7 +83,7 @@ final class DropDownUIView: UIView {
     }
     
     /// Shows Drop Down Menu, hides it if already present. The height of the dropdown shown will be equal to the rowHeight of the individual dropdown cells multiplied by the numberOfRowsToShow
-    func showDropDown(numberOfRowsToShow numRows: CGFloat, selectedIndexPath: IndexPath? = nil) {
+    func showDropDown(numberOfRowsToShow numRows: CGFloat) {
         guard isDropDownPresent == false else {
             self.hideDropDown()
             return

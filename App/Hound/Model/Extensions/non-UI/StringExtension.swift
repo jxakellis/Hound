@@ -15,8 +15,7 @@ extension String {
         let intTime = abs(Int(timeInterval.rounded()))
         
         let numWeeks = Int((intTime / (86400)) / 7)
-        let numDaysUnderAWeek = Int((intTime / (86400)) % 7)
-        let numDays = Int(intTime / (86400))
+        let numDays = Int((intTime / (86400)) % 7)
         let numHours = Int((intTime % (86400)) / (3600))
         let numMinutes = Int((intTime % 3600) / 60)
         let numSeconds = Int((intTime % 3600) % 60)
@@ -25,18 +24,18 @@ extension String {
         
         switch intTime {
         case 0..<60:
-            readableString.addSeconds(numSeconds: numSeconds)
+            readableString.append("\(numSeconds) Second\(numSeconds > 1 ? "s" : "") ")
         case 60..<3600:
-            readableString.addMinutes(numMinutes: numMinutes)
+            readableString.append("\(numMinutes) Minute\(numMinutes > 1 ? "s" : "") ")
         case 3600..<86400:
-            readableString.addHours(numHours: numHours)
-            readableString.addMinutes(numMinutes: numMinutes)
+            readableString.append("\(numHours) Hour\(numHours > 1 ? "s" : "") ")
+            readableString.append("\(numMinutes) Minute\(numMinutes > 1 ? "s" : "") ")
         case 86400..<604800:
-            readableString.addDays(numDays: numDays)
-            readableString.addHours(numHours: numHours)
+            readableString.append("\(numDays) Day\(numDays > 1 ? "s" : "") ")
+            readableString.append("\(numHours) Hour\(numHours > 1 ? "s" : "") ")
         default:
-            readableString.addWeeks(numWeeks: numWeeks)
-            readableString.addDays(numDays: numDaysUnderAWeek)
+            readableString.append("\(numWeeks) Week\(numWeeks > 1 ? "s" : "") ")
+            readableString.append("\(numDays) Day\(numDays > 1 ? "s" : "") ")
         }
         
         if readableString.last == " "{
@@ -144,72 +143,6 @@ extension String {
         }
     }
     
-    mutating private func addMonths(numMonths: Int) {
-        if numMonths > 1 {
-            self.append("\(numMonths) Months ")
-        }
-        else if numMonths == 1 {
-            self.append("\(numMonths) Month ")
-        }
-    }
-    
-    mutating private func addWeeks(numWeeks: Int) {
-        if numWeeks > 1 {
-            self.append("\(numWeeks) Weeks ")
-        }
-        else if numWeeks == 1 {
-            self.append("\(numWeeks) Week ")
-        }
-    }
-    
-    mutating private func addDays(numDays: Int) {
-        if numDays > 1 {
-            self.append("\(numDays) Days ")
-        }
-        else if numDays == 1 {
-            self.append("\(numDays) Day ")
-        }
-    }
-    
-    mutating private func addHours(numHours: Int) {
-        if numHours > 1 {
-            self.append("\(numHours) Hours ")
-        }
-        else if numHours == 1 {
-            self.append("\(numHours) Hour ")
-        }
-    }
-    
-    mutating private func addMinutes(numMinutes: Int) {
-        if numMinutes > 1 {
-            self.append("\(numMinutes) Minutes ")
-        }
-        else if numMinutes == 1 {
-            self.append("\(numMinutes) Minute ")
-        }
-    }
-    
-    mutating private func addSeconds(numSeconds: Int) {
-        if numSeconds > 1 || numSeconds == 0 {
-            self.append("\(numSeconds) Seconds")
-        }
-        else if numSeconds == 1 {
-            self.append("\(numSeconds) Second")
-        }
-    }
-    
-    /// Adds given text with given font to the end of the string, converts whole thing to NSAttributedString
-    func addingFontToEnd(text: String, font customFont: UIFont) -> NSAttributedString {
-        let originalString = NSMutableAttributedString(string: self)
-        
-        let customFontAttribute = [NSAttributedString.Key.font: customFont]
-        let customAttributedString = NSMutableAttributedString(string: text, attributes: customFontAttribute)
-        
-        originalString.append(customAttributedString)
-        
-        return originalString
-    }
-    
     /// Adds given text with given font to the start of the string, converts whole thing to NSAttributedString
     func addingFontToBeginning(text: String, font customFont: UIFont) -> NSAttributedString {
         let originalString = NSMutableAttributedString(string: self)
@@ -252,15 +185,5 @@ extension String {
         let boundWidth = self.boundingFrom(font: font, height: .greatestFiniteMagnitude)
         return CGSize(width: boundWidth.width, height: boundHeight.height)
         
-    }
-    
-    subscript(i: Int) -> String {
-        return String(self[index(startIndex, offsetBy: i)])
-    }
-    
-    subscript (range: Range<Int>) -> Substring {
-        let startIndex = self.index(self.startIndex, offsetBy: range.startIndex)
-        let stopIndex = self.index(self.startIndex, offsetBy: range.startIndex + range.count)
-        return self[startIndex..<stopIndex]
     }
 }

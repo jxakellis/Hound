@@ -7,7 +7,7 @@
 //
 import UIKit
 
-final class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, LogsNavigationViewControllerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate, SettingsNavigationViewControllerDelegate {
+final class MainTabBarViewController: UITabBarController, DogsNavigationViewControllerDelegate, TimingManagerDelegate, LogsNavigationViewControllerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate, SettingsNavigationViewControllerDelegate {
     
     // MARK: - DogsNavigationViewControllerDelegate
     
@@ -21,12 +21,6 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
             // Joined family with reminders
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "RemindersIntroductionViewController")
         }
-    }
-    
-    // MARK: - RemindersIntroductionViewControllerDelegate
-    
-    func didComplete(sender: Sender, forDogManager dogManager: DogManager) {
-        setDogManager(sender: sender, forDogManager: dogManager)
     }
     
     // MARK: - TimingManagerDelegate && DogsViewControllerDelegate && SettingsNavigationViewControllerDelegate
@@ -65,11 +59,9 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         setDogManager(sender: sender, forDogManager: dogManager)
     }
     
-    // MARK: - DogManagerControlFlowProtocol + ParentDogManager
+    // MARK: - Dog Manager
     
-    private var dogManager: DogManager = DogManager()
-    
-    static var staticDogManager: DogManager = DogManager()
+    private(set) var dogManager: DogManager = DogManager()
     
     // Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
     func setDogManager(sender: Sender, forDogManager: DogManager) {
@@ -80,16 +72,12 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         }
         
         dogManager = forDogManager
-        MainTabBarViewController.staticDogManager = forDogManager
         
         if (sender.localized is DogsViewController) == false {
             dogsViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }
         if (sender.localized is LogsViewController) == false {
             logsViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
-        }
-        if (sender.localized is SettingsViewController) == false {
-            settingsViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }
         
     }
@@ -166,16 +154,11 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
     
     static var mainTabBarViewController: MainTabBarViewController?
     
-    /// The tab on the tab bar that the app should open to, if its the first time openning the app then go the the second tab (setup dogs) which is index 1 as index starts at 0
-    static var selectedEntryIndex: Int = 0
-    
     // MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
         AppDelegate.generalLogger.notice("Application build is \(UIApplication.appBuild)")
-        
-        self.selectedIndex = MainTabBarViewController.selectedEntryIndex
         
         logsNavigationViewController = self.viewControllers?[0] as? LogsNavigationViewController
         logsNavigationViewController?.passThroughDelegate = self
@@ -190,7 +173,6 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         settingsNavigationViewController = self.viewControllers?[2] as? SettingsNavigationViewController
         settingsNavigationViewController?.passThroughDelegate = self
         settingsViewController = settingsNavigationViewController?.viewControllers[0] as? SettingsViewController
-        settingsViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         
         MainTabBarViewController.mainTabBarViewController = self
         
@@ -252,7 +234,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let remindersIntroductionViewController: RemindersIntroductionViewController = segue.destination as? RemindersIntroductionViewController {
             remindersIntroductionViewController.delegate = self
-            remindersIntroductionViewController.dogManager = dogManager
+            remindersIntroductionViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         }
     }
     

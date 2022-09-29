@@ -298,43 +298,6 @@ extension ReminderManager {
         return nil
     }
     
-    /// finds and returns the index of a reminder with a reminderId in terms of the reminder: [Reminder] array
-    func findIndex(forReminderId reminderId: Int) -> Int? {
-        for r in 0..<reminders.count where reminders[r].reminderId == reminderId {
-            return r
-        }
-        
-        return nil
-    }
-    
-    // MARK: Information
-    
-    /// returns true if has created a reminder and has at least one enabled
-    var hasEnabledReminder: Bool {
-        for reminder in reminders where reminder.reminderIsEnabled == true {
-            return true
-        }
-        return false
-    }
-    
-    /// Returns the reminderExecutionDate that is closest to the present but still in the future.
-    var soonestReminderExecutionDate: Date? {
-        var soonestExecutionDate: Date?
-        // no point to interate through reminders with a nil reminderExecutionDate
-        for reminder in reminders {
-            guard let reminderExecutionDate = reminder.reminderExecutionDate else {
-                continue
-            }
-            if let executionDate = soonestExecutionDate, Date().distance(to: reminderExecutionDate) < Date().distance(to: executionDate) {
-                soonestExecutionDate = executionDate
-            }
-            else if soonestExecutionDate == nil {
-                soonestExecutionDate = reminderExecutionDate
-            }
-        }
-        return soonestExecutionDate
-    }
-    
     // MARK: Compare
     
     /// Combines the reminders of an old reminder manager with the new reminder manager, forming a union with their reminders arrays. In the event that the newReminderManager (this object) has a reminder with the same id as the oldReminderManager, the reminder from the newReminderManager will override that reminder
@@ -384,15 +347,5 @@ extension ReminderManager {
         
         return (sameReminders, createdReminders, updatedReminders, deletedReminders)
     }
-    
-}
-
-protocol ReminderManagerControlFlowProtocol {
-    
-    /// Sets reminderManager equal to newReminderManager, depending on sender will also call methods to propogate change.
-    func setReminderManager(sender: Sender, newReminderManager: ReminderManager)
-    
-    // Updates things dependent on reminderManager
-    func updateReminderManagerDependents()
     
 }

@@ -20,7 +20,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         
-        if let dogIcon = ImageManager.processImage(forDogIcon: dogIcon, forInfo: info) {
+        if let dogIcon = DogIconManager.processDogIcon(forDogIconButton: dogIcon, forInfo: info) {
             self.dogIcon.setImage(dogIcon, for: .normal)
         }
         
@@ -71,18 +71,6 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         return updatedText.count <= ClassConstant.DogConstant.dogNameCharacterLimit
     }
     
-    // MARK: - DogManagerControlFlowProtocol
-    
-    private var dogManager: DogManager = DogManager()
-    
-    func setDogManager(sender: Sender, forDogManager: DogManager) {
-        dogManager = forDogManager
-        
-        if !(sender.localized is DogsViewController) {
-            delegate.didUpdateDogManager(sender: sender, forDogManager: dogManager)
-        }
-    }
-    
     // MARK: - IB
     
     @IBOutlet private weak var dogName: BorderedUITextField!
@@ -103,7 +91,8 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             // try to initalize from a passed dog, if non exists, then we make a new one
             dog = try dogToUpdate ?? Dog(dogName: dogName.text)
             try dog.changeDogName(forDogName: dogName.text)
-            if let image = dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseImageForDog {
+            if let image = self.dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseImageForDog {
+                // DogsRequest handles .addIcon and .removeIcon. It will remove the dogIcon saved under the placeholder id (if creating an dog) and it will save the new dogIcon under the offical dogId
                 dog.dogIcon = image
             }
         }
@@ -317,6 +306,18 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         
     }
     
+    // MARK: - Dog Manager
+    
+    private(set) var dogManager: DogManager = DogManager()
+    
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
+        
+        if !(sender.localized is DogsViewController) {
+            delegate.didUpdateDogManager(sender: sender, forDogManager: dogManager)
+        }
+    }
+    
     // MARK: - Properties
     
     var dogsReminderNavigationViewController: DogsReminderNavigationViewController! = nil
@@ -419,7 +420,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         initalDogIcon = dogIcon.imageView?.image
         
         // Setup AlertController for dogIcon button now, increases responsiveness
-        let (picker, viewController) = ImageManager.setupDogIconImagePicker(forViewController: self)
+        let (picker, viewController) = DogIconManager.setupDogIconImagePicker(forViewController: self)
         picker.delegate = self
         imagePickMethodAlertController = viewController
     }
