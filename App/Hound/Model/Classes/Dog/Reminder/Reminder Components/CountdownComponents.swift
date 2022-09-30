@@ -22,6 +22,15 @@ final class CountdownComponents: NSObject, NSCoding, NSCopying {
     
     required init?(coder aDecoder: NSCoder) {
         executionInterval = aDecoder.decodeDouble(forKey: KeyConstant.countdownExecutionInterval.rawValue)
+        
+        if executionInterval == 0.0 {
+            // <= build 3810 executionInterval
+            executionInterval = aDecoder.decodeDouble(forKey: "executionInterval")
+        }
+        
+        if executionInterval == 0.0 {
+            executionInterval = ClassConstant.ReminderComponentConstant.defaultCountdownExecutionInterval
+        }
     }
     
     func encode(with aCoder: NSCoder) {

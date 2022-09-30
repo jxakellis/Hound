@@ -6,13 +6,29 @@
 //  Copyright © 2022 Jonathan Xakellis. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 final class LogManager: NSObject, NSCoding {
     
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         logs = aDecoder.decodeObject(forKey: KeyConstant.logs.rawValue) as? [Log] ?? logs
+        
+        // <= build 3810 dogName stored here
+        dataMigrationDogName = aDecoder.decodeObject(forKey: "dogName") as? String
+        
+        // <= build 3810 icon stored here
+        dataMigrationDogIcon = aDecoder.decodeObject(forKey: "icon") as? UIImage
+        
+        // If multiple logs have the same placeholder id (e.g. migrating from Hound 1.3.5 to 2.0.0), shift the dogIds so they all have a unique placeholder id
+        var lowestPlaceholderId: Int = Int.max
+        for log in logs where log.logId <= -1 {
+            // if the currently iterated over log has a placeholder id that overlaps with another placeholder id
+            if log.logId >= lowestPlaceholderId {
+                log.logId = lowestPlaceholderId - 1
+                lowestPlaceholderId = log.logId
+            }
+        }
     }
     
     func encode(with aCoder: NSCoder) {
@@ -37,8 +53,16 @@ final class LogManager: NSObject, NSCoding {
     // MARK: - Properties
     private (set) var logs: [Log] = []
     
+    // <= build 3810 dogName was stored in TraitManager. TraitManager became LogManager when migrating to new system dogName is contained in here
+    var dataMigrationDogName: String?
+    
+    // <= build 3810 dogIcon was stored in TraitManager. TraitManager became LogManager when migrating to new system dogIcon is contained in here
+    var dataMigrationDogIcon: UIImage?
+    
     // Stores the result of uniqueLogActions. This increases efficency as if uniqueLogActions is called multiple times, without the logs array changing, we return this same stored value. If the logs array is updated, then we invalidate the stored value so its recalculated next time
     private var uniqueLogActionsResult: [LogAction]?
+    
+    // MARK: - Functions
     
     /// Helper function allows us to use the same logic for addLog and addLogs and allows us to only sort at the end. Without this function, addLogs would invoke addLog repeadly and sortLogs() with each call.
     private func addLogWithoutSorting(forLog newLog: Log) {

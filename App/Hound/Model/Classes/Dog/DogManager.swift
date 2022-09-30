@@ -13,8 +13,19 @@ final class DogManager: NSObject, NSCoding {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
+        // TO DO NOW TEST converting old dog manager into new dogManager
         dogs = aDecoder.decodeObject(forKey: KeyConstant.dogs.rawValue) as? [Dog] ?? dogs
-        // TO DO NOW convert old dog manager into new dogManager
+        
+        // TO DO NOW if we have dogs with a placeholder id stored, add a flag. This flag will indicate we have migrated data from Hound 1.3.5 to 2.0.0. Then, we will use this flag after one of the ServerVCs to allow the user to migrate their data to Hound's servers
+        // If multiple dogs have the same placeholder id (e.g. migrating from Hound 1.3.5 to 2.0.0), shift the dogIds so they all have a unique placeholder id
+        var lowestPlaceholderId: Int = Int.max
+        for dog in dogs where dog.dogId <= -1 {
+            // if the currently iterated over dog has a placeholder id that overlaps with another placeholder id
+            if dog.dogId >= lowestPlaceholderId {
+                dog.dogId = lowestPlaceholderId - 1
+                lowestPlaceholderId = dog.dogId
+            }
+        }
     }
     
     func encode(with aCoder: NSCoder) {
@@ -269,23 +280,6 @@ extension DogManager {
                 return year1 >= year2
             }
         }
-        
-        /*
-         let groupedLogsByUniqueDateSorted = Date()
-         
-         let dogIdLogsTuplesCompiledMSElapsed = (startDate.distance(to: dogIdLogsTuplesCompiled) * 1000)
-         let dogIdLogsTuplesSortedMSElapsed = dogIdLogsTuplesCompiled.distance(to: dogIdLogsTuplesSorted) * 1000
-         let groupedLogsByUniqueDateCompiledMSElapsed = dogIdLogsTuplesSorted.distance(to: groupedLogsByUniqueDateCompiled) * 1000
-         let groupedLogsByUniqueDateSortedMSElapsed = groupedLogsByUniqueDateCompiled.distance(to: groupedLogsByUniqueDateSorted) * 1000
-         let totalMSElapsed = startDate.distance(to: groupedLogsByUniqueDateSorted) * 1000
-         
-         var debugString = "\ngroupedLogsByUniqueDate with \(dogIdLogsTuples.count) dogIdLogsTuples \n"
-         debugString.append("\(dogIdLogsTuplesCompiledMSElapsed)\n")
-         debugString.append("\(dogIdLogsTuplesSortedMSElapsed)\n")
-         debugString.append("\(groupedLogsByUniqueDateCompiledMSElapsed)\n")
-         debugString.append("\(groupedLogsByUniqueDateSortedMSElapsed) \n")
-         debugString.append("\(totalMSElapsed)\n")
-         */
         
         return groupedLogsByUniqueDate
     }

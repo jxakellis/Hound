@@ -24,6 +24,15 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         reminders = aDecoder.decodeObject(forKey: KeyConstant.reminders.rawValue) as? [Reminder] ?? reminders
+        // If multiple reminders have the same placeholder id (e.g. migrating from Hound 1.3.5 to 2.0.0), shift the dogIds so they all have a unique placeholder id
+        var lowestPlaceholderId: Int = Int.max
+        for reminder in reminders where reminder.reminderId <= -1 {
+            // if the currently iterated over reminder has a placeholder id that overlaps with another placeholder id
+            if reminder.reminderId >= lowestPlaceholderId {
+                reminder.reminderId = lowestPlaceholderId - 1
+                lowestPlaceholderId = reminder.reminderId
+            }
+        }
     }
     
     func encode(with aCoder: NSCoder) {

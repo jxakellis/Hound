@@ -50,7 +50,8 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     
     @IBOutlet private weak var restoreTransactionsButton: UIButton!
     @IBAction private func didClickRestoreTransactions(_ sender: Any) {
-        // TO DO NOW BUG investigate infinite loading on restore transactions (could be because of ios simulator)
+        // TO DO NOW infinite loading on restore transactions. could be because subscription is specially modified by me to have different expirationDate than it actually does. This could also be due to hitting restore transactions when there are no transactions to restore.
+        
         // The user doesn't have permission to perform this action
         guard FamilyInformation.isUserFamilyHead else {
             AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionSubtitle, forStyle: .danger)

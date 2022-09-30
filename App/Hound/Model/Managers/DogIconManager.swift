@@ -8,7 +8,7 @@
 
 import UIKit
 
-// TO DO NOW test that we store images properly. test by opening create dog and dog icon, then create that dog. test by adding icon to already created dog (aka update dog). delete a dog locally and delete one on the server, make sure the local dogIcon is deleted for both of them.
+// TO DO NOW TEST that we store images properly. test by opening create dog and dog icon, then create that dog. test by adding icon to already created dog (aka update dog). delete a dog locally and delete one on the server, make sure the local dogIcon is deleted for both of them.
 
 enum DogIconManager {
     
