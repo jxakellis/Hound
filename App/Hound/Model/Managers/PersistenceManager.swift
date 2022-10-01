@@ -36,7 +36,7 @@ enum PersistenceManager {
         UserInformation.userIdentifier = keychain.get(KeyConstant.userIdentifier.rawValue)
         
         if DevelopmentConstant.isProductionDatabase == false {
-            UserInformation.userIdentifier = "18a324da0aea90d36451962667b664aeb168c8cee5033a5ff9e806342cdc54d0"
+            // UserInformation.userIdentifier = "1f66dbb1e7df20e51a8cd88c2334f5e4def79a2ebc1444f6766ff4160ea6927a"
         }
         
         UserInformation.userEmail = keychain.get(KeyConstant.userEmail.rawValue) ?? UserInformation.userEmail
@@ -48,7 +48,7 @@ enum PersistenceManager {
         UserInformation.userId = UserDefaults.standard.value(forKey: KeyConstant.userId.rawValue) as? String ?? UserInformation.userId
         
         if DevelopmentConstant.isProductionDatabase == false {
-            UserInformation.userId = "c461dda5297129dfcd92a69b47ba850fd573a656800930fd3e7fe0c940eeca1b"
+            // UserInformation.userId = "378d9865894c6afe53dc6259c7645fa4b5e330894a2df2594d04484ca819db1a"
         }
        
         UserInformation.familyId = UserDefaults.standard.value(forKey: KeyConstant.familyId.rawValue) as? String ?? UserInformation.familyId

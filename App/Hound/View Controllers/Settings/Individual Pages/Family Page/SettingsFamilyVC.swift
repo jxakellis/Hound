@@ -157,7 +157,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
             
             leaveFamilyButton.setTitle("Delete Family", for: .normal)
             
-            let familyHasPurchasedSubscription = FamilyInformation.activeFamilySubscription.product != ClassConstant.SubscriptionConstant.defaultSubscriptionProduct
+            let familyHasPurchasedSubscription = FamilyInformation.activeFamilySubscription.product != nil
             // If the user has an active subscription, then let them know they will lose the rest of its duration
             let forfitSubscriptionDisclaimer: String = familyHasPurchasedSubscription ? " If you delete your family, the remaining duration of your active subscription will be forfitted." : ""
             
@@ -297,7 +297,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         let familyActiveSubscription = FamilyInformation.activeFamilySubscription
         
         // Check to make sure either the family has the default free subsription or they have an active subscription that isn't auto-renewing. So that if they leave the family, they won't be charged for subscription that isn't attached to anything
-        guard familyActiveSubscription.product == ClassConstant.SubscriptionConstant.defaultSubscriptionProduct || (familyActiveSubscription.product != ClassConstant.SubscriptionConstant.defaultSubscriptionProduct && familyActiveSubscription.isAutoRenewing == false) else {
+        guard familyActiveSubscription.product == nil || (familyActiveSubscription.product != nil && familyActiveSubscription.isAutoRenewing == false) else {
             ErrorConstant.FamilyResponseError.leaveSubscriptionActive.alert()
             return
         }

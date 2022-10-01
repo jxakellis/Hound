@@ -8,6 +8,7 @@
 
 import UIKit
 import StoreKit
+import KeychainSwift
 
 final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
     
@@ -22,7 +23,7 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
     // MARK: - Properties
     
     var product: SKProduct?
-    var inAppPurchaseProduct: InAppPurchaseProduct = InAppPurchaseProduct.default
+    var subscriptionGroup20965379Product: SubscriptionGroup20965379Product?
     
     // MARK: - Main
     
@@ -44,47 +45,38 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
         self.product = product
         let activeFamilySubscriptionProduct = FamilyInformation.activeFamilySubscription.product
         
-        guard let product: SKProduct = product, let productSubscriptionPeriod = product.subscriptionPeriod else {
-            self.inAppPurchaseProduct = .default
-            
-            changeCellColors(isProductActiveSubscription: activeFamilySubscriptionProduct == InAppPurchaseProduct.default)
-            subscriptionTierTitleLabel.text = InAppPurchaseProduct.localizedTitleExpanded(forInAppPurchaseProduct: InAppPurchaseProduct.default)
-            subscriptionTierDescriptionLabel.text = InAppPurchaseProduct.localizedDescriptionExpanded(forInAppPurchaseProduct: InAppPurchaseProduct.default)
+        guard let product: SKProduct = product, let productSubscriptionPeriod = product.subscriptionPeriod, let subscriptionProduct = SubscriptionGroup20965379Product(rawValue: product.productIdentifier) else {
+            // default subscription
+            changeCellColors(isProductActiveSubscription: FamilyInformation.activeFamilySubscription.product == nil)
+            subscriptionTierTitleLabel.text = SubscriptionGroup20965379Product.localizedTitleExpanded(forSubscriptionGroup20965379Product: nil)
+            subscriptionTierDescriptionLabel.text = SubscriptionGroup20965379Product.localizedDescriptionExpanded(forSubscriptionGroup20965379Product: nil)
             subscriptionTierPricingDescriptionLabel.text = "Completely and always free! You get to benefit from the same features as paid subscribers. The only difference is family member and dog limits."
             return
         }
         
-        self.inAppPurchaseProduct = InAppPurchaseProduct(rawValue: product.productIdentifier) ?? .unknown
+        self.subscriptionGroup20965379Product = subscriptionProduct
         
-        changeCellColors(isProductActiveSubscription: inAppPurchaseProduct == activeFamilySubscriptionProduct)
+        changeCellColors(isProductActiveSubscription: subscriptionProduct == activeFamilySubscriptionProduct)
         
-        if inAppPurchaseProduct != .unknown {
-            // if we know what product it is, then highlight the cell if its product is the current, active subscription
-            subscriptionTierTitleLabel.text = InAppPurchaseProduct.localizedTitleExpanded(forInAppPurchaseProduct: inAppPurchaseProduct)
-            subscriptionTierDescriptionLabel.text = InAppPurchaseProduct.localizedDescriptionExpanded(forInAppPurchaseProduct: inAppPurchaseProduct)
-        }
-        else {
-            subscriptionTierTitleLabel.text = product.localizedTitle
-            subscriptionTierTitleLabel.text = product.localizedDescription
-        }
+        // if we know what product it is, then highlight the cell if its product is the current, active subscription
+        subscriptionTierTitleLabel.text = SubscriptionGroup20965379Product.localizedTitleExpanded(forSubscriptionGroup20965379Product: subscriptionProduct)
+        subscriptionTierDescriptionLabel.text = SubscriptionGroup20965379Product.localizedDescriptionExpanded(forSubscriptionGroup20965379Product: subscriptionProduct)
         
-        // Check to see if the family has bought a subscription
-        let hasBoughtSubscriptionBefore: Bool = FamilyInformation.familySubscriptions.contains { subscription in
-            return subscription.transactionId != nil
-        }
+        let keychain = KeychainSwift()
+        let userUsedPaymentDiscountFromSubscriptionGroup20965379 = keychain.getBool(KeyConstant.userUsedPaymentDiscountFromSubscriptionGroup20965379.rawValue)
         
         // now we have to determine what the pricing is like
         let subscriptionPriceWithSymbol = "\(product.priceLocale.currencySymbol ?? "")\(product.price)"
         let subscriptionPeriodString = convertSubscriptionPeriodUnits(forUnit: productSubscriptionPeriod.unit, forNumberOfUnits: productSubscriptionPeriod.numberOfUnits, isFreeTrialText: false)
+        
         // tier offers a free trial
-        if let introductoryPrice = product.introductoryPrice, introductoryPrice.paymentMode == .freeTrial && hasBoughtSubscriptionBefore == false {
+        if let introductoryPrice = product.introductoryPrice, introductoryPrice.paymentMode == .freeTrial && userUsedPaymentDiscountFromSubscriptionGroup20965379 == false {
             let freeTrialSubscriptionPeriod = convertSubscriptionPeriodUnits(forUnit: introductoryPrice.subscriptionPeriod.unit, forNumberOfUnits: introductoryPrice.subscriptionPeriod.numberOfUnits, isFreeTrialText: true)
             
             subscriptionTierPricingDescriptionLabel.text = "Begin with a free \(freeTrialSubscriptionPeriod) trial then continue your \(product.localizedTitle) experience for \(subscriptionPriceWithSymbol) per \(subscriptionPeriodString)"
         }
-        // no free trial or the family has used up their subscription
+        // no free trial or the user has used up their free trial
         else {
-            // TO DO BUG PRIO: LOW if a user deletes their family and creates a new one, they will still be ineligible for a new free trial however this text will display that they get a free trial still. In addition, other family members that haven't used their free trial will be shown they don't have a free trial when they actually do
             subscriptionTierPricingDescriptionLabel.text = "Enjoy all \(product.localizedTitle) has to offer for \(subscriptionPriceWithSymbol) per \(subscriptionPeriodString)"
         }
     }

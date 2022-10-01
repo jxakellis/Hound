@@ -31,11 +31,6 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
             reminder.reminderId = lowestPlaceholderId - 1
             lowestPlaceholderId = reminder.reminderId
         }
-        
-        print("finished decoding ReminderManager")
-        for reminder in reminders {
-            print("reminderId \(reminder.reminderId)")
-        }
     }
     
     func encode(with aCoder: NSCoder) {

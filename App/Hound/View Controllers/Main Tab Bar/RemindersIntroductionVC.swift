@@ -64,6 +64,7 @@ final class RemindersIntroductionViewController: UIViewController {
                 
                 // if we were able to add the reminders, then append to the dogManager
                 self.dogManager.dogs[0].dogReminders.addReminders(forReminders: reminders)
+                self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                 LocalConfiguration.localHasCompletedRemindersIntroductionViewController = true
                 self.dismiss(animated: true, completion: nil)
             }

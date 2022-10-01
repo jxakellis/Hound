@@ -50,8 +50,6 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     
     @IBOutlet private weak var restoreTransactionsButton: UIButton!
     @IBAction private func didClickRestoreTransactions(_ sender: Any) {
-        // TO DO NOW infinite loading on restore transactions. could be because subscription is specially modified by me to have different expirationDate than it actually does. This could also be due to hitting restore transactions when there are no transactions to restore.
-        
         // The user doesn't have permission to perform this action
         guard FamilyInformation.isUserFamilyHead else {
             AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionSubtitle, forStyle: .danger)
@@ -120,8 +118,8 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     private func setupActiveSubscriptionLabels() {
         let familyActiveSubscription = FamilyInformation.activeFamilySubscription
         
-        familyActiveSubscriptionTitleLabel.text = InAppPurchaseProduct.localizedTitleExpanded(forInAppPurchaseProduct: familyActiveSubscription.product)
-        familyActiveSubscriptionDescriptionLabel.text = InAppPurchaseProduct.localizedDescriptionExpanded(forInAppPurchaseProduct: familyActiveSubscription.product)
+        familyActiveSubscriptionTitleLabel.text = SubscriptionGroup20965379Product.localizedTitleExpanded(forSubscriptionGroup20965379Product: familyActiveSubscription.product)
+        familyActiveSubscriptionDescriptionLabel.text = SubscriptionGroup20965379Product.localizedDescriptionExpanded(forSubscriptionGroup20965379Product: familyActiveSubscription.product)
         
         var purchaseDateString: String {
             guard let purchaseDate = familyActiveSubscription.purchaseDate else {
@@ -194,17 +192,29 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
             return
         }
         
-        guard let indexOfActiveSubscription = InAppPurchaseProduct.allCases.firstIndex(of: FamilyInformation.activeFamilySubscription.product), let indexOfSelectedRow = InAppPurchaseProduct.allCases.firstIndex(of: cell.inAppPurchaseProduct) else {
-            return
-        }
+        let allCasesIndexOfSelectedRow = {
+            guard let subscriptionGroup20965379Product = cell.subscriptionGroup20965379Product else {
+                return -1
+            }
+            
+            return SubscriptionGroup20965379Product.allCases.firstIndex(of: subscriptionGroup20965379Product) ?? -1
+        }()
+        
+        let allCasesIndexOfActiveSubscription = {
+            guard let subscriptionGroup20965379Product = FamilyInformation.activeFamilySubscription.product else {
+                return -1
+            }
+            
+            return SubscriptionGroup20965379Product.allCases.firstIndex(of: subscriptionGroup20965379Product) ?? -1
+        }()
         
         // Make sure the user didn't select the cell of the subscription that they are currently subscribed to
-        guard indexOfSelectedRow != indexOfActiveSubscription else {
+        guard allCasesIndexOfSelectedRow != allCasesIndexOfActiveSubscription else {
             return
         }
         
         // Make sure that the user didn't try to downgrade
-        guard indexOfSelectedRow > indexOfActiveSubscription else {
+        guard allCasesIndexOfSelectedRow > allCasesIndexOfActiveSubscription else {
             // The user is downgrading their subscription, show a disclaimer
             let downgradeSubscriptionDisclaimer = GeneralUIAlertController(title: "Are you sure you want to downgrade your Hound subscription?", message: "If you exceed your new family member or dog limit, you won't be able to add or update any dogs, reminders, or logs. This means you might have to delete family members or dogs to restore functionality.", preferredStyle: .alert)
             downgradeSubscriptionDisclaimer.addAction(UIAlertAction(title: "Yes, I'm sure", style: .default, handler: { _ in

@@ -11,8 +11,7 @@ import UIKit
 enum ClassConstant {
     
     enum SubscriptionConstant {
-        static var defaultSubscription: Subscription { return Subscription(transactionId: nil, product: defaultSubscriptionProduct, purchaseDate: nil, expirationDate: nil, numberOfFamilyMembers: defaultSubscriptionNumberOfFamilyMembers, numberOfDogs: defaultSubscriptionNumberOfDogs, isActive: true, isAutoRenewing: true) }
-        static let defaultSubscriptionProduct = InAppPurchaseProduct.default
+        static var defaultSubscription: Subscription { return Subscription(transactionId: nil, product: nil, purchaseDate: nil, expirationDate: nil, numberOfFamilyMembers: defaultSubscriptionNumberOfFamilyMembers, numberOfDogs: defaultSubscriptionNumberOfDogs, isActive: true, isAutoRenewing: true) }
         static let defaultSubscriptionNumberOfFamilyMembers = 1
         static let defaultSubscriptionSpelledOutNumberOfFamilyMembers = "one"
         static let defaultSubscriptionNumberOfDogs = 2

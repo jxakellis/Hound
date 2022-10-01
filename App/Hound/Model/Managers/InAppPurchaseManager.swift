@@ -8,6 +8,7 @@
 
 import Foundation
 import StoreKit
+import KeychainSwift
 
 // This main class provides a streamlined way to perform the main two queries
 final class InAppPurchaseManager {
@@ -93,7 +94,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
             return
         }
         
-        let request = SKProductsRequest(productIdentifiers: Set(InAppPurchaseProduct.allCases.compactMap({ $0.rawValue })))
+        let request = SKProductsRequest(productIdentifiers: Set(SubscriptionGroup20965379Product.allCases.compactMap({ $0.rawValue })))
         request.delegate = self
         request.start()
         productsRequestCompletionHandler = completionHandler
@@ -102,32 +103,36 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     /// Get available products from Apple Servers
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         
-        let products = response.products.sorted(by: { product1, product2 in
+        let products = response.products.sorted(by: { unknownProduct1, unknownProduct2 in
             // The product with a product identifier that is closer to index 0 of the InAppPurchase enum allCases should come first. If a product identifier is unknown, the known one comes first. If both product identiifers are known, we have the <= productIdentifer come first.
             
-            guard let indexOfProduct1: Int = InAppPurchaseProduct.allCases.firstIndex(of: InAppPurchaseProduct(rawValue: product1.productIdentifier) ?? InAppPurchaseProduct.unknown), let indexOfProduct2: Int = InAppPurchaseProduct.allCases.firstIndex(of: InAppPurchaseProduct(rawValue: product2.productIdentifier) ?? InAppPurchaseProduct.unknown), let indexOfUnknown: Int = InAppPurchaseProduct.allCases.firstIndex(of: InAppPurchaseProduct.unknown) else {
-                return product1.productIdentifier <= product2.productIdentifier
+            let product1 = SubscriptionGroup20965379Product(rawValue: unknownProduct1.productIdentifier)
+            let product2 = SubscriptionGroup20965379Product(rawValue: unknownProduct2.productIdentifier)
+            
+            if product1 == nil && product2 == nil {
+                // the product identifiers aren't known to us. Therefore we should sort based upon the product identifier strings themselves
+                return unknownProduct1.productIdentifier <= unknownProduct2.productIdentifier
             }
             
-            // the product identifiers aren't known to us. Therefore we should sort based upon the product identifier strings themselves
-            if indexOfProduct1 == indexOfUnknown && indexOfProduct2 == indexOfUnknown {
-                return product1.productIdentifier <= product2.productIdentifier
-            }
-            // only the product identifier of product1 isn't known to us
-            else if indexOfProduct1 == indexOfUnknown {
-                // since product2 is known and product1 isn't, product2 should come first
+            // at least one of them isn't nil
+            guard let product1 = product1 else {
+                // since product1 isn't known and therefore product2 is known, product2 should come first
                 return false
             }
-            // only the product identifier of product2 isn't known to us
-            else if indexOfProduct2 == indexOfUnknown {
+            
+            guard let product2 = product2 else {
                 // since product1 is known and product2 isn't, product1 should come first
                 return true
             }
-            // the product identifiers are both known to us
-            else {
-                // the product with product identifier that has the lower index in .allCases of the InAppPurchase enum comes first
-                return indexOfProduct1 <= indexOfProduct2
-            }})
+            
+            guard let indexOfProduct1: Int = SubscriptionGroup20965379Product.allCases.firstIndex(of: product1), let indexOfProduct2: Int = SubscriptionGroup20965379Product.allCases.firstIndex(of: product2) else {
+                // if we can't find their indexes, compare them based off their productIdentifiers
+                return unknownProduct1.productIdentifier <= unknownProduct2.productIdentifier
+            }
+            
+            // the product with product identifier that has the lower index in .allCases of the InAppPurchase enum comes first
+            return indexOfProduct1 <= indexOfProduct2
+            })
         
         DispatchQueue.main.async {
             // If we didn't retrieve any products, return an error
@@ -272,6 +277,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
                 self.productRestoreCompletionHandler = nil
                 return
             }
+            
             SubscriptionRequest.create(invokeErrorManager: true) { requestWasSuccessful, _ in
                 guard requestWasSuccessful else {
                     productRestoreCompletionHandler(false)
@@ -304,6 +310,16 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
                 case .purchased:
                     // A successfully processed transaction.
                     // Your application should provide the content the user purchased.
+                    // Write to the keychain if user has made a purchase
+                    let keychain = KeychainSwift()
+                    if SubscriptionGroup20965379Product(rawValue: transaction.payment.productIdentifier) != nil {
+                        keychain.set(true, forKey: KeyConstant.userPurchasedProductFromSubscriptionGroup20965379.rawValue)
+                        
+                        if transaction.payment.paymentDiscount != nil {
+                            keychain.set(true, forKey: KeyConstant.userUsedPaymentDiscountFromSubscriptionGroup20965379.rawValue)
+                        }
+                    }
+                    keychain.set(true, forKey: KeyConstant.userPurchasedProduct.rawValue)
                     
                     SubscriptionRequest.create(invokeErrorManager: true) { requestWasSuccessful, _ in
                         guard requestWasSuccessful else {
@@ -401,6 +417,17 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
             return
         }
         
+        let keychain = KeychainSwift()
+        let userPurchasedProduct = keychain.getBool(KeyConstant.userPurchasedProduct.rawValue) ?? false
+        
+        guard userPurchasedProduct == true else {
+            // If the user hasn't purchased a product, as indicated by our keychain which stores the value regardless if the user's device got blown up by a nuke, then don't invoke restoreCompletedTransactions().
+            // This is because if "All transactions are unfinished OR The user did not purchase anything that is restorable OR You tried to restore items that are not restorable, such as a non-renewing subscription or a consumable product", this function will simply never return anything, causing the user
+            
+            completionHandler(true)
+            return
+        }
+        
         // Don't test for SKPaymentQueue.default().transactions. This could lock the code from ever executing. E.g. the user goes to buy something (so its in the payment queue) but they stop mid way (maybe leaving the transaction as .purchasing or .deferred). Then the background async processing isn't invoked to start (or it simply can't process whats in the queue) so we are left with transactions in the queue that are stuck and are locking
         
         InternalInAppPurchaseManager.shared.productRestoreCompletionHandler = completionHandler
@@ -412,6 +439,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
             if self.productRestoreCompletionHandler != nil {
                 ErrorConstant.InAppPurchaseError.restoreFailed.alert()
             }
+            
             self.productRestoreCompletionHandler?(false)
             self.productRestoreCompletionHandler = nil
         }

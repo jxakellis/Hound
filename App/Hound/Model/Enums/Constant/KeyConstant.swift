@@ -61,6 +61,11 @@ enum KeyConstant: String {
     
     // MARK: App Store Purchase
     
+    // client
+    case userPurchasedProduct
+    case userPurchasedProductFromSubscriptionGroup20965379
+    case userUsedPaymentDiscountFromSubscriptionGroup20965379
+    
     // client and server
     case appStoreReceiptURL
     case transactionId

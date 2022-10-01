@@ -126,6 +126,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
             logsTableViewController?.logsFilter = logsFilter
             filterButton.isEnabled = familyHasAtLeastOneLog
         }
+        
         if (sender.localized is MainTabBarViewController) == true {
             // pop add log vc as the dog it could have been adding to is now deleted
             logsAddLogViewController?.navigationController?.popViewController(animated: false)

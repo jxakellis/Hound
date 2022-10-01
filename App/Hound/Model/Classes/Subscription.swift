@@ -8,21 +8,20 @@
 
 import Foundation
 
-enum InAppPurchaseProduct: String, CaseIterable {
-    case unknown = "com.jonathanxakellis.hound.unknown"
-    case `default` = "com.jonathanxakellis.hound.default"
+/// productIdentifiers that belong to the subscription group of id 20965379
+enum SubscriptionGroup20965379Product: String, CaseIterable {
     case twoFMTwoDogs = "com.jonathanxakellis.hound.twofamilymemberstwodogs.monthly"
     case fourFMFourDogs = "com.jonathanxakellis.hound.fourfamilymembersfourdogs.monthly"
     case sixFMSixDogs = "com.jonathanxakellis.hound.sixfamilymemberssixdogs.monthly"
     case tenFMTenDogs = "com.jonathanxakellis.hound.tenfamilymemberstendogs.monthly"
     
     /// Expands the product;s localizedTitle to add emojis, as Apple won't let you add emojis.
-    static func localizedTitleExpanded(forInAppPurchaseProduct inAppPurchaseProduct: InAppPurchaseProduct) -> String {
-        switch inAppPurchaseProduct {
-        case .unknown:
-            return VisualConstant.TextConstant.unknownText
-        case .`default`:
+    static func localizedTitleExpanded(forSubscriptionGroup20965379Product subscriptionGroup20965379Product: SubscriptionGroup20965379Product?) -> String {
+        guard let subscriptionGroup20965379Product = subscriptionGroup20965379Product else {
             return "Single 🧍‍♂️"
+        }
+        
+        switch subscriptionGroup20965379Product {
         case .twoFMTwoDogs:
             return "Duo 👫"
         case .fourFMFourDogs:
@@ -35,12 +34,11 @@ enum InAppPurchaseProduct: String, CaseIterable {
     }
     
     /// Expand the product's localizedDescription to add detail, as Apple limits their length
-    static func localizedDescriptionExpanded(forInAppPurchaseProduct inAppPurchaseProduct: InAppPurchaseProduct) -> String {
-        switch inAppPurchaseProduct {
-        case .unknown:
-            return VisualConstant.TextConstant.unknownText
-        case .`default`:
+    static func localizedDescriptionExpanded(forSubscriptionGroup20965379Product subscriptionGroup20965379Product: SubscriptionGroup20965379Product?) -> String {
+        guard let subscriptionGroup20965379Product = subscriptionGroup20965379Product else {
             return "Explore Hound's default subscription tier by yourself with up to two different dogs"
+        }
+        switch subscriptionGroup20965379Product {
         case .twoFMTwoDogs:
             return "Take the first step in creating your multi-user Hound family. Unlock up to two different family members and dogs."
         case .fourFMFourDogs:
@@ -59,7 +57,7 @@ final class Subscription: NSObject {
     
     init(
         transactionId: Int?,
-        product: InAppPurchaseProduct,
+        product: SubscriptionGroup20965379Product?,
         purchaseDate: Date?,
         expirationDate: Date?,
         numberOfFamilyMembers: Int,
@@ -82,7 +80,10 @@ final class Subscription: NSObject {
     convenience init(fromBody body: [String: Any]) {
         let transactionId = body[KeyConstant.transactionId.rawValue] as? Int
         
-        let product = InAppPurchaseProduct(rawValue: body[KeyConstant.productId.rawValue] as? String ?? InAppPurchaseProduct.unknown.rawValue) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionProduct
+        var product: SubscriptionGroup20965379Product?
+        if let productId = body[KeyConstant.productId.rawValue] as? String {
+            product = SubscriptionGroup20965379Product(rawValue: productId)
+        }
         
         var purchaseDate: Date?
         if let purchaseDateString = body[KeyConstant.purchaseDate.rawValue] as? String {
@@ -119,8 +120,8 @@ final class Subscription: NSObject {
     /// Transaction Id that of the subscription purchase
     private(set) var transactionId: Int?
     
-    /// Product Id that the subscription purchase was for
-    private(set) var product: InAppPurchaseProduct
+    /// Product Id that the subscription purchase was for. No product means its a default subscription
+    private(set) var product: SubscriptionGroup20965379Product?
     
     /// Date at which the subscription was purchased and completed processing on Hound's server
     private(set) var purchaseDate: Date?
