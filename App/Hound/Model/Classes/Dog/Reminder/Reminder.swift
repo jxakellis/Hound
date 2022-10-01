@@ -61,42 +61,18 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         // shift reminderId of 0 to proper placeholder of -1
         reminderId = reminderId >= 1 ? reminderId : -1
         
-        // <= build 3810 reminderType
-        reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: KeyConstant.reminderAction.rawValue) as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue) ?? ReminderAction(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue) ?? reminderAction
+        reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: KeyConstant.reminderAction.rawValue) as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue) ?? reminderAction
+        reminderCustomActionName = aDecoder.decodeObject(forKey: KeyConstant.reminderCustomActionName.rawValue) as? String ?? reminderCustomActionName
         
-        // <= build 3810 customTypeName
-        reminderCustomActionName = aDecoder.decodeObject(forKey: KeyConstant.reminderCustomActionName.rawValue) as? String ?? aDecoder.decodeObject(forKey: "customTypeName") as? String ?? reminderCustomActionName
-        
-        // <= build 3810 countDownComponents
-        countdownComponents = aDecoder.decodeObject(forKey: KeyConstant.countdownComponents.rawValue) as? CountdownComponents ?? aDecoder.decodeObject(forKey: "countDownComponents") as? CountdownComponents ?? countdownComponents
-        
-        // <= build 3810 timeOfDayComponents
-        weeklyComponents = aDecoder.decodeObject(forKey: KeyConstant.weeklyComponents.rawValue) as?  WeeklyComponents ?? aDecoder.decodeObject(forKey: "timeOfDayComponents") as?  WeeklyComponents ?? weeklyComponents
-        // <= build 3810 timeOfDayComponents
-        monthlyComponents = aDecoder.decodeObject(forKey: KeyConstant.monthlyComponents.rawValue) as?  MonthlyComponents ?? aDecoder.decodeObject(forKey: "timeOfDayComponents") as?  MonthlyComponents ?? monthlyComponents
+        countdownComponents = aDecoder.decodeObject(forKey: KeyConstant.countdownComponents.rawValue) as? CountdownComponents ?? countdownComponents
+        weeklyComponents = aDecoder.decodeObject(forKey: KeyConstant.weeklyComponents.rawValue) as?  WeeklyComponents ?? weeklyComponents
+        monthlyComponents = aDecoder.decodeObject(forKey: KeyConstant.monthlyComponents.rawValue) as?  MonthlyComponents ?? monthlyComponents
         oneTimeComponents = aDecoder.decodeObject(forKey: KeyConstant.oneTimeComponents.rawValue) as? OneTimeComponents ?? oneTimeComponents
         snoozeComponents = aDecoder.decodeObject(forKey: KeyConstant.snoozeComponents.rawValue) as? SnoozeComponents ?? snoozeComponents
         
-        // <= build 3810 timingStyle
-        storedReminderType = ReminderType(rawValue: aDecoder.decodeObject(forKey: KeyConstant.reminderType.rawValue) as? String ?? ClassConstant.ReminderConstant.defaultReminderType.rawValue) ?? ReminderType(rawValue: aDecoder.decodeObject(forKey: "timingStyle") as? String ?? ClassConstant.ReminderConstant.defaultReminderType.rawValue) ?? storedReminderType
-        
-        // <= build 3810 executionBasis
-        reminderExecutionBasis = aDecoder.decodeObject(forKey: KeyConstant.reminderExecutionBasis.rawValue) as? Date ?? aDecoder.decodeObject(forKey: "executionBasis") as? Date ?? reminderExecutionBasis
-        
+        storedReminderType = ReminderType(rawValue: aDecoder.decodeObject(forKey: KeyConstant.reminderType.rawValue) as? String ?? ClassConstant.ReminderConstant.defaultReminderType.rawValue) ?? storedReminderType
+        reminderExecutionBasis = aDecoder.decodeObject(forKey: KeyConstant.reminderExecutionBasis.rawValue) as? Date ?? reminderExecutionBasis
         reminderIsEnabled = aDecoder.decodeBool(forKey: KeyConstant.reminderIsEnabled.rawValue)
-        
-        // false is the default value if decoding a bool for a key that has no stored value, this means we should check for the old key of isEnabled. If the false was correct and the reminder was actually disabled, then we will get the default value of false from "isEnabled". If false was incorrect and there was no value stored for reminderIsEnabled, then we will get the stored value from "isEnabled"
-        if reminderIsEnabled == false {
-            // <= build 3810 isEnabled
-            reminderIsEnabled = aDecoder.decodeBool(forKey: "isEnabled")
-        }
-        
-        print("finished decoding Reminder")
-        print("reminderAction \(reminderAction.rawValue)")
-        print("reminderCustomActionName \(reminderCustomActionName)")
-        print("storedReminderType \(reminderType.rawValue)")
-        print("reminderExecutionBasis \(reminderExecutionBasis)")
-        print("reminderIsEnabled \(reminderIsEnabled)")
     }
     
     func encode(with aCoder: NSCoder) {

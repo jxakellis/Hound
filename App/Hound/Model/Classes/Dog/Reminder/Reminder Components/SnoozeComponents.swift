@@ -22,18 +22,10 @@ final class SnoozeComponents: NSObject, NSCoding, NSCopying {
     
     required init?(coder aDecoder: NSCoder) {
         executionInterval = aDecoder.decodeDouble(forKey: KeyConstant.snoozeExecutionInterval.rawValue)
-        if let executionInterval = executionInterval, executionInterval == 0.0 {
-            // <= build 3810 executionInterval
-            self.executionInterval = aDecoder.decodeDouble(forKey: "executionInterval")
-        }
         
         if let executionInterval = executionInterval, executionInterval == 0.0 {
-            // if executionInterval is still 0.0, then set it to nil
             self.executionInterval = nil
         }
-        
-        print("finished decoding SnoozeComponents")
-        print("executionInterval \(executionInterval)")
     }
     
     func encode(with aCoder: NSCoder) {

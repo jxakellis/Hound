@@ -26,36 +26,9 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     required init?(coder aDecoder: NSCoder) {
         
         UTCDay = aDecoder.decodeInteger(forKey: KeyConstant.monthlyUTCDay.rawValue)
-        
-        if UTCDay == 0 {
-            // <= build 3810 dayOfMonth
-            UTCDay = aDecoder.decodeInteger(forKey: "dayOfMonth")
-        }
-        
         UTCHour = aDecoder.decodeInteger(forKey: KeyConstant.monthlyUTCHour.rawValue)
         UTCMinute = aDecoder.decodeInteger(forKey: KeyConstant.monthlyUTCMinute.rawValue)
-        
-        // <= build 3810 timeOfDayComponent
-        if let timeOfDayComponent = aDecoder.decodeObject(forKey: "timeOfDayComponent") as? DateComponents {
-            let hoursFromUTC = Calendar.localCalendar.timeZone.secondsFromGMT() / 3600
-            let localHour = timeOfDayComponent.hour ?? 7
-            // Add 24 to make sure UTCHour is positive then mod 24 to make sure its  [0, 23]
-            UTCHour = (localHour - hoursFromUTC + 24) % 24
-            
-            let minutesFromUTC = (Calendar.localCalendar.timeZone.secondsFromGMT() % 3600) / 60
-            let localMinute = timeOfDayComponent.minute ?? 0
-            // Add 60 to make sure UTCMinute is positive then mod 60 to make sure its  [0, 59]
-            UTCMinute = (localMinute - minutesFromUTC + 60) % 60
-        }
-        
-        // <= build 3810 isSkippingLogDate
-        skippedDate = aDecoder.decodeObject(forKey: KeyConstant.monthlySkippedDate.rawValue) as? Date ?? aDecoder.decodeObject(forKey: "isSkippingLogDate") as? Date ?? skippedDate
-        
-        print("finished decoding MonthlyComponents")
-        print("UTCDay \(UTCDay)")
-        print("UTCHour \(UTCHour)")
-        print("UTCMinute \(UTCMinute)")
-        print("skippedDate \(skippedDate)")
+        skippedDate = aDecoder.decodeObject(forKey: KeyConstant.monthlySkippedDate.rawValue) as? Date
     }
     
     func encode(with aCoder: NSCoder) {

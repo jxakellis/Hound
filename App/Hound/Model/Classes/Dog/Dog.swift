@@ -31,17 +31,10 @@ final class Dog: NSObject, NSCoding, NSCopying {
         dogId = aDecoder.decodeInteger(forKey: KeyConstant.dogId.rawValue)
         // shift dogId of 0 to proper placeholder of -1
         dogId = dogId >= 1 ? dogId : -1
+        
         dogName = aDecoder.decodeObject(forKey: KeyConstant.dogName.rawValue) as? String ?? dogName
-        // <= build 3810 dogTraits
-        dogLogs = aDecoder.decodeObject(forKey: KeyConstant.dogLogs.rawValue) as? LogManager ?? aDecoder.decodeObject(forKey: "dogTraits") as? LogManager ?? dogLogs
-        
-        // <= build 3810 dogName stored in dogTraits
-        dogName = dogLogs.dataMigrationDogName ?? dogName
-        // <= build 3810 dogIcon stored in dogTraits
-        dogIcon = dogLogs.dataMigrationDogIcon ?? dogIcon
-        
+        dogLogs = aDecoder.decodeObject(forKey: KeyConstant.dogLogs.rawValue) as? LogManager ?? dogLogs
         dogReminders = aDecoder.decodeObject(forKey: KeyConstant.dogReminders.rawValue) as? ReminderManager ?? dogReminders
-
     }
     
     func encode(with aCoder: NSCoder) {

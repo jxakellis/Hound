@@ -25,23 +25,7 @@ final class DogManager: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        // TO DO NOW TEST converting old dog manager into new dogManager
         dogs = aDecoder.decodeObject(forKey: KeyConstant.dogs.rawValue) as? [Dog] ?? dogs
-        
-        // TO DO NOW if we have dogs with a placeholder id stored, add a flag. This flag will indicate we have migrated data from Hound 1.3.5 to 2.0.0. Then, we will use this flag after one of the ServerVCs to allow the user to migrate their data to Hound's servers
-        
-        // If multiple dogs have the same placeholder id (e.g. migrating from Hound 1.3.5 to 2.0.0), shift the dogIds so they all have a unique placeholder id.
-        var lowestPlaceholderId: Int = -1
-        for dog in dogs where dog.dogId <= -1 && dog.dogId >= lowestPlaceholderId {
-            // the currently iterated over dog has a placeholder id that overlaps with another placeholder id
-            dog.dogId = lowestPlaceholderId - 1
-            lowestPlaceholderId = dog.dogId
-        }
-        
-        print("finished decoding DogManager")
-        for dog in dogs {
-            print("dogId \(dog.dogId)")
-        }
     }
     
     func encode(with aCoder: NSCoder) {
