@@ -22,7 +22,7 @@ final class LogsNavigationViewController: UINavigationController, LogsViewContro
     
     // MARK: - Properties
     
-    var logsViewController: LogsViewController! = nil
+    var logsViewController: LogsViewController?
     
     weak var passThroughDelegate: LogsNavigationViewControllerDelegate! = nil
     
@@ -31,8 +31,8 @@ final class LogsNavigationViewController: UINavigationController, LogsViewContro
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        logsViewController = self.viewControllers[0] as? LogsViewController
-        logsViewController.delegate = self
+        logsViewController = self.viewControllers.first as? LogsViewController
+        logsViewController?.delegate = self
     }
     
 }

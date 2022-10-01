@@ -12,7 +12,7 @@ import UIKit
 protocol DogsNestedReminderViewControllerDelegate: AnyObject {
     func didAddReminder(sender: Sender, forReminder: Reminder)
     func didUpdateReminder(sender: Sender, forReminder: Reminder)
-    func didRemoveReminder(sender: Sender, reminderId: Int)
+    func didRemoveReminder(sender: Sender, forReminder: Reminder)
 }
 
 final class DogsNestedReminderViewController: UIViewController {
@@ -65,7 +65,7 @@ final class DogsNestedReminderViewController: UIViewController {
         let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.selectedReminderAction?.displayActionName(reminderCustomActionName: targetReminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true) ?? targetReminder.reminderAction.displayActionName(reminderCustomActionName: targetReminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))?", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-            self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), reminderId: targetReminder.reminderId)
+            self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forReminder: targetReminder)
             self.navigationController?.popViewController(animated: true)
         }
         

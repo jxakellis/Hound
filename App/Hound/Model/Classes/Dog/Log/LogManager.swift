@@ -8,9 +8,27 @@
 
 import UIKit
 
-final class LogManager: NSObject, NSCoding {
+final class LogManager: NSObject, NSCoding, NSCopying {
+    
+    // MARK: - NSCopying
+       func copy(with zone: NSZone? = nil) -> Any {
+           let copy = LogManager()
+           for log in logs {
+               if let logCopy = log.copy() as? Log {
+                   copy.logs.append(logCopy)
+               }
+           }
+           if let uniqueLogActionsResult = uniqueLogActionsResult {
+               copy.uniqueLogActionsResult = []
+               for uniqueLogActionCopy in uniqueLogActionsResult {
+                   copy.uniqueLogActionsResult?.append(uniqueLogActionCopy)
+               }
+           }
+           return copy
+       }
     
     // MARK: - NSCoding
+    
     required init?(coder aDecoder: NSCoder) {
         logs = aDecoder.decodeObject(forKey: KeyConstant.logs.rawValue) as? [Log] ?? logs
         
@@ -22,13 +40,17 @@ final class LogManager: NSObject, NSCoding {
         
         // If multiple logs have the same placeholder id (e.g. migrating from Hound 1.3.5 to 2.0.0), shift the dogIds so they all have a unique placeholder id
         var lowestPlaceholderId: Int = Int.max
-        for log in logs where log.logId <= -1 {
-            // if the currently iterated over log has a placeholder id that overlaps with another placeholder id
-            if log.logId >= lowestPlaceholderId {
-                log.logId = lowestPlaceholderId - 1
-                lowestPlaceholderId = log.logId
-            }
+        for log in logs where log.logId <= -1 && log.logId >= lowestPlaceholderId {
+            // the currently iterated over log has a placeholder id that overlaps with another placeholder id
+            log.logId = lowestPlaceholderId - 1
+            lowestPlaceholderId = log.logId
         }
+        
+        print("finished decoding LogManager")
+        for log in logs {
+            print("logId \(log.logId)")
+        }
+        print("dogName \(dataMigrationDogName)")
     }
     
     func encode(with aCoder: NSCoder) {
@@ -171,10 +193,15 @@ extension LogManager {
     
     /// Combines the logs of an old log manager with the new log manager, forming a union with their log arrays. In the event that the newLogManager (this object) has a log with the same id as the oldLogManager, the log from the newLogManager will override that log
     func combine(withOldLogManager oldLogManager: LogManager) {
+        // we need to copy oldLogManager as it might still be in use and the combining process modifies oldLogManager. Therefore, copy is necessary to keep oldLogManager integrity.
+        guard let oldLogManagerCopy = oldLogManager.copy() as? LogManager else {
+            return
+        }
+        
         // the addLogs function overwrites logs if it finds them, so we must add the logs to the old log (allowing the newLogManager to overwrite the oldLogManager logs if there is an overlap)
-        oldLogManager.addLogs(forLogs: self.logs)
+        oldLogManagerCopy.addLogs(forLogs: self.logs)
         // now that the oldLogManager contains its original logs, our new logs, and has had its old logs overwritten (in the case old & new both had a log with same logId), we have an updated array.
-        logs = oldLogManager.logs
+        logs = oldLogManagerCopy.logs
         uniqueLogActionsResult = nil
     }
 }

@@ -28,6 +28,9 @@ final class OneTimeComponents: NSObject, NSCoding, NSCopying {
         if let dateComponents = aDecoder.decodeObject(forKey: "dateComponents") as? DateComponents {
             oneTimeDate = Calendar.localCalendar.date(from: dateComponents) ?? oneTimeDate
         }
+        
+        print("finished decoding OneTimeComponents")
+        print("oneTimeDate \(oneTimeDate)")
     }
     
     func encode(with aCoder: NSCoder) {

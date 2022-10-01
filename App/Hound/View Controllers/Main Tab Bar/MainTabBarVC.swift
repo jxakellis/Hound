@@ -65,14 +65,12 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
     
     // Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
     func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
         
         // MainTabBarViewController may not have been fully initalized by the time setDogManager is called on it, leading to TimingManager throwing an error possibly
         if (sender.localized is ServerSyncViewController) == false {
             TimingManager.willReinitalize(forOldDogManager: dogManager, forNewDogManager: forDogManager)
         }
-        
-        dogManager = forDogManager
-        
         if (sender.localized is DogsViewController) == false {
             dogsViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }

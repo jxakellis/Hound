@@ -8,7 +8,19 @@
 
 import UIKit
 
-final class DogManager: NSObject, NSCoding {
+final class DogManager: NSObject, NSCoding, NSCopying {
+    
+    // MARK: - NSCopying
+    
+        func copy(with zone: NSZone? = nil) -> Any {
+            let copy = DogManager()
+            for dog in dogs {
+                if let dogCopy = dog.copy() as? Dog {
+                    copy.dogs.append(dogCopy)
+                }
+            }
+            return copy
+        }
     
     // MARK: - NSCoding
     
@@ -17,14 +29,18 @@ final class DogManager: NSObject, NSCoding {
         dogs = aDecoder.decodeObject(forKey: KeyConstant.dogs.rawValue) as? [Dog] ?? dogs
         
         // TO DO NOW if we have dogs with a placeholder id stored, add a flag. This flag will indicate we have migrated data from Hound 1.3.5 to 2.0.0. Then, we will use this flag after one of the ServerVCs to allow the user to migrate their data to Hound's servers
-        // If multiple dogs have the same placeholder id (e.g. migrating from Hound 1.3.5 to 2.0.0), shift the dogIds so they all have a unique placeholder id
-        var lowestPlaceholderId: Int = Int.max
-        for dog in dogs where dog.dogId <= -1 {
-            // if the currently iterated over dog has a placeholder id that overlaps with another placeholder id
-            if dog.dogId >= lowestPlaceholderId {
-                dog.dogId = lowestPlaceholderId - 1
-                lowestPlaceholderId = dog.dogId
-            }
+        
+        // If multiple dogs have the same placeholder id (e.g. migrating from Hound 1.3.5 to 2.0.0), shift the dogIds so they all have a unique placeholder id.
+        var lowestPlaceholderId: Int = -1
+        for dog in dogs where dog.dogId <= -1 && dog.dogId >= lowestPlaceholderId {
+            // the currently iterated over dog has a placeholder id that overlaps with another placeholder id
+            dog.dogId = lowestPlaceholderId - 1
+            lowestPlaceholderId = dog.dogId
+        }
+        
+        print("finished decoding DogManager")
+        for dog in dogs {
+            print("dogId \(dog.dogId)")
         }
     }
     
@@ -288,10 +304,16 @@ extension DogManager {
     
     /// Combines all of the dogs, reminders, and logs in union fashion to the dogManager. If a dog, reminder, or log exists in either of the dogManagers, then they will be present after this function is done. Dogs, reminders, or logs in the newDogManager (this object) overwrite dogs, reminders, or logs in the oldDogManager. Note: if one dog is to overwrite another dog, it will first combine the reminder/logs, again the reminders/logs of the newDog will take precident over the reminders/logs of the oldDog.
     func combine(withOldDogManager oldDogManager: DogManager) {
+        // we need to copy oldDogManager as it might still be in use and the combining process modifies oldDogManager. Therefore, copy is necessary to keep oldDogManager integrity.
+        guard let oldDogManagerCopy = oldDogManager.copy() as? DogManager else {
+            return
+        }
+        
         // the addDogs function overwrites the dog info (e.g. dogName) but combines the reminders / logs in the event that the oldDogManager and the newDogManager both contain a dog with the same dogId. Therefore, we must add the dogs to the oldDogManager (allowing the newDogManager to overwrite the oldDogManager dogs if there is an overlap)
-        oldDogManager.addDogs(forDogs: self.dogs)
+        oldDogManagerCopy.addDogs(forDogs: self.dogs)
+        
         // now that the oldDogManager contains its original dogs, our new dogs, and has had its old dogs overwritten (in the case old & new both had a dog with same dogId), we have an updated array.
-        dogs = oldDogManager.dogs
+        dogs = oldDogManagerCopy.dogs
         sortDogs()
     }
     

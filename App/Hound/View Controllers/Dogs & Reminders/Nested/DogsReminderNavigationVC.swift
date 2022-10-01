@@ -11,7 +11,7 @@ import UIKit
 protocol DogsReminderNavigationViewControllerDelegate: AnyObject {
     func didAddReminder(forReminder: Reminder)
     func didUpdateReminder(forReminder: Reminder)
-    func didRemoveReminder(reminderId: Int)
+    func didRemoveReminder(forReminder: Reminder)
 }
 
 final class DogsReminderNavigationViewController: UINavigationController, DogsReminderTableViewControllerDelegate {
@@ -26,8 +26,8 @@ final class DogsReminderNavigationViewController: UINavigationController, DogsRe
         passThroughDelegate.didUpdateReminder(forReminder: reminder)
     }
     
-    func didRemoveReminder(reminderId: Int) {
-        passThroughDelegate.didRemoveReminder(reminderId: reminderId)
+    func didRemoveReminder(forReminder reminder: Reminder) {
+        passThroughDelegate.didRemoveReminder(forReminder: reminder)
     }
     
     // MARK: - Properties
@@ -35,7 +35,7 @@ final class DogsReminderNavigationViewController: UINavigationController, DogsRe
     // This delegate is used in order to connect the delegate from the sub table view to the parent embedded view, i.e. connect DogsReminderTableViewController delegate to DogsAddDogViewController
     weak var passThroughDelegate: DogsReminderNavigationViewControllerDelegate! = nil
     
-    var dogsReminderTableViewController: DogsReminderTableViewController! = nil
+    var dogsReminderTableViewController: DogsReminderTableViewController?
     
     // MARK: - Main
     
@@ -43,14 +43,14 @@ final class DogsReminderNavigationViewController: UINavigationController, DogsRe
         super.viewDidLoad()
         
         // Sets DogsReminderTableViewController delegate to self, this is required to pass through the data to DogsAddDogViewController as this navigation controller is in the way.
-        dogsReminderTableViewController = self.viewControllers[self.viewControllers.count - 1] as? DogsReminderTableViewController
-        dogsReminderTableViewController.delegate = self
+        dogsReminderTableViewController = self.viewControllers.first as? DogsReminderTableViewController
+        dogsReminderTableViewController?.delegate = self
     }
     
     // MARK: - DogsAddDogViewController
     
     // Called by superview to pass down new reminders to subview, used when editting a dog
     func didPassReminders(sender: Sender, passedReminders: ReminderManager) {
-        dogsReminderTableViewController.setReminderManager(sender: Sender(origin: sender, localized: self), newReminderManager: passedReminders)
+        dogsReminderTableViewController?.setReminderManager(sender: Sender(origin: sender, localized: self), newReminderManager: passedReminders)
     }
 }

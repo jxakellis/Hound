@@ -184,6 +184,7 @@ final class DogsIndependentReminderViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let dogsReminderManagerViewController = segue.destination as? DogsReminderManagerViewController {
             self.dogsReminderManagerViewController = dogsReminderManagerViewController
+            
             dogsReminderManagerViewController.targetReminder = self.targetReminder
         }
     }

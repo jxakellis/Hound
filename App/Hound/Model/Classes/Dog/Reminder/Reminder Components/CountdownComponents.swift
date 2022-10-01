@@ -31,6 +31,9 @@ final class CountdownComponents: NSObject, NSCoding, NSCopying {
         if executionInterval == 0.0 {
             executionInterval = ClassConstant.ReminderComponentConstant.defaultCountdownExecutionInterval
         }
+        
+        print("finished decoding CountdownComponents")
+        print("executionInterval \(executionInterval)")
     }
     
     func encode(with aCoder: NSCoder) {

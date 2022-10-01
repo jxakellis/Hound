@@ -50,6 +50,12 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         
         // <= build 3810 isSkippingLogDate
         skippedDate = aDecoder.decodeObject(forKey: KeyConstant.monthlySkippedDate.rawValue) as? Date ?? aDecoder.decodeObject(forKey: "isSkippingLogDate") as? Date ?? skippedDate
+        
+        print("finished decoding MonthlyComponents")
+        print("UTCDay \(UTCDay)")
+        print("UTCHour \(UTCHour)")
+        print("UTCMinute \(UTCMinute)")
+        print("skippedDate \(skippedDate)")
     }
     
     func encode(with aCoder: NSCoder) {

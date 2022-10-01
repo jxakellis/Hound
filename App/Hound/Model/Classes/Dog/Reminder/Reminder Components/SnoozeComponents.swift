@@ -31,6 +31,9 @@ final class SnoozeComponents: NSObject, NSCoding, NSCopying {
             // if executionInterval is still 0.0, then set it to nil
             self.executionInterval = nil
         }
+        
+        print("finished decoding SnoozeComponents")
+        print("executionInterval \(executionInterval)")
     }
     
     func encode(with aCoder: NSCoder) {

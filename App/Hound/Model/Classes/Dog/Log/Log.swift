@@ -8,7 +8,20 @@
 
 import UIKit
 
-final class Log: NSObject, NSCoding {
+final class Log: NSObject, NSCoding, NSCopying {
+    
+    // MARK: - NSCopying
+        
+        func copy(with zone: NSZone? = nil) -> Any {
+            let copy = Log()
+            copy.logId = self.logId
+            copy.userId = self.userId
+            copy.logAction = self.logAction
+            copy.logCustomActionName = self.logCustomActionName
+            copy.logDate = self.logDate
+            copy.logNote = self.logNote
+            return copy
+        }
     
     // MARK: - NSCoding
     
@@ -18,13 +31,20 @@ final class Log: NSObject, NSCoding {
         logId = logId >= 1 ? logId : -1
         userId = aDecoder.decodeObject(forKey: KeyConstant.userId.rawValue) as? String ?? userId
         // <= build 3810 logType
-        logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: KeyConstant.logAction.rawValue) as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue) ?? LogAction(rawValue: aDecoder.decodeObject(forKey: "logType") as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue) ??  logAction
+        logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: KeyConstant.logAction.rawValue) as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue) ?? LogAction(rawValue: aDecoder.decodeObject(forKey: "logType") as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue) ?? logAction
         // <= build 3810 customTypeName
         logCustomActionName = aDecoder.decodeObject(forKey: KeyConstant.logCustomActionName.rawValue) as? String ?? aDecoder.decodeObject(forKey: "customTypeName") as? String ?? logCustomActionName
         // <= build 3810 note
         logDate = aDecoder.decodeObject(forKey: KeyConstant.logDate.rawValue) as? Date ?? aDecoder.decodeObject(forKey: "date") as? Date ?? logDate
         // <= build 3810 note
         logNote = aDecoder.decodeObject(forKey: KeyConstant.logNote.rawValue) as? String ?? aDecoder.decodeObject(forKey: "note") as? String ?? logNote
+        
+        print("finished decoding Log")
+        print("userId \(userId)")
+        print("logAction \(logAction.rawValue)")
+        print("logCustomActionName \(logCustomActionName)")
+        print("logDate \(logDate)")
+        print("logNote \(logNote)")
     }
     
     func encode(with aCoder: NSCoder) {

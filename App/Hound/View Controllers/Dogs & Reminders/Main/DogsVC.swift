@@ -22,6 +22,7 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
     }
     
     func didCancel(sender: Sender) {
+        // Reinitalizes timers that were possibly destroyed
         setDogManager(sender: sender, forDogManager: dogManager)
     }
     
@@ -71,6 +72,7 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
                 guard newDog != nil else {
                     return
                 }
+                
                 self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsAddDogViewController")
                 self.dogsAddDogViewController.dogToUpdate = newDog
             }
@@ -446,10 +448,14 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
         if let dogsAddDogViewController = segue.destination as? DogsAddDogViewController {
             self.dogsAddDogViewController = dogsAddDogViewController
             dogsAddDogViewController.delegate = self
+            
+            dogsAddDogViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         }
         else if let dogsTableViewController = segue.destination as? DogsTableViewController {
             self.dogsTableViewController = dogsTableViewController
             dogsTableViewController.delegate = self
+            
+            dogsTableViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         }
         else if let dogsIndependentReminderViewController = segue.destination as? DogsIndependentReminderViewController {
             self.dogsIndependentReminderViewController = dogsIndependentReminderViewController

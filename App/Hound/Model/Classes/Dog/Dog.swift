@@ -8,7 +8,22 @@
 
 import UIKit
 
-final class Dog: NSObject, NSCoding {
+final class Dog: NSObject, NSCoding, NSCopying {
+    
+    // MARK: - NSCopying
+        
+        func copy(with zone: NSZone? = nil) -> Any {
+            guard let copy = try? Dog(dogName: self.dogName) else {
+                return Dog()
+            }
+            
+            copy.dogId = self.dogId
+            copy.dogName = self.dogName
+            copy.dogIcon = self.dogIcon.copy() as? UIImage ?? UIImage()
+            copy.dogReminders = self.dogReminders.copy() as? ReminderManager ?? ReminderManager()
+            copy.dogLogs = self.dogLogs.copy() as? LogManager ?? LogManager()
+            return copy
+        }
     
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
@@ -26,6 +41,7 @@ final class Dog: NSObject, NSCoding {
         dogIcon = dogLogs.dataMigrationDogIcon ?? dogIcon
         
         dogReminders = aDecoder.decodeObject(forKey: KeyConstant.dogReminders.rawValue) as? ReminderManager ?? dogReminders
+
     }
     
     func encode(with aCoder: NSCoder) {
@@ -127,6 +143,7 @@ final class Dog: NSObject, NSCoding {
     
     /// Combines all of the reminders and logs in union fashion to the current dog. If a reminder or log exists in either of the dogs, then they will be present after this function is done. If a reminder or log is present in both of the dogs, the oldDog's reminder/log will be overriden with the newDogs (this object's) reminder/log
     func combine(withOldDog oldDog: Dog) {
+        // No need to copy oldDog at this point in time, dogLogs and dogReminders performs a copy themselves so that arrays don't reference the same objects.
         dogLogs.combine(withOldLogManager: oldDog.dogLogs)
         dogReminders.combine(withOldReminderManager: oldDog.dogReminders)
     }

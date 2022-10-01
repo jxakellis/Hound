@@ -90,6 +90,13 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             // <= build 3810 isEnabled
             reminderIsEnabled = aDecoder.decodeBool(forKey: "isEnabled")
         }
+        
+        print("finished decoding Reminder")
+        print("reminderAction \(reminderAction.rawValue)")
+        print("reminderCustomActionName \(reminderCustomActionName)")
+        print("storedReminderType \(reminderType.rawValue)")
+        print("reminderExecutionBasis \(reminderExecutionBasis)")
+        print("reminderIsEnabled \(reminderIsEnabled)")
     }
     
     func encode(with aCoder: NSCoder) {

@@ -8,8 +8,6 @@
 
 import UIKit
 
-// TO DO NOW TEST that we store images properly. test by opening create dog and dog icon, then create that dog. test by adding icon to already created dog (aka update dog). delete a dog locally and delete one on the server, make sure the local dogIcon is deleted for both of them.
-
 enum DogIconManager {
     
     final class LocalDogIcon {
@@ -106,7 +104,6 @@ enum DogIconManager {
     
     /// Attempts to retrieve the dogIcon for the provided dogId. If no dogIcon is found, then nil is returned
     static func getIcon(forDogId dogId: Int) -> UIImage? {
-        
         // Before reading icon from files, see if we have it stored in a reference (meaning we've retrieved it before in this lifecycle). Saves us from needlessly reading from files again
         if let icon = icons.first(where: { localDogIcon in
             return localDogIcon.dogId == dogId

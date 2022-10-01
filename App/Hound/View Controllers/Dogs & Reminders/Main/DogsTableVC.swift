@@ -84,7 +84,6 @@ final class DogsTableViewController: UITableViewController {
         if let loopTimer = loopTimer {
             RunLoop.main.add(loopTimer, forMode: .default)
         }
-        
     }
     
     /// Makes a query to the server to retrieve new information then refreshed the tableView
@@ -299,10 +298,6 @@ final class DogsTableViewController: UITableViewController {
     // MARK: Table View Management
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        // if dogManager.dogs.count == 0 {
-        //    return 1
-        // }
         return dogManager.dogs.count
     }
     
@@ -315,7 +310,6 @@ final class DogsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "DogsDogDisplayTableViewCell", for: indexPath)
             

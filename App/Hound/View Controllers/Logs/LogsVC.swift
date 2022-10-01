@@ -149,7 +149,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
         }
     }
     
-    var logsTableViewController: LogsTableViewController! = nil
+    var logsTableViewController: LogsTableViewController?
     
     var logsAddLogViewController: LogsAddLogViewController?
     
@@ -427,7 +427,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
         }
         
         // logsFilter is configured, now apply it to the table view controller
-        logsTableViewController.logsFilter = logsFilter
+        logsTableViewController?.logsFilter = logsFilter
     }
     
     // MARK: - Navigation
@@ -436,16 +436,17 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let logsTableViewController = segue.destination as? LogsTableViewController {
             self.logsTableViewController = logsTableViewController
-            logsTableViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
             logsTableViewController.delegate = self
+            
+            logsTableViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         }
         else if let logsAddLogViewController = segue.destination as? LogsAddLogViewController {
             self.logsAddLogViewController = logsAddLogViewController
+            logsAddLogViewController.delegate = self
             
             logsAddLogViewController.parentDogIdToUpdate = parentDogIdOfSelectedLog
             logsAddLogViewController.logToUpdate = selectedLog
             logsAddLogViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
-            logsAddLogViewController.delegate = self
         }
     }
     

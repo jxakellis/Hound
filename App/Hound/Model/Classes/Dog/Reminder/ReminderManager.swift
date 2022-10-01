@@ -26,12 +26,15 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
         reminders = aDecoder.decodeObject(forKey: KeyConstant.reminders.rawValue) as? [Reminder] ?? reminders
         // If multiple reminders have the same placeholder id (e.g. migrating from Hound 1.3.5 to 2.0.0), shift the dogIds so they all have a unique placeholder id
         var lowestPlaceholderId: Int = Int.max
-        for reminder in reminders where reminder.reminderId <= -1 {
-            // if the currently iterated over reminder has a placeholder id that overlaps with another placeholder id
-            if reminder.reminderId >= lowestPlaceholderId {
-                reminder.reminderId = lowestPlaceholderId - 1
-                lowestPlaceholderId = reminder.reminderId
-            }
+        for reminder in reminders where reminder.reminderId <= -1 && reminder.reminderId >= lowestPlaceholderId {
+            // the currently iterated over reminder has a placeholder id that overlaps with another placeholder id
+            reminder.reminderId = lowestPlaceholderId - 1
+            lowestPlaceholderId = reminder.reminderId
+        }
+        
+        print("finished decoding ReminderManager")
+        for reminder in reminders {
+            print("reminderId \(reminder.reminderId)")
         }
     }
     
@@ -281,16 +284,6 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
         reminders.remove(at: removedReminderIndex)
     }
     
-    func removeReminder(forIndex index: Int) {
-        // Make sure the index is valid
-        guard reminders.count > index else {
-            return
-        }
-        
-        reminders[index].timer?.invalidate()
-        reminders.remove(at: index)
-    }
-    
 }
 
 extension ReminderManager {
@@ -311,50 +304,14 @@ extension ReminderManager {
     
     /// Combines the reminders of an old reminder manager with the new reminder manager, forming a union with their reminders arrays. In the event that the newReminderManager (this object) has a reminder with the same id as the oldReminderManager, the reminder from the newReminderManager will override that reminder
     func combine(withOldReminderManager oldReminderManager: ReminderManager) {
+        // We need to copy oldReminderManager as it might still be in use and the combining process modifies oldReminderManager. Therefore, copy is necessary to keep oldReminderManager integrity.
+        guard let oldReminderManagerCopy = oldReminderManager.copy() as? ReminderManager else {
+            return
+        }
+        
         // the addReminders function overwrites reminders if it finds them, so we must add the reminders to the old reminders (allowing the newReminderManager to overwrite the oldReminderManager reminders if there is an overlap)
-        oldReminderManager.addReminders(forReminders: reminders)
+        oldReminderManagerCopy.addReminders(forReminders: reminders)
         // now that the oldReminderManager contains its original reminders, our new reminders, and has had its old reminders overwritten (in the case old & new both had a reminder with same reminderId), we have an updated array.
-        reminders = oldReminderManager.reminders
+        reminders = oldReminderManagerCopy.reminders
     }
-    
-    /// Compares newReminders against the reminders stored in this reminders manager. The first array is reminders that haven't changed, therefore they are in sync with the server. The second array is reminders that have been created and must be communicated to the server. The third array is reminders that have been updated so the server must be notified of their changes. The fourth array is reminders that have been deleted so the server must be notified of their deletion (this function also invalidates the timers of the reminders in the deleted array).
-    func groupReminders(newReminders: [Reminder]) -> ([Reminder], [Reminder], [Reminder], [Reminder]) {
-        var sameReminders: [Reminder] = []
-        var createdReminders: [Reminder] = []
-        var updatedReminders: [Reminder] = []
-        var deletedReminders: [Reminder] = []
-        
-        // first we loop through our inital reminders array. We can find same, updated, and deleted reminders this way.
-        // Since we don't deal with created reminders in this loop, all reminderIds will be real Ids from the server
-        for reminder in self.reminders {
-            var containsReminder = false
-            for newReminder in newReminders where newReminder.reminderId == reminder.reminderId && newReminder.reminderId >= 0 {
-                containsReminder = true
-                if reminder.isSame(asReminder: newReminder) {
-                    // nothing was changed about the reminder
-                    sameReminders.append(newReminder)
-                }
-                else {
-                    // some property of the reminder was updated
-                    updatedReminders.append(newReminder)
-                }
-                break
-            }
-            if containsReminder == false {
-                // new reminder array doesn't contain the old reminder, therefore it was deleted
-                deletedReminders.append(reminder)
-                // make sure to invalidate the old reminder, no need to do any same/updated reminder as (even if they are a .copy()) their timers are just references to the original timers. This means there are no duplicated timers and TimingManager will handle them
-                reminder.timer?.invalidate()
-                reminder.timer = nil
-            }
-        }
-        
-        // look for reminders that have the default reminder id, meaning they were just created and couldn't be in the old array
-        for newReminder in newReminders where newReminder.reminderId < 0 {
-            createdReminders.append(newReminder)
-        }
-        
-        return (sameReminders, createdReminders, updatedReminders, deletedReminders)
-    }
-    
 }

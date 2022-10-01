@@ -45,6 +45,12 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         
         // <= build 3810 isSkippingLogDate
         skippedDate = aDecoder.decodeObject(forKey: KeyConstant.weeklySkippedDate.rawValue) as? Date ?? aDecoder.decodeObject(forKey: "isSkippingLogDate") as? Date
+        
+        print("finished decoding WeeklyComponents")
+        print("weekdays \(weekdays)")
+        print("UTCHour \(UTCHour)")
+        print("UTCMinute \(UTCMinute)")
+        print("skippedDate \(skippedDate)")
     }
     
     func encode(with aCoder: NSCoder) {

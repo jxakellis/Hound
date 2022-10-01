@@ -25,14 +25,14 @@ final class DogsNavigationViewController: UINavigationController, DogsViewContro
     
     weak var passThroughDelegate: DogsNavigationViewControllerDelegate! = nil
     
-    var dogsViewController: DogsViewController!
+    var dogsViewController: DogsViewController?
     
     // MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        dogsViewController = self.viewControllers[0] as? DogsViewController
-        dogsViewController.delegate = self
+        dogsViewController = self.viewControllers.first as? DogsViewController
+        dogsViewController?.delegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {

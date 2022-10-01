@@ -45,6 +45,7 @@ final class DogsReminderCountdownViewController: UIViewController, UIGestureReco
     // MARK: - Main
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         
         countdown.minuteInterval = DevelopmentConstant.reminderMinuteInterval
         

@@ -11,7 +11,7 @@ import UIKit
 protocol DogsReminderTableViewControllerDelegate: AnyObject {
     func didAddReminder(forReminder: Reminder)
     func didUpdateReminder(forReminder: Reminder)
-    func didRemoveReminder(reminderId: Int)
+    func didRemoveReminder(forReminder: Reminder)
 }
 
 final class DogsReminderTableViewController: UITableViewController, DogsNestedReminderViewControllerDelegate, DogsReminderTableViewCellDelegate {
@@ -48,12 +48,12 @@ final class DogsReminderTableViewController: UITableViewController, DogsNestedRe
         delegate.didUpdateReminder(forReminder: reminder)
     }
     
-    func didRemoveReminder(sender: Sender, reminderId: Int) {
-        reminderManager.removeReminder(forReminderId: reminderId)
+    func didRemoveReminder(sender: Sender, forReminder reminder: Reminder) {
+        reminderManager.removeReminder(forReminderId: reminder.reminderId)
         
         setReminderManager(sender: sender, newReminderManager: reminderManager)
         
-        delegate.didRemoveReminder(reminderId: reminderId)
+        delegate.didRemoveReminder(forReminder: reminder)
     }
     
     // MARK: - Reminder Manager
@@ -152,8 +152,6 @@ final class DogsReminderTableViewController: UITableViewController, DogsNestedRe
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        let reminderId = reminderManager.reminders[indexPath.row].reminderId
-        
         if editingStyle == .delete && reminderManager.reminders.count > 0 {
             let reminder = reminderManager.reminders[indexPath.row]
             
@@ -161,10 +159,10 @@ final class DogsReminderTableViewController: UITableViewController, DogsNestedRe
             
             let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 
-                self.reminderManager.removeReminder(forIndex: indexPath.row)
+                self.reminderManager.removeReminder(forReminderId: reminder.reminderId)
                 self.setReminderManager(sender: Sender(origin: self, localized: self), newReminderManager: self.reminderManager)
                 
-                self.delegate.didRemoveReminder(reminderId: reminderId)
+                self.delegate.didRemoveReminder(forReminder: reminder)
                 self.tableView.deleteRows(at: [indexPath], with: .automatic)
             }
             let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)

@@ -531,6 +531,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         view.addSubview(logNoteTextView)
         
         oneTimeSetup()
+        
+        // TO DO NOW review constraints. Make logDate a minimum size of ~1:1.15 and logNote minimum size of 35. Then if there is extra space, have logDate expand up to ~1:1.3, then if there is more space have logNote expand forever.
     }
     
     override func viewWillAppear(_ animated: Bool) {

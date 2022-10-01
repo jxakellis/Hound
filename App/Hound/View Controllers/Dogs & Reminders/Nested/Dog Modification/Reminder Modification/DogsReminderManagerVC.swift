@@ -455,43 +455,34 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
             self.dogsReminderCountdownViewController = dogsReminderCountdownViewController
             dogsReminderCountdownViewController.delegate = self
             
-            guard let targetReminder = targetReminder, targetReminder.reminderType == .countdown else {
-                return
+            if let targetReminder = targetReminder, targetReminder.reminderType == .countdown {
+                dogsReminderCountdownViewController.passedInterval = targetReminder.countdownComponents.executionInterval
             }
-            
-            dogsReminderCountdownViewController.passedInterval = targetReminder.countdownComponents.executionInterval
-            
         }
         else if let dogsReminderWeeklyViewController = segue.destination as? DogsReminderWeeklyViewController {
             self.dogsReminderWeeklyViewController = dogsReminderWeeklyViewController
             dogsReminderWeeklyViewController.delegate = self
             
-            guard let targetReminder = targetReminder, targetReminder.reminderType == .weekly else {
-                return
+            if let targetReminder = targetReminder, targetReminder.reminderType == .weekly {
+                dogsReminderWeeklyViewController.passedTimeOfDay = targetReminder.weeklyComponents.notSkippingExecutionDate(forReminderExecutionBasis: targetReminder.reminderExecutionBasis)
+                dogsReminderWeeklyViewController.passedWeekDays = targetReminder.weeklyComponents.weekdays
             }
-            dogsReminderWeeklyViewController.passedTimeOfDay = targetReminder.weeklyComponents.notSkippingExecutionDate(forReminderExecutionBasis: targetReminder.reminderExecutionBasis)
-            dogsReminderWeeklyViewController.passedWeekDays = targetReminder.weeklyComponents.weekdays
-            
         }
         else if let dogsReminderMonthlyViewController = segue.destination as? DogsReminderMonthlyViewController {
             self.dogsReminderMonthlyViewController = dogsReminderMonthlyViewController
             dogsReminderMonthlyViewController.delegate = self
             
-            guard let targetReminder = targetReminder, targetReminder.reminderType == .monthly else {
-                return
+            if let targetReminder = targetReminder, targetReminder.reminderType == .monthly {
+                dogsReminderMonthlyViewController.passedTimeOfDay = targetReminder.monthlyComponents.notSkippingExecutionDate(forReminderExecutionBasis: targetReminder.reminderExecutionBasis)
             }
-            
-            dogsReminderMonthlyViewController.passedTimeOfDay = targetReminder.monthlyComponents.notSkippingExecutionDate(forReminderExecutionBasis: targetReminder.reminderExecutionBasis)
         }
         else if let dogsReminderOneTimeViewController = segue.destination as? DogsReminderOneTimeViewController {
             self.dogsReminderOneTimeViewController = dogsReminderOneTimeViewController
             dogsReminderOneTimeViewController.delegate = self
             
-            guard let targetReminder = targetReminder, targetReminder.reminderType == .oneTime && Date().distance(to: targetReminder.oneTimeComponents.oneTimeDate) > 0 else {
-                return
+            if let targetReminder = targetReminder, targetReminder.reminderType == .oneTime && Date().distance(to: targetReminder.oneTimeComponents.oneTimeDate) > 0 {
+                dogsReminderOneTimeViewController.passedDate = targetReminder.oneTimeComponents.oneTimeDate
             }
-            
-            dogsReminderOneTimeViewController.passedDate = targetReminder.oneTimeComponents.oneTimeDate
         }
         
     }
