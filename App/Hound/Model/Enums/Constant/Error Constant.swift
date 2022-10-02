@@ -53,8 +53,8 @@ enum ErrorConstant {
             return FamilyResponseError.permissionInvalid
         }
         // MARK: - GeneralResponseError
-        else if errorCode == "ER_GENERAL_APP_BUILD_OUTDATED" {
-            return GeneralResponseError.appBuildOutdated
+        else if errorCode == "ER_GENERAL_APP_VERSION_OUTDATED" {
+            return GeneralResponseError.appVersionOutdated
         }
         else if errorCode == "ER_GENERAL_APPLE_SERVER_FAILED" {
             return GeneralResponseError.appleServerFailed
@@ -139,10 +139,10 @@ enum ErrorConstant {
     
     enum GeneralResponseError {
         
-        static let appBuildOutdatedName = "GeneralResponseError.appBuildOutdated"
-        /// The app build that the user is using is out dated
-        static var appBuildOutdated: HoundError {
-            return HoundError(forName: appBuildOutdatedName, forDescription: "Your version of Hound is outdated. Please update to the latest version to continue.")
+        static let appVersionOutdatedName = "GeneralResponseError.appVersionOutdated"
+        /// The app version that the user is using is out dated
+        static var appVersionOutdated: HoundError {
+            return HoundError(forName: appVersionOutdatedName, forDescription: "Your version of Hound is outdated. Please update to the latest version to continue.")
         }
         static var appleServerFailed: HoundError {
             return HoundError(forName: "GeneralResponseError.appleServerFailed", forDescription: "Hound was unable to contact Apple's iTunes server and complete your request. Please restart and retry. If this issue persists, please contact Hound support.")

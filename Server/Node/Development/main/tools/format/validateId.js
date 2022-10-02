@@ -1,26 +1,19 @@
 const { databaseQuery } = require('../database/databaseQuery');
-const { formatSHA256Hash, formatNumber, formatArray } = require('./formatObject');
+const { formatSHA256Hash, formatString, formatArray } = require('./formatObject');
 const { areAllDefined } = require('./validateDefined');
 const { ValidationError } = require('../general/errors');
 
 /**
- * Checks to see that the appBuild of the requester is either up to date or one version behind.
- * If a Hound update is publish, we want to support both the users who have updated to the brand new version and the ones who haven't.
- * If we didn't support both, then users could be locked out of Hound and unable to update as the app store takes a day or two to show the update
- *
- * However, if a user is on an old version, we kick them back.
- * E.g. User is on build 1000. The most recent build was 1500 but we just published 2000.
- * We reject the build 1000 user but support build 1500 and build 2000.
- * Build 1500 will no longer be supported once a new build (e.g. 2500) comes out.
+ * Checks to see that the appVersion of the requester is compatible
  */
-async function validateAppBuild(req, res, next) {
-  const appBuild = formatNumber(req.params.appBuild);
-  if (areAllDefined(appBuild) === false) {
-    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError('appBuild missing', global.constant.error.value.MISSING));
+async function validateAppVersion(req, res, next) {
+  const appVersion = formatString(req.params.appVersion);
+  if (areAllDefined(appVersion) === false) {
+    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError('appVersion missing', global.constant.error.value.MISSING));
   }
-  // the user isn't on the previous or current app build
-  if (global.constant.server.COMPATIBLE_IOS_APP_BUILDS.includes(appBuild) === false) {
-    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError(`App build of ${appBuild} is incompatible. Compatible builds: ${global.constant.server.COMPATIBLE_IOS_APP_BUILDS}`, global.constant.error.general.APP_BUILD_OUTDATED));
+  // the user isn't on the previous or current app version
+  if (global.constant.server.COMPATIBLE_IOS_APP_VERSIONS.includes(appVersion) === false) {
+    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError(`App version of ${appVersion} is incompatible. Compatible versions: ${global.constant.server.COMPATIBLE_IOS_APP_VERSIONS}`, global.constant.error.general.APP_VERSION_OUTDATED));
   }
 
   return next();
@@ -307,5 +300,5 @@ async function validateBodyReminderId(req, res, next) {
 }
 
 module.exports = {
-  validateAppBuild, validateUserId, validateFamilyId, validateDogId, validateLogId, validateParamsReminderId, validateBodyReminderId,
+  validateAppVersion, validateUserId, validateFamilyId, validateDogId, validateLogId, validateParamsReminderId, validateBodyReminderId,
 };

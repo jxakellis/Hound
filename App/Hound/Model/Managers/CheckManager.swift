@@ -105,8 +105,8 @@ enum CheckManager {
             return
         }
         
-        // make sure we haven't shown the release notes for this version before. To do this, we check to see if our array of app builds that we showed release notes for contains the app build of the current version. If the array does not contain the current app build, then we haven't shown release notes for this new version and we are ok to proceed.
-        guard LocalConfiguration.localAppVersionsWithReleaseNotesShown.contains(UIApplication.appVersion) == false && LocalConfiguration.localAppBuildsWithReleaseNotesShown.contains(UIApplication.appBuild) == false else {
+        // make sure we haven't shown the release notes for this version before. To do this, we check to see if our array of app versions that we showed release notes for contains the app version of the current version. If the array does not contain the current app version, then we haven't shown release notes for this new version and we are ok to proceed.
+        guard LocalConfiguration.localAppVersionsWithReleaseNotesShown.contains(UIApplication.appVersion) == false else {
             return
         }
         
@@ -129,9 +129,8 @@ enum CheckManager {
             AlertManager.enqueueAlertForPresentation(updateAlertController)
         }
         
-        // we successfully showed the banner, so store the build we showed it for
+        // we successfully showed the banner, so store the version we showed it for
         LocalConfiguration.localAppVersionsWithReleaseNotesShown.append(UIApplication.appVersion)
-        LocalConfiguration.localAppBuildsWithReleaseNotesShown.append(UIApplication.appBuild)
     }
     
 }

@@ -24,7 +24,6 @@ enum PersistenceManager {
         UIApplication.previousAppVersion = UserDefaults.standard.object(forKey: KeyConstant.localAppVersion.rawValue) as? String ?? UserDefaults.standard.object(forKey: "appVersion") as? String ?? "1.3.5"
         
         UserDefaults.standard.setValue(UIApplication.appVersion, forKey: KeyConstant.localAppVersion.rawValue)
-        UserDefaults.standard.setValue(UIApplication.appBuild, forKey: KeyConstant.localAppBuild.rawValue)
         
         UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         
@@ -35,10 +34,6 @@ enum PersistenceManager {
         
         UserInformation.userIdentifier = keychain.get(KeyConstant.userIdentifier.rawValue)
         
-        if DevelopmentConstant.isProductionDatabase == false {
-            // UserInformation.userIdentifier = "1f66dbb1e7df20e51a8cd88c2334f5e4def79a2ebc1444f6766ff4160ea6927a"
-        }
-        
         UserInformation.userEmail = keychain.get(KeyConstant.userEmail.rawValue) ?? UserInformation.userEmail
         UserInformation.userFirstName = keychain.get(KeyConstant.userFirstName.rawValue) ?? UserInformation.userFirstName
         UserInformation.userLastName = keychain.get(KeyConstant.userLastName.rawValue) ?? UserInformation.userLastName
@@ -46,10 +41,6 @@ enum PersistenceManager {
         // MARK: Load User Information
         
         UserInformation.userId = UserDefaults.standard.value(forKey: KeyConstant.userId.rawValue) as? String ?? UserInformation.userId
-        
-        if DevelopmentConstant.isProductionDatabase == false {
-            // UserInformation.userId = "378d9865894c6afe53dc6259c7645fa4b5e330894a2df2594d04484ca819db1a"
-        }
        
         UserInformation.familyId = UserDefaults.standard.value(forKey: KeyConstant.familyId.rawValue) as? String ?? UserInformation.familyId
         
@@ -103,7 +94,6 @@ enum PersistenceManager {
         ?? UserDefaults.standard.value(forKey: "userAskedToReviewHoundDates") as? [Date]
         ?? LocalConfiguration.localPreviousDatesUserShownBannerToReviewHound
         
-        // reviewRequestDates depreciated >= build 6000; rateReviewRequestedDates depreciated >= build 6500
         // <= build 6000 reviewRequestDates
         // <= build 6500 rateReviewRequestedDates
         // <= build 8000 datesUserReviewRequested
@@ -118,12 +108,6 @@ enum PersistenceManager {
         UserDefaults.standard.value(forKey: KeyConstant.localAppVersionsWithReleaseNotesShown.rawValue) as? [String]
         ?? UserDefaults.standard.value(forKey: "appVersionsWithReleaseNotesShown") as? [String]
         ?? LocalConfiguration.localAppVersionsWithReleaseNotesShown
-        
-        // <= build 8000 appBuildsWithReleaseNotesShown
-        LocalConfiguration.localAppBuildsWithReleaseNotesShown =
-        UserDefaults.standard.value(forKey: KeyConstant.localAppBuildsWithReleaseNotesShown.rawValue) as? [Int]
-        ?? UserDefaults.standard.value(forKey: "appBuildsWithReleaseNotesShown") as? [Int]
-        ?? LocalConfiguration.localAppBuildsWithReleaseNotesShown
         
         // <= build 8000 hasLoadedHoundIntroductionViewControllerBefore
         LocalConfiguration.localHasCompletedHoundIntroductionViewController =
@@ -195,7 +179,6 @@ enum PersistenceManager {
         PersistenceManager.persistRateReviewRequestedDates()
     
         UserDefaults.standard.setValue(LocalConfiguration.localAppVersionsWithReleaseNotesShown, forKey: KeyConstant.localAppVersionsWithReleaseNotesShown.rawValue)
-        UserDefaults.standard.setValue(LocalConfiguration.localAppBuildsWithReleaseNotesShown, forKey: KeyConstant.localAppBuildsWithReleaseNotesShown.rawValue)
         
         UserDefaults.standard.setValue(LocalConfiguration.localHasCompletedHoundIntroductionViewController, forKey: KeyConstant.localHasCompletedHoundIntroductionViewController.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.localHasCompletedRemindersIntroductionViewController, forKey: KeyConstant.localHasCompletedRemindersIntroductionViewController.rawValue)

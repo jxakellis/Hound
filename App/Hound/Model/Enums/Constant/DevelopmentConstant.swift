@@ -12,12 +12,12 @@ enum DevelopmentConstant {
         /// True if the server we are contacting is our Ubuntu AWS instance, false if we are local hosting off personal computer
         static let isProductionServer: Bool = {
 #if DEBUG
-            AppDelegate.generalLogger.info("DEBUG Build Configuration for server")
+            AppDelegate.generalLogger.info("DEBUG configuration for server")
             // Return true to connect to AWS EC2 instance
             // Return false to connect to local
             return false
 #else
-            AppDelegate.generalLogger.info("RELEASE Build Configuration for server")
+            AppDelegate.generalLogger.info("RELEASE configuration for server")
             // MARK: ALWAYS RETURN TRUE, WANT PROD SERVER FOR RELEASE
             return true
 #endif
@@ -25,11 +25,11 @@ enum DevelopmentConstant {
         /// True if we are contacting the production environment side of our server, false if we are contacting the development side
         static let isProductionDatabase: Bool = {
 #if DEBUG
-            AppDelegate.generalLogger.info("DEBUG Build Configuration for database")
+            AppDelegate.generalLogger.info("DEBUG configuration for database")
             // MARK: ALWAYS RETURN FALSE, WANT DEV DATABASE FOR DEBUG
             return false
 #else
-            AppDelegate.generalLogger.info("RELEASE Build Configuration for database")
+            AppDelegate.generalLogger.info("RELEASE configuration for database")
             // MARK: ALWAYS RETURN TRUE, WANT PROD DATABASE FOR RELEASE
             return true
 #endif

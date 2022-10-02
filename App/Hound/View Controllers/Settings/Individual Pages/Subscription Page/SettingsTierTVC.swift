@@ -63,14 +63,14 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
         subscriptionTierDescriptionLabel.text = SubscriptionGroup20965379Product.localizedDescriptionExpanded(forSubscriptionGroup20965379Product: subscriptionProduct)
         
         let keychain = KeychainSwift()
-        let userUsedPaymentDiscountFromSubscriptionGroup20965379 = keychain.getBool(KeyConstant.userUsedPaymentDiscountFromSubscriptionGroup20965379.rawValue)
+        let userPurchasedProductFromSubscriptionGroup20965379WithPaymentDiscount = keychain.getBool(KeyConstant.userPurchasedProductFromSubscriptionGroup20965379WithPaymentDiscount.rawValue)
         
         // now we have to determine what the pricing is like
         let subscriptionPriceWithSymbol = "\(product.priceLocale.currencySymbol ?? "")\(product.price)"
         let subscriptionPeriodString = convertSubscriptionPeriodUnits(forUnit: productSubscriptionPeriod.unit, forNumberOfUnits: productSubscriptionPeriod.numberOfUnits, isFreeTrialText: false)
         
         // tier offers a free trial
-        if let introductoryPrice = product.introductoryPrice, introductoryPrice.paymentMode == .freeTrial && userUsedPaymentDiscountFromSubscriptionGroup20965379 == false {
+        if let introductoryPrice = product.introductoryPrice, introductoryPrice.paymentMode == .freeTrial && userPurchasedProductFromSubscriptionGroup20965379WithPaymentDiscount == false {
             let freeTrialSubscriptionPeriod = convertSubscriptionPeriodUnits(forUnit: introductoryPrice.subscriptionPeriod.unit, forNumberOfUnits: introductoryPrice.subscriptionPeriod.numberOfUnits, isFreeTrialText: true)
             
             subscriptionTierPricingDescriptionLabel.text = "Begin with a free \(freeTrialSubscriptionPeriod) trial then continue your \(product.localizedTitle) experience for \(subscriptionPriceWithSymbol) per \(subscriptionPeriodString)"

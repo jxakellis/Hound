@@ -32,6 +32,11 @@ enum KeyConstant: String {
     
     // MARK: User Information
     
+    // client
+    case userMiddleName
+    case userNamePrefix
+    case userNameSuffix
+    
     // client and server
     case userId
     case userIdentifier
@@ -64,7 +69,7 @@ enum KeyConstant: String {
     // client
     case userPurchasedProduct
     case userPurchasedProductFromSubscriptionGroup20965379
-    case userUsedPaymentDiscountFromSubscriptionGroup20965379
+    case userPurchasedProductFromSubscriptionGroup20965379WithPaymentDiscount
     
     // client and server
     case appStoreReceiptURL
@@ -188,7 +193,6 @@ enum KeyConstant: String {
     case localPreviousDatesUserReviewRequested
     
     case localAppVersionsWithReleaseNotesShown
-    case localAppBuildsWithReleaseNotesShown
     
     case localHasCompletedFirstTimeSetup
     case localHasCompletedHoundIntroductionViewController
@@ -196,5 +200,4 @@ enum KeyConstant: String {
     case localHasCompletedSettingsFamilyIntroductionViewController
 
     case localAppVersion
-    case localAppBuild
 }

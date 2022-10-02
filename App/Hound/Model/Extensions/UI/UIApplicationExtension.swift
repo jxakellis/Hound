@@ -33,11 +33,4 @@ extension UIApplication {
     static var appVersion: String {
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "2.0.0"
     }
-    
-    static var previousAppBuild: Int?
-    
-    static var appBuild: Int {
-        
-        return Int((Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String) ?? "1228") ?? 1228
-    }
 }

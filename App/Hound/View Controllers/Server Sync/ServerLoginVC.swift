@@ -70,16 +70,25 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
             
             let fullName = appleIDCredential.fullName
             
-            let firstName = fullName?.givenName
-            if let firstName = firstName {
+            if let firstName = fullName?.givenName {
                 keychain.set(firstName, forKey: KeyConstant.userFirstName.rawValue)
                 UserInformation.userFirstName = firstName
             }
             
-            let lastName = fullName?.familyName
-            if let lastName = lastName {
+            if let lastName = fullName?.familyName {
                 keychain.set(lastName, forKey: KeyConstant.userLastName.rawValue)
                 UserInformation.userLastName = lastName
+            }
+            
+            // not used but we store anyways
+            if let middleName = fullName?.middleName {
+                keychain.set(middleName, forKey: KeyConstant.userMiddleName.rawValue)
+            }
+            if let namePrefix = fullName?.namePrefix {
+                keychain.set(namePrefix, forKey: KeyConstant.userNamePrefix.rawValue)
+            }
+            if let nameSuffix = fullName?.nameSuffix {
+                keychain.set(nameSuffix, forKey: KeyConstant.userNameSuffix.rawValue)
             }
             
             self.signUpUser()

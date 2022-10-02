@@ -10,7 +10,7 @@ import UIKit
 
 /// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
 enum InternalRequestUtils {
-    static var baseURLWithoutParams: URL { return URL(string: DevelopmentConstant.url + "/\(UIApplication.appBuild)") ?? URL(fileURLWithPath: "foo") }
+    static var baseURLWithoutParams: URL { return URL(string: DevelopmentConstant.url + "/\(UIApplication.appVersion)") ?? URL(fileURLWithPath: "foo") }
     
     private static var sessionConfig: URLSessionConfiguration {
         let sessionConfig = URLSessionConfiguration.default
@@ -128,8 +128,8 @@ enum InternalRequestUtils {
                     }
                 }()
                 
-                guard responseError.name != ErrorConstant.GeneralResponseError.appBuildOutdatedName else {
-                    // If we experience an app build response error, that means the user's local app is outdated. If this is the case, then nothing will work until the user updates their app. Therefore we stop everything and do not return a completion handler. This might break something but we don't care.
+                guard responseError.name != ErrorConstant.GeneralResponseError.appVersionOutdatedName else {
+                    // If we experience an app version response error, that means the user's local app is outdated. If this is the case, then nothing will work until the user updates their app. Therefore we stop everything and do not return a completion handler. This might break something but we don't care.
                     DispatchQueue.main.async {
                         responseError.alert()
                     }

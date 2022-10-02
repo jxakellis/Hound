@@ -316,7 +316,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
                         keychain.set(true, forKey: KeyConstant.userPurchasedProductFromSubscriptionGroup20965379.rawValue)
                         
                         if transaction.payment.paymentDiscount != nil {
-                            keychain.set(true, forKey: KeyConstant.userUsedPaymentDiscountFromSubscriptionGroup20965379.rawValue)
+                            keychain.set(true, forKey: KeyConstant.userPurchasedProductFromSubscriptionGroup20965379WithPaymentDiscount.rawValue)
                         }
                     }
                     keychain.set(true, forKey: KeyConstant.userPurchasedProduct.rawValue)

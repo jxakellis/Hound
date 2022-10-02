@@ -156,7 +156,7 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        AppDelegate.generalLogger.notice("Application build is \(UIApplication.appBuild)")
+        AppDelegate.generalLogger.notice("Version: \(UIApplication.appVersion)")
         
         logsNavigationViewController = self.viewControllers?[0] as? LogsNavigationViewController
         logsNavigationViewController?.passThroughDelegate = self

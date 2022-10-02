@@ -9,8 +9,7 @@ const { formatString, formatNumber } = require('../format/formatObject');
 async function logRequest(req, res, next) {
   const date = new Date();
 
-  let appBuild = formatNumber(req.params.appBuild);
-  appBuild = appBuild > 65535 ? 65535 : appBuild;
+  const appVersion = formatString(req.params.appVersio, 10);
 
   const ip = formatString(req.ip, 32);
 
@@ -25,8 +24,8 @@ async function logRequest(req, res, next) {
     try {
       const result = await databaseQuery(
         databaseConnectionForLogging,
-        'INSERT INTO previousRequests(requestAppBuild, requestIP, requestDate, requestMethod, requestOriginalURL) VALUES (?,?,?,?,?)',
-        [appBuild, ip, date, method, originalUrl],
+        'INSERT INTO previousRequests(requestAppVersion, requestIP, requestDate, requestMethod, requestOriginalURL) VALUES (?,?,?,?,?)',
+        [appVersion, ip, date, method, originalUrl],
       );
       const requestId = formatNumber(result.insertId);
       req.requestId = requestId;
