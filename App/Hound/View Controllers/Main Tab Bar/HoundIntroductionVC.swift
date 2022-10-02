@@ -71,16 +71,6 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
             }
         }
         
-        var dogIcon: UIImage? {
-            if let image = self.dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseImageForDog {
-                return image
-            }
-            else {
-                return nil
-            }
-            
-        }
-        
         // no dogs so we create a new one for the user
         if dogManager.dogs.count == 0, let dog = try? Dog(dogName: dogName ?? ClassConstant.DogConstant.defaultDogName) {
             // can only fail if dogName == "", but already checked for that and corrected if there was a problem
@@ -94,6 +84,15 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
                 }
                 // go to next page if dog good
                 dog.dogId = dogId
+                dog.dogIcon = {
+                    if let image = self.dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseImageForDog {
+                        return image
+                    }
+                    else {
+                        return nil
+                    }
+                }()
+                
                 self.dogManager.addDog(forDog: dog)
                 LocalConfiguration.localHasCompletedHoundIntroductionViewController = true
                 self.performSegueOnceInWindowHierarchy(segueIdentifier: "MainTabBarViewController")
@@ -101,10 +100,14 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
         }
         // updating the icon of an existing dog
         else if dogManager.dogs.count >= 1 {
-            // if the user chose a dogIcon, then we apply
-            if let icon = dogIcon {
-                dogManager.dogs[0].dogIcon = icon
-            }
+            dogManager.dogs[0].dogIcon = {
+                if let image = self.dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseImageForDog {
+                    return image
+                }
+                else {
+                    return nil
+                }
+            }()
             // close page because updated
             LocalConfiguration.localHasCompletedHoundIntroductionViewController = true
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "MainTabBarViewController")
@@ -168,7 +171,7 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
         
         // Other
         
-        continueButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadious
+        continueButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadius
     }
     
     override func viewDidAppear(_ animated: Bool) {

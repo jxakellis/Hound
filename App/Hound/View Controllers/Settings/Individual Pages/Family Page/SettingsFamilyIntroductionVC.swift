@@ -27,35 +27,11 @@ class SettingsFamilyIntroductionViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        oneTimeSetup()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        repeatableSetup()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        AlertManager.globalPresenter = self
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        LocalConfiguration.localHasCompletedSettingsFamilyIntroductionViewController = true
-    }
-    
-    // MARK: - Functions
-    
-    /// These properties only need assigned once.
-    private func oneTimeSetup() {
-        
-    }
-    
-    /// These properties can be reassigned. Does not reload anything, rather just configures.
-    private func repeatableSetup() {
         let formatter = NumberFormatter()
         formatter.numberStyle = .spellOut
         let familyActiveSubscription = FamilyInformation.activeFamilySubscription
@@ -92,6 +68,16 @@ class SettingsFamilyIntroductionViewController: UIViewController {
         ))
         
         upgradeFamilyWithSubscriptionLabel.attributedText = message
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        LocalConfiguration.localHasCompletedSettingsFamilyIntroductionViewController = true
     }
     
 }

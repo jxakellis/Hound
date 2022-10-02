@@ -58,11 +58,31 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
         synchronizeNotificationsValues(animated: false)
     }
     
+    /// viewDidLayoutSubviews is called repeatedly whenever views inside the viewcontroller are added or shifted. This causes the code inside viewDidLayoutSubviews to be repeatedly called. However, we use viewDidLayoutSubviews instead of viewDidAppear. Both of these functions are called when the view is already layed out, meaning we can perform accurate changes to the view (like adding and showing a drop down), though viewDidAppear has the downside of performing these changes once the user can see the view, meaning they will see views shift in front of them. Therefore, viewDidLayoutSubviews is the superior choice and we just need to limit it calling the code below once.
+    private var didLayoutSubviews: Bool = false
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        guard didLayoutSubviews == false else {
+            return
+        }
+        
+        didLayoutSubviews = true
+        
+        /// only one dropdown used on the dropdown instance so no identifier needed
+        dropDown.dropDownUIViewIdentifier = ""
+        dropDown.cellReusableIdentifier = "DropDownCell"
+        dropDown.dataSource = self
+        dropDown.setupDropDown(viewPositionReference: notificationSoundLabel.frame, offset: 0.0)
+        dropDown.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
+        dropDown.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
+        scrollView.addSubview(dropDown)
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
-        
-        setupDropDown()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -251,13 +271,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     @IBOutlet private weak var notificationSoundLabel: BorderedUILabel!
     
     @objc private func willShowNotificationSoundDropDown(_ sender: Any) {
-        if dropDown.isDown == false {
-            self.dropDown.showDropDown(numberOfRowsToShow: 6.5)
-        }
-        else {
-            self.hideDropDown()
-        }
-        
+        self.dropDown.showDropDown(numberOfRowsToShow: 6.5, animated: true)
     }
     
     // MARK: Notification Sound Drop Down
@@ -340,17 +354,6 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     }
     
     // MARK: Notification Sound Drop Down Functions
-    
-    private func setupDropDown() {
-        /// only one dropdown used on the dropdown instance so no identifier needed
-        dropDown.dropDownUIViewIdentifier = ""
-        dropDown.cellReusableIdentifier = "DropDownCell"
-        dropDown.dataSource = self
-        dropDown.setupDropDown(viewPositionReference: notificationSoundLabel.frame, offset: 0.0)
-        dropDown.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
-        dropDown.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
-        scrollView.addSubview(dropDown)
-    }
     
     @objc private func hideDropDown() {
         AudioManager.stopAudio()

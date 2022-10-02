@@ -127,29 +127,6 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        oneTimeSetup()
-    }
-    
-    override func viewWillLayoutSubviews() {
-        repeatableSetup()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        // Called before the view is added to the windows’ view hierarchy
-        super.viewWillAppear(animated)
-        
-        // make sure the view has the correct interfaceStyle
-        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        AlertManager.globalPresenter = self
-    }
-    
-    // MARK: Setup
-    
-    private func oneTimeSetup() {
         // we want the user to have a fresh login experience, so we reset the introduction pages
         LocalConfiguration.localHasCompletedHoundIntroductionViewController = false
         LocalConfiguration.localHasCompletedRemindersIntroductionViewController = false
@@ -169,7 +146,26 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
         }
     }
     
-    private func repeatableSetup() {
+    override func viewWillAppear(_ animated: Bool) {
+        // Called before the view is added to the windows’ view hierarchy
+        super.viewWillAppear(animated)
+        
+        // make sure the view has the correct interfaceStyle
+        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
+    }
+    
+    /// viewDidLayoutSubviews is called repeatedly whenever views inside the viewcontroller are added or shifted. This causes the code inside viewDidLayoutSubviews to be repeatedly called. However, we use viewDidLayoutSubviews instead of viewDidAppear. Both of these functions are called when the view is already layed out, meaning we can perform accurate changes to the view (like adding and showing a drop down), though viewDidAppear has the downside of performing these changes once the user can see the view, meaning they will see views shift in front of them. Therefore, viewDidLayoutSubviews is the superior choice and we just need to limit it calling the code below once.
+    private var didLayoutSubviews: Bool = false
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        guard didLayoutSubviews == false else {
+            return
+        }
+        
+        didLayoutSubviews = true
+        
         setupSignInWithApple()
         setupSignInWithAppleDisclaimer()
         func setupSignInWithApple() {
@@ -222,6 +218,11 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
                 signInWithAppleDisclaimer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10 - (signInWithApple.frame.height / 2))]
             NSLayoutConstraint.activate(constraints)
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
     }
     
     // MARK: - Sign In With Apple

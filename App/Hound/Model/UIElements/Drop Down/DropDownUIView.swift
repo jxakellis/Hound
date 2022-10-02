@@ -51,10 +51,7 @@ final class DropDownUIView: UIView {
     }
     // Other Variables
     private var viewPositionRef: CGRect?
-    private var isDropDownPresent: Bool = false
-    var isDown: Bool { return isDropDownPresent }
-    /// The style of the dropDown last time it was shown
-    // private var dropDownStyle: UIUserInterfaceStyle! = nil
+    private(set) var isDown: Bool = false
     
     // MARK: - DropDown Methods
     
@@ -83,8 +80,9 @@ final class DropDownUIView: UIView {
     }
     
     /// Shows Drop Down Menu, hides it if already present. The height of the dropdown shown will be equal to the rowHeight of the individual dropdown cells multiplied by the numberOfRowsToShow
-    func showDropDown(numberOfRowsToShow numRows: CGFloat) {
-        guard isDropDownPresent == false else {
+    func showDropDown(numberOfRowsToShow numRows: CGFloat, animated: Bool) {
+        print("\(dropDownUIViewIdentifier) showDropDown \(isDown)")
+        guard isDown == false else {
             self.hideDropDown()
             return
         }
@@ -96,11 +94,11 @@ final class DropDownUIView: UIView {
         let height = numRows * dropDownTableView.rowHeight
         reloadDropDownData()
         reloadBorderShadowColor()
-        isDropDownPresent = true
+        isDown = true
         self.frame = CGRect(x: viewPositionRef.minX, y: viewPositionRef.maxY + self.offset, width: width, height: 0)
         dropDownTableView.frame = CGRect(x: 0, y: 0, width: width, height: 0)
         
-        UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.05, options: .curveLinear, animations: {
+        UIView.animate(withDuration: animated ? 0.7 : 0.0, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.05, options: .curveLinear, animations: {
             self.frame.size = CGSize(width: self.width, height: height)
             dropDownTableView.frame.size = CGSize(width: self.width, height: height)
         })
@@ -127,18 +125,21 @@ final class DropDownUIView: UIView {
     
     /// Hides DropDownMenu
     func hideDropDown(removeFromSuperview shouldRemoveFromSuperview: Bool = false) {
-        if isDropDownPresent == true {
-            isDropDownPresent = false
-            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.3, options: .curveLinear, animations: {
-                self.frame.size = CGSize(width: self.width, height: 0)
-                self.dropDownTableView?.frame.size = CGSize(width: self.width, height: 0)
-            }) { (_) in
-                if shouldRemoveFromSuperview == true {
-                    self.removeFromSuperview()
-                    self.dropDownTableView?.removeFromSuperview()
-                }
-                
+        print("\(dropDownUIViewIdentifier) hideDropDown \(isDown)")
+        guard isDown else {
+            return
+        }
+        
+        isDown = false
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.3, options: .curveLinear, animations: {
+            self.frame.size = CGSize(width: self.width, height: 0)
+            self.dropDownTableView?.frame.size = CGSize(width: self.width, height: 0)
+        }) { (_) in
+            if shouldRemoveFromSuperview == true {
+                self.removeFromSuperview()
+                self.dropDownTableView?.removeFromSuperview()
             }
+            
         }
     }
 }

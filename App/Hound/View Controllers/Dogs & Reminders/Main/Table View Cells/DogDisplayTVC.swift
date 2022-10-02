@@ -67,7 +67,7 @@ final class DogsDogDisplayTableViewCell: UITableViewCell {
         
         // Dog Icon Configuration
         
-        dogIconImageView.image = dogPassed.dogIcon
+        dogIconImageView.image = dogPassed.dogIcon ?? ClassConstant.DogConstant.defaultDogIcon
         dogIconImageView.layer.masksToBounds = true
         let dogIconWidth = 55.0 * sizeRatio
         dogIconWidthConstraint.constant = dogIconWidth

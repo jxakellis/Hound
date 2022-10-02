@@ -88,35 +88,18 @@ final class ServerFamilyViewController: UIViewController {
         super.viewDidLoad()
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        repeatableSetup()
-    }
+    /// viewDidLayoutSubviews is called repeatedly whenever views inside the viewcontroller are added or shifted. This causes the code inside viewDidLayoutSubviews to be repeatedly called. However, we use viewDidLayoutSubviews instead of viewDidAppear. Both of these functions are called when the view is already layed out, meaning we can perform accurate changes to the view (like adding and showing a drop down), though viewDidAppear has the downside of performing these changes once the user can see the view, meaning they will see views shift in front of them. Therefore, viewDidLayoutSubviews is the superior choice and we just need to limit it calling the code below once.
+    private var didLayoutSubviews: Bool = false
     
-    override func viewWillAppear(_ animated: Bool) {
-        // Called before the view is added to the windows’ view hierarchy
-        super.viewWillAppear(animated)
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         
-        // make sure the view has the correct interfaceStyle
-        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        AlertManager.globalPresenter = self
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+        guard didLayoutSubviews == false else {
+            return
+        }
         
-        LocalConfiguration.resetForNewFamily()
+        didLayoutSubviews = true
         
-        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: DogManager())
-    }
-    
-    // MARK: - Setup
-    
-    private func repeatableSetup() {
         setupCreateFamily()
         setupCreateFamilyDisclaimer()
         setupJoinFamily()
@@ -144,4 +127,24 @@ final class ServerFamilyViewController: UIViewController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        // Called before the view is added to the windows’ view hierarchy
+        super.viewWillAppear(animated)
+        
+        // make sure the view has the correct interfaceStyle
+        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        LocalConfiguration.resetForNewFamily()
+        
+        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: DogManager())
+    }
 }

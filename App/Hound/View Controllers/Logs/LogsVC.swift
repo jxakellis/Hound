@@ -100,7 +100,8 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
             }
             
         }
-        dropDown.showDropDown(numberOfRowsToShow: CGFloat(numRowsDisplayed))
+        
+        dropDown.showDropDown(numberOfRowsToShow: CGFloat(numRowsDisplayed), animated: true)
     }
     
     // MARK: - Dog Manager
@@ -176,21 +177,17 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
         willAddLogBackground?.isHidden = dogManager.dogs.isEmpty
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        AlertManager.globalPresenter = self
+    /// viewDidLayoutSubviews is called repeatedly whenever views inside the viewcontroller are added or shifted. This causes the code inside viewDidLayoutSubviews to be repeatedly called. However, we use viewDidLayoutSubviews instead of viewDidAppear. Both of these functions are called when the view is already layed out, meaning we can perform accurate changes to the view (like adding and showing a drop down), though viewDidAppear has the downside of performing these changes once the user can see the view, meaning they will see views shift in front of them. Therefore, viewDidLayoutSubviews is the superior choice and we just need to limit it calling the code below once.
+    private var didLayoutSubviews: Bool = false
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         
-        setupDropDown()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        dropDown.hideDropDown(removeFromSuperview: true)
-    }
-    
-    // MARK: - Drop Down Functions
-    
-    private func setupDropDown() {
+        guard didLayoutSubviews == false else {
+            return
+        }
+        
+        didLayoutSubviews = true
         
         /// Finds the widthNeeded by the largest label, has a minimum and maximum possible along with subtracting the space taken by leading and trailing constraints.
         var neededWidthForLabel: CGFloat {
@@ -241,6 +238,18 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
         dropDown.setRowHeight(height: DropDownUIView.rowHeightForLogFilter)
         self.view.addSubview(dropDown)
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        dropDown.hideDropDown(removeFromSuperview: true)
+    }
+    
+    // MARK: - Drop Down Functions
     
     @objc private func hideDropDown() {
         dropDown.hideDropDown()

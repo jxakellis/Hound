@@ -32,7 +32,7 @@ enum VisualConstant {
     }
     
     enum SizeConstant {
-        static let largeRectangularButtonCornerRadious = 10.0
+        static let largeRectangularButtonCornerRadius = 10.0
     }
     
     enum BannerTextConstant {

@@ -36,7 +36,7 @@ enum DogsRequest {
         urlComponents.queryItems = [
             URLQueryItem(name: "isRetrievingReminders", value: "true"),
             URLQueryItem(name: "isRetrievingLogs", value: "true"),
-            URLQueryItem(name: "lastDogManagerSynchronization", value: LocalConfiguration.lastDogManagerSynchronization.ISO8601FormatWithFractionalSeconds())
+            URLQueryItem(name: "userConfigurationPreviousDogManagerSynchronization", value: LocalConfiguration.userConfigurationPreviousDogManagerSynchronization.ISO8601FormatWithFractionalSeconds())
         ]
         
         guard let URLWithParams = urlComponents.url else {
@@ -132,7 +132,7 @@ extension DogsRequest {
                     completionHandler(newDog, responseStatus)
                 }
                 else {
-                    // Don't return nil. This is because we pass through lastDogManagerSynchronization. That means a successful result could be completely blank (and fail the above if statement), indicating that the user is fully up to date.
+                    // Don't return nil. This is because we pass through userConfigurationPreviousDogManagerSynchronization. That means a successful result could be completely blank (and fail the above if statement), indicating that the user is fully up to date.
                     completionHandler(currentDog, responseStatus)
                 }
             case .failureResponse:
@@ -149,8 +149,8 @@ extension DogsRequest {
      */
     static func get(invokeErrorManager: Bool, dogManager currentDogManager: DogManager, completionHandler: @escaping (DogManager?, ResponseStatus) -> Void) -> Progress? {
         
-        // we want this Date() to be slightly in the past. If we set  LocalConfiguration.lastDogManagerSynchronization = Date() after the request is successful then any changes that might have occured DURING our query (e.g. we are querying and at the exact same moment a family member creates a log) will not be saved. Therefore, this is more redundant and makes sure nothing is missed
-        let lastDogManagerSynchronization = Date()
+        // we want this Date() to be slightly in the past. If we set  LocalConfiguration.userConfigurationPreviousDogManagerSynchronization = Date() after the request is successful then any changes that might have occured DURING our query (e.g. we are querying and at the exact same moment a family member creates a log) will not be saved. Therefore, this is more redundant and makes sure nothing is missed
+        let userConfigurationPreviousDogManagerSynchronization = Date()
         
         // Now can get the dogManager
         return DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: nil) { responseBody, responseStatus in
@@ -158,7 +158,7 @@ extension DogsRequest {
             case .successResponse:
                 if let newDogManagerBody = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]], newDogManagerBody.isEmpty == false, let newDogManager = DogManager(fromBody: newDogManagerBody) {
                     // successful sync, so we can update value
-                    LocalConfiguration.lastDogManagerSynchronization = lastDogManagerSynchronization
+                    LocalConfiguration.userConfigurationPreviousDogManagerSynchronization = userConfigurationPreviousDogManagerSynchronization
                     
                     newDogManager.combine(withOldDogManager: currentDogManager)
                     
@@ -187,7 +187,7 @@ extension DogsRequest {
                     completionHandler(newDogManager, responseStatus)
                 }
                 else {
-                    // Don't return nil. This is because we pass through lastDogManagerSynchronization. That means a successful result could be completely blank (and fail the above if statement), indicating that the user is fully up to date.
+                    // Don't return nil. This is because we pass through userConfigurationPreviousDogManagerSynchronization. That means a successful result could be completely blank (and fail the above if statement), indicating that the user is fully up to date.
                     completionHandler(currentDogManager, responseStatus)
                 }
             case .failureResponse:
@@ -213,7 +213,10 @@ extension DogsRequest {
                     DogIconManager.removeIcon(forDogId: dog.dogId)
                     
                     // add a localDogIcon under offical dogId for newly created dog
-                    DogIconManager.addIcon(forDogId: dogId, forDogIcon: dog.dogIcon)
+                    if let dogIcon = dog.dogIcon {
+                        DogIconManager.addIcon(forDogId: dogId, forDogIcon: dogIcon)
+                    }
+                    
                     completionHandler(dogId, responseStatus)
                 }
                 else {
@@ -238,7 +241,10 @@ extension DogsRequest {
             case .successResponse:
                 // Successfully saved to server, so update dogIcon locally
                 // overwrite the locally stored dogIcon as user could have updated it
-                DogIconManager.addIcon(forDogId: dog.dogId, forDogIcon: dog.dogIcon)
+                if let dogIcon = dog.dogIcon {
+                    DogIconManager.addIcon(forDogId: dog.dogId, forDogIcon: dogIcon)
+                }
+               
                 completionHandler(true, responseStatus)
             case .failureResponse:
                 completionHandler(false, responseStatus)

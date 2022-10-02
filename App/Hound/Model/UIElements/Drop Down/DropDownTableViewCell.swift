@@ -38,6 +38,9 @@ class DropDownTableViewCell: UITableViewCell {
     }
     
     func willToggleDropDownSelection(forSelected selected: Bool) {
+        guard selected != isSelectedInDropDown else {
+            return
+        }
         
         isSelectedInDropDown = selected
         UIView.animate(withDuration: VisualConstant.AnimationConstant.willToggleDropDownSelection) {

@@ -20,6 +20,7 @@ enum ClassConstant {
     
     enum DogConstant {
         static let defaultDogName: String = "Bella"
+        // TO DO NOW don't store default dog icon, only store if user manually adds it
         static let defaultDogIcon: UIImage = UIImage.init(named: "whitePawWithHands") ?? UIImage()
         static let defaultDogId: Int = -1
         static let chooseImageForDog: UIImage = UIImage.init(named: "chooseImageForDog") ?? UIImage()

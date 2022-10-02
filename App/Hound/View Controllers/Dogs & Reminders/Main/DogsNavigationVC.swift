@@ -39,7 +39,6 @@ final class DogsNavigationViewController: UINavigationController, DogsViewContro
         super.viewDidAppear(animated)
         
         passThroughDelegate.checkForRemindersIntroductionPage()
-        
     }
     
 }

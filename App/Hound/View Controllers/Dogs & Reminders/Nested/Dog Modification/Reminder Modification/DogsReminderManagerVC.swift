@@ -200,22 +200,6 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        oneTimeSetup()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        repeatableSetup()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        dropDown.hideDropDown(removeFromSuperview: true)
-    }
-    
-    // MARK: - Setup
-    
-    private func oneTimeSetup() {
         setupValues()
         setupGestures()
         setupSegmentedControl()
@@ -299,10 +283,19 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
         }
     }
     
-    private func repeatableSetup () {
-        setupDropDown()
-        func setupDropDown() {
-            /// only one dropdown used on the dropdown instance so no identifier needed
+    /// viewDidLayoutSubviews is called repeatedly whenever views inside the viewcontroller are added or shifted. This causes the code inside viewDidLayoutSubviews to be repeatedly called. However, we use viewDidLayoutSubviews instead of viewDidAppear. Both of these functions are called when the view is already layed out, meaning we can perform accurate changes to the view (like adding and showing a drop down), though viewDidAppear has the downside of performing these changes once the user can see the view, meaning they will see views shift in front of them. Therefore, viewDidLayoutSubviews is the superior choice and we just need to limit it calling the code below once.
+    private var didLayoutSubviews: Bool = false
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        guard didLayoutSubviews == false else {
+            return
+        }
+        
+        didLayoutSubviews = true
+        
+        /// only one dropdown used on the dropdown instance so no identifier needed
             dropDown.dropDownUIViewIdentifier = ""
             dropDown.cellReusableIdentifier = "DropDownCell"
             dropDown.dataSource = self
@@ -310,7 +303,12 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
             dropDown.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
             dropDown.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
             view.addSubview(dropDown)
-        }
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        dropDown.hideDropDown(removeFromSuperview: true)
     }
     
     // MARK: - Functions
@@ -429,7 +427,7 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
     
     @objc private func reminderActionTapped() {
         dismissKeyboard()
-        dropDown.showDropDown(numberOfRowsToShow: 6.5)
+        dropDown.showDropDown(numberOfRowsToShow: 6.5, animated: true)
     }
     
     @objc internal override func dismissKeyboard() {

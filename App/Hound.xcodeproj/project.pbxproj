@@ -347,8 +347,6 @@
 		A2F996BB27569F4400605D03 /* stargaze.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = stargaze.mp3; sourceTree = "<group>"; };
 		A2F996BC27569F4400605D03 /* silk.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = silk.mp3; sourceTree = "<group>"; };
 		A2F996BE27569F4400605D03 /* night owl.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "night owl.mp3"; sourceTree = "<group>"; };
-		A2FC4EBC274AF59F006A872F /* Add Drop Down */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Add Drop Down"; sourceTree = "<group>"; };
-		A2FC4EBE274AF980006A872F /* Add Tool Tip */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Add Tool Tip"; sourceTree = "<group>"; };
 		C6BA7C2F91F8CB1DF213275F /* libPods-Hound.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Hound.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7B3D19811D2D739602885E4 /* Pods-Hound.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hound.release.xcconfig"; path = "Target Support Files/Pods-Hound/Pods-Hound.release.xcconfig"; sourceTree = "<group>"; };
 		F1A5C1841BA2129D46477D9A /* Pods-Hound.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hound.debug.xcconfig"; path = "Target Support Files/Pods-Hound/Pods-Hound.debug.xcconfig"; sourceTree = "<group>"; };
@@ -490,7 +488,6 @@
 				A2C4091F27C9D72100073420 /* Requests */,
 				A2FF539B27E3D784004AB880 /* Responses */,
 				A258AEED25661530005242E4 /* Managers */,
-				A286934A2576A2B900C0C06E /* Notes */,
 				A263B2F52638A4C000E1DCE6 /* UIElements */,
 				A26AF36C25807878005D5DAB /* Extensions */,
 			);
@@ -673,15 +670,6 @@
 				A2EA864F28E3A3EF009148EC /* Reminder Action.swift */,
 			);
 			path = Enums;
-			sourceTree = "<group>";
-		};
-		A286934A2576A2B900C0C06E /* Notes */ = {
-			isa = PBXGroup;
-			children = (
-				A2FC4EBC274AF59F006A872F /* Add Drop Down */,
-				A2FC4EBE274AF980006A872F /* Add Tool Tip */,
-			);
-			path = Notes;
 			sourceTree = "<group>";
 		};
 		A29390762608491100879C79 /* Reminder */ = {

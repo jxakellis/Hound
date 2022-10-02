@@ -64,7 +64,9 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        oneTimeSetup()
+        tableView.separatorInset = .zero
+        
+        leaveFamilyButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadius
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -79,14 +81,6 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     }
     
     // MARK: - Functions
-    
-    /// These properties only need assigned once.
-    private func oneTimeSetup() {
-        
-        tableView.separatorInset = .zero
-        
-        leaveFamilyButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadious
-    }
     
     /// These properties can be reassigned. Does not reload anything, rather just configures.
     private func repeatableSetup() {

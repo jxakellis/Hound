@@ -19,7 +19,7 @@ final class Dog: NSObject, NSCoding, NSCopying {
             
             copy.dogId = self.dogId
             copy.dogName = self.dogName
-            copy.dogIcon = self.dogIcon.copy() as? UIImage ?? UIImage()
+            copy.dogIcon = self.dogIcon?.copy() as? UIImage
             copy.dogReminders = self.dogReminders.copy() as? ReminderManager ?? ReminderManager()
             copy.dogLogs = self.dogLogs.copy() as? LogManager ?? LogManager()
             return copy
@@ -99,12 +99,16 @@ final class Dog: NSObject, NSCoding, NSCopying {
     
     // MARK: - Traits
     
-    var dogIcon: UIImage {
+    var dogIcon: UIImage? {
         get {
-            let dogIcon = DogIconManager.getIcon(forDogId: dogId)
-            return dogIcon ?? ClassConstant.DogConstant.defaultDogIcon
+            return DogIconManager.getIcon(forDogId: dogId)
         }
         set (newDogIcon) {
+            guard let newDogIcon = newDogIcon else {
+                DogIconManager.removeIcon(forDogId: self.dogId)
+                return
+            }
+            
             DogIconManager.addIcon(forDogId: self.dogId, forDogIcon: newDogIcon)
         }
     }

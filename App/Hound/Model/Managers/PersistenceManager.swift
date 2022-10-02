@@ -20,8 +20,12 @@ enum PersistenceManager {
         
         // MARK: Save App State Values
         
+        // If localAppVersion and appVersion are missing, that means the user just installed the app or upgraded from Hound 1.3.5. A user who just installed won't have a value stored for "appBuild", but a user who just upgraded from Hound 1.3.5 will.
+        let previousAppBuild = UserDefaults.standard.value(forKey: "appBuild") as? Int
+        UserDefaults.standard.set(nil, forKey: "appBuild")
+        
         // <= build 8000 appVersion
-        UIApplication.previousAppVersion = UserDefaults.standard.object(forKey: KeyConstant.localAppVersion.rawValue) as? String ?? UserDefaults.standard.object(forKey: "appVersion") as? String ?? "1.3.5"
+        UIApplication.previousAppVersion = UserDefaults.standard.object(forKey: KeyConstant.localAppVersion.rawValue) as? String ?? UserDefaults.standard.object(forKey: "appVersion") as? String ?? (previousAppBuild != nil ? "1.3.5" : "2.0.0")
         
         UserDefaults.standard.setValue(UIApplication.appVersion, forKey: KeyConstant.localAppVersion.rawValue)
         
@@ -34,6 +38,10 @@ enum PersistenceManager {
         
         UserInformation.userIdentifier = keychain.get(KeyConstant.userIdentifier.rawValue)
         
+        if DevelopmentConstant.isProductionDatabase == false {
+            UserInformation.userIdentifier = "1f66dbb1e7df20e51a8cd88c2334f5e4def79a2ebc1444f6766ff4160ea6927a"
+        }
+        
         UserInformation.userEmail = keychain.get(KeyConstant.userEmail.rawValue) ?? UserInformation.userEmail
         UserInformation.userFirstName = keychain.get(KeyConstant.userFirstName.rawValue) ?? UserInformation.userFirstName
         UserInformation.userLastName = keychain.get(KeyConstant.userLastName.rawValue) ?? UserInformation.userLastName
@@ -41,12 +49,16 @@ enum PersistenceManager {
         // MARK: Load User Information
         
         UserInformation.userId = UserDefaults.standard.value(forKey: KeyConstant.userId.rawValue) as? String ?? UserInformation.userId
+        
+        if DevelopmentConstant.isProductionDatabase == false {
+            UserInformation.userId = "cfc10397467cf47335242e756c93eea9f18c975545fca07537750ded2fae9b9e"
+        }
        
         UserInformation.familyId = UserDefaults.standard.value(forKey: KeyConstant.familyId.rawValue) as? String ?? UserInformation.familyId
         
         // MARK: Load Local Configuration
-        
-        LocalConfiguration.lastDogManagerSynchronization = UserDefaults.standard.value(forKey: KeyConstant.userConfigurationPreviousDogManagerSynchronization.rawValue) as? Date ?? LocalConfiguration.lastDogManagerSynchronization
+        // <= build 8000 lastDogManagerSynchronization
+        LocalConfiguration.userConfigurationPreviousDogManagerSynchronization = UserDefaults.standard.value(forKey: KeyConstant.userConfigurationPreviousDogManagerSynchronization.rawValue) as? Date ?? UserDefaults.standard.value(forKey: "lastDogManagerSynchronization") as? Date ?? LocalConfiguration.userConfigurationPreviousDogManagerSynchronization
         
         if let dataDogManager: Data = UserDefaults.standard.data(forKey: KeyConstant.dogManager.rawValue), let unarchiver = try? NSKeyedUnarchiver.init(forReadingFrom: dataDogManager) {
             unarchiver.requiresSecureCoding = false
@@ -58,14 +70,14 @@ enum PersistenceManager {
                 // if nil, then decode failed or there was an issue. therefore, set the interval back to past so we can refetch from the server
                 AppDelegate.generalLogger.error("Failed to decode dogManager with unarchiver")
                 ServerSyncViewController.dogManager = DogManager()
-                LocalConfiguration.lastDogManagerSynchronization = ClassConstant.DateConstant.default1970Date
+                LocalConfiguration.userConfigurationPreviousDogManagerSynchronization = ClassConstant.DateConstant.default1970Date
             }
         }
         else {
             // if nil, then decode failed or there was an issue. therefore, set the interval back to past so we can refetch from the server
             AppDelegate.generalLogger.error("Failed to construct dataDogManager or construct unarchiver for dogManager")
             ServerSyncViewController.dogManager = DogManager()
-            LocalConfiguration.lastDogManagerSynchronization = ClassConstant.DateConstant.default1970Date
+            LocalConfiguration.userConfigurationPreviousDogManagerSynchronization = ClassConstant.DateConstant.default1970Date
         }
         
         // <= build 8000 logCustomActionNames
@@ -164,7 +176,7 @@ enum PersistenceManager {
         
         // Local Configuration
         
-        UserDefaults.standard.set(LocalConfiguration.lastDogManagerSynchronization, forKey: KeyConstant.userConfigurationPreviousDogManagerSynchronization.rawValue)
+        UserDefaults.standard.set(LocalConfiguration.userConfigurationPreviousDogManagerSynchronization, forKey: KeyConstant.userConfigurationPreviousDogManagerSynchronization.rawValue)
         
         if let dogManager = MainTabBarViewController.mainTabBarViewController?.dogManager, let dataDogManager = try? NSKeyedArchiver.archivedData(withRootObject: dogManager, requiringSecureCoding: false) {
             UserDefaults.standard.set(dataDogManager, forKey: KeyConstant.dogManager.rawValue)

@@ -80,13 +80,15 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        oneTimeSetup()
+        tableView.separatorInset = .zero
+        
+        restoreTransactionsButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadius
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        repeatableSetup()
+        setupActiveSubscriptionLabels()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -99,20 +101,6 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     /// If a transaction was syncronized to the Hound server from the background, i.e. the system recognized there was a transaction sitting in the queue so silently contacted Hound to process it, call this function. It will refresh the page without any animations that would confuse the user
     func willRefreshAfterTransactionsSyncronizedInBackground() {
         self.willRefresh(false)
-    }
-    
-    /// These properties only need assigned once.
-    private func oneTimeSetup() {
-        
-        tableView.separatorInset = .zero
-        
-        restoreTransactionsButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadious
-    }
-    
-    /// These properties can be reassigned. Does not reload anything, rather just configures.
-    private func repeatableSetup() {
-        
-        setupActiveSubscriptionLabels()
     }
     
     private func setupActiveSubscriptionLabels() {

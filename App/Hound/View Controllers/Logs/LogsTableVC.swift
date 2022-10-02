@@ -200,11 +200,11 @@ final class LogsTableViewController: UITableViewController {
         let log = targetTuple.1
         
         // has dogIcon
-        if dog.dogIcon.isEqualToImage(image: ClassConstant.DogConstant.defaultDogIcon) == false {
+        if let dogIcon = dog.dogIcon {
             let cell = tableView.dequeueReusableCell(withIdentifier: "LogsBodyWithIconTableViewCell", for: indexPath)
             
             if let customCell = cell as? LogsBodyWithIconTableViewCell {
-                customCell.setup(forParentDogIcon: dog.dogIcon, forLog: log)
+                customCell.setup(forParentDogIcon: dogIcon, forLog: log)
             }
             
             return cell

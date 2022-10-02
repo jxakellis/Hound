@@ -342,17 +342,6 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        oneTimeSetup()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        AlertManager.globalPresenter = self
-    }
-    
-    /// Called to initalize all data, if a dog is passed then it uses that, otherwise uses default
-    private func oneTimeSetup() {
-        
         // gestures
         self.setupToHideKeyboardOnTapOnView()
         
@@ -369,21 +358,14 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         dogName.text = dogToUpdate?.dogName ?? ""
         dogName.delegate = self
         
-        let icon = {
-            // If the dog has a icon that was set by the user, an icon that is different than the default dog icon, then we display that icon. Otherwise, we display an an icon that tells the to choose an icon for their dog
-            guard let dogToUpdate = dogToUpdate else {
-                return ClassConstant.DogConstant.chooseImageForDog
-            }
-            
-            return dogToUpdate.dogIcon.isEqualToImage(image: ClassConstant.DogConstant.defaultDogIcon)
-            ? ClassConstant.DogConstant.chooseImageForDog
-            : dogToUpdate.dogIcon
-        }()
+        dogIcon.setImage(dogToUpdate?.dogIcon ?? ClassConstant.DogConstant.chooseImageForDog, for: .normal)
         
-        dogIcon.setImage(icon, for: .normal)
-        
+        let remindersToPass = dogToUpdate?.dogReminders.copy() as? ReminderManager ?? ReminderManager(initReminders: ClassConstant.ReminderConstant.defaultReminders)
         // if we have a dogToUpdate available, then we pass a copy of its reminders, otherwise we pass a reminder manager filled with just default reminders
-        dogsReminderNavigationViewController?.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: dogToUpdate?.dogReminders.copy() as? ReminderManager ?? ReminderManager(initReminders: ClassConstant.ReminderConstant.defaultReminders))
+        dogsReminderNavigationViewController?.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: remindersToPass)
+        
+        // if we passed a reminder manager full of default reminders, then add those reminders to our created reminders array
+        createdReminders += remindersToPass.reminders.filter({ $0.reminderId <= -1 })
         
         // buttons
         dogIcon.layer.masksToBounds = true
@@ -398,6 +380,11 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         let (picker, viewController) = DogIconManager.setupDogIconImagePicker(forViewController: self)
         picker.delegate = self
         imagePickMethodAlertController = viewController
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
     }
     
     /// Hides the big gray back button and big blue checkmark, don't want access to them while editting a reminder.

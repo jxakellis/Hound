@@ -1,5 +1,7 @@
 const { databaseQuery } = require('../database/databaseQuery');
-const { formatSHA256Hash, formatString, formatArray } = require('./formatObject');
+const {
+  formatSHA256Hash, formatString, formatArray, formatNumber,
+} = require('./formatObject');
 const { areAllDefined } = require('./validateDefined');
 const { ValidationError } = require('../general/errors');
 
