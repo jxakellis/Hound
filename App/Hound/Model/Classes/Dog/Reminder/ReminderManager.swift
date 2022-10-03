@@ -287,12 +287,7 @@ extension ReminderManager {
     
     /// finds and returns the reference of a reminder matching the given reminderId
     func findReminder(forReminderId reminderId: Int) -> Reminder? {
-        
-        for reminder in reminders where reminder.reminderId == reminderId {
-            return reminder
-        }
-        
-        return nil
+        return reminders.first(where: { $0.reminderId == reminderId })
     }
     
     // MARK: Compare

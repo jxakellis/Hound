@@ -101,7 +101,8 @@ async function validateFamilyId(req, res, next) {
 }
 
 /**
- * Checks to see that dogId is defined, a number, and exists in the database under familyId provided. If it does then the user owns the dog and invokes next().
+ * Checks to see that dogId is defined, a number, and exists in the database under familyId provided. Dog can be deleted.
+ * If it does then the user owns the dog and invokes next().
  */
 async function validateDogId(req, res, next) {
   // familyId should be validated already
@@ -120,7 +121,7 @@ async function validateDogId(req, res, next) {
     // JOIN families as dog must have a family attached to it
     const dog = await databaseQuery(
       req.databaseConnection,
-      'SELECT 1 FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE dogs.dogIsDeleted = 0 AND dogs.familyId = ? AND dogs.dogId = ? LIMIT 1',
+      'SELECT 1 FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE dogs.familyId = ? AND dogs.dogId = ? LIMIT 1',
       [familyId, dogId],
     );
 
@@ -142,7 +143,8 @@ async function validateDogId(req, res, next) {
 }
 
 /**
- * Checks to see that logId is defined, a number. and exists in the database under dogId provided. If it does then the dog owns that log and invokes next().
+ * Checks to see that logId is defined, a number. and exists in the database under dogId provided. Log can be deleted.
+ * If it does then the dog owns that log and invokes next().
  */
 async function validateLogId(req, res, next) {
   // dogId should be validated already
@@ -161,7 +163,7 @@ async function validateLogId(req, res, next) {
     // JOIN dogs as log has to have dog still attached to it
     const log = await databaseQuery(
       req.databaseConnection,
-      'SELECT 1 FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogLogs.logIsDeleted = 0 AND dogLogs.dogId = ? AND dogLogs.logId = ? LIMIT 1',
+      'SELECT 1 FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogLogs.dogId = ? AND dogLogs.logId = ? LIMIT 1',
       [dogId, logId],
     );
 
@@ -183,7 +185,8 @@ async function validateLogId(req, res, next) {
 }
 
 /**
- * Checks to see that reminderId is defined, a number, and exists in the database under the dogId provided. If it does then the dog owns that reminder and invokes next().
+ * Checks to see that reminderId is defined, a number, and exists in the database under the dogId provided. Reminder can be deleted
+ * If it does then the dog owns that reminder and invokes next().
  */
 async function validateParamsReminderId(req, res, next) {
   // dogId should be validated already
@@ -202,7 +205,7 @@ async function validateParamsReminderId(req, res, next) {
     // JOIN dogs as reminder must have dog attached to it
     const reminder = await databaseQuery(
       req.databaseConnection,
-      'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+      'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
       [dogId, reminderId],
     );
 
@@ -244,7 +247,7 @@ async function validateBodyReminderId(req, res, next) {
       // Attempt to locate a reminder. It must match the reminderId provided while being attached to a dog that the user has permission to use
       reminderPromises.push(databaseQuery(
         req.databaseConnection,
-        'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+        'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
         [dogId, reminderId],
       ));
     }
@@ -276,7 +279,7 @@ async function validateBodyReminderId(req, res, next) {
       // JOIN dogs as reminder must have dog attached to it
       const reminder = await databaseQuery(
         req.databaseConnection,
-        'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+        'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
         [dogId, singleReminderId],
       );
 

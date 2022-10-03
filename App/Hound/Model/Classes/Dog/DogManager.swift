@@ -138,11 +138,7 @@ extension DogManager {
     
     /// Returns reference of a dog with the given dogId
     func findDog(forDogId dogId: Int) -> Dog? {
-        for dog in dogs where dog.dogId == dogId {
-            return dog
-        }
-        
-        return nil
+        return dogs.first(where: { $0.dogId == dogId })
     }
     
     // MARK: Information

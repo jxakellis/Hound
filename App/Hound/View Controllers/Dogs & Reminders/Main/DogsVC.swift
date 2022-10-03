@@ -67,9 +67,14 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
         
         RequestUtils.beginRequestIndictator()
         
-        DogsRequest.get(invokeErrorManager: true, dog: currentDog) { newDog, _ in
+        DogsRequest.get(invokeErrorManager: true, dog: currentDog) { newDog, responseStatus in
             RequestUtils.endRequestIndictator {
-                guard newDog != nil else {
+                guard let newDog = newDog else {
+                    if responseStatus == .successResponse {
+                        // If the response was successful but no dog was returned, that means the dog was deleted. Therefore, update the dogManager to indicate as such.
+                        self.dogManager.removeDog(forDogId: currentDog.dogId)
+                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    }
                     return
                 }
                 
@@ -86,13 +91,20 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
             // updating
             RequestUtils.beginRequestIndictator()
             // query for existing
-            RemindersRequest.get(invokeErrorManager: true, forDogId: parentDogId, forReminderId: reminderId) { newReminder, _ in
+            RemindersRequest.get(invokeErrorManager: true, forDogId: parentDogId, forReminderId: reminderId) { newReminder, responseStatus in
                 RequestUtils.endRequestIndictator {
-                    if newReminder != nil {
-                        self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsIndependentReminderViewController")
-                        self.dogsIndependentReminderViewController.parentDogId = parentDogId
-                        self.dogsIndependentReminderViewController.targetReminder = newReminder
+                    guard let newReminder = newReminder else {
+                        if responseStatus == .successResponse {
+                            // If the response was successful but no reminder was returned, that means the reminder was deleted. Therefore, update the dogManager to indicate as such.
+                            self.dogManager.findDog(forDogId: parentDogId)?.dogReminders.removeReminder(forReminderId: reminderId)
+                            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                        }
+                        return
                     }
+                    
+                    self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsIndependentReminderViewController")
+                    self.dogsIndependentReminderViewController.parentDogId = parentDogId
+                    self.dogsIndependentReminderViewController.targetReminder = newReminder
                 }
             }
         }

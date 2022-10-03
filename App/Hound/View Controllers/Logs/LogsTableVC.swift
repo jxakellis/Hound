@@ -24,7 +24,7 @@ final class LogsTableViewController: UITableViewController {
         
         if (sender.localized is LogsTableViewController) == true {
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
-            self.reloadTableDataSource()
+            reloadTable()
         }
     }
     
@@ -102,20 +102,11 @@ final class LogsTableViewController: UITableViewController {
             
             AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.refreshLogsTitle, forSubtitle: VisualConstant.BannerTextConstant.refreshLogsSubtitle, forStyle: .success)
             self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
-            // manually reload table as the self sender doesn't do that
-            self.tableView.reloadData()
         }
     }
     
     /// Updates dogManagerDependents then reloads table
     private func reloadTable() {
-        
-        reloadTableDataSource()
-        
-        tableView.reloadData()
-    }
-    
-    private func reloadTableDataSource() {
         
         // important to store this value so we don't recompute more than needed
         groupedLogsByUniqueDate = dogManager.groupedLogsByUniqueDate(forLogsFilter: logsFilter, forMaximumNumberOfLogsPerDog: UserConfiguration.maximumNumberOfLogsDisplayed)
@@ -126,6 +117,8 @@ final class LogsTableViewController: UITableViewController {
         else {
             tableView.separatorStyle = .singleLine
         }
+        
+        tableView.reloadData()
     }
     
     // MARK: - Table View Data Source
@@ -260,9 +253,6 @@ final class LogsTableViewController: UITableViewController {
             
             self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
             
-            // manually reload table as the self sender doesn't do that
-            self.tableView.reloadData()
-            
             // TO DO BUG PRIO: MEDIUM, if the number of logs that exist is greater than the logsTableViewControllermaximumNumberOfLogsDisplayed, then when one log gets deleted, another will take its place. This will cause a crash as the tableView is expecting there to be one less row but there is the same amount still. Solution is to probably insert the new row using the tableView.insert thing at the same time we delete.
             /*
              // batch update so doesn't freak out
@@ -310,13 +300,20 @@ final class LogsTableViewController: UITableViewController {
         let logId = nestedLogsArray[indexPath.row - 1].1.logId
         
         RequestUtils.beginRequestIndictator()
-        LogsRequest.get(invokeErrorManager: true, forDogId: dogId, forLogId: logId) { newLog, _ in
+        LogsRequest.get(invokeErrorManager: true, forDogId: dogId, forLogId: logId) { newLog, responseStatus in
             RequestUtils.endRequestIndictator {
                 self.tableView.deselectRow(at: indexPath, animated: true)
                 
-                if let newLog = newLog {
-                    self.delegate.didSelectLog(parentDogId: dogId, log: newLog)
+                guard let newLog = newLog else {
+                    if responseStatus == .successResponse {
+                        // If the response was successful but no log was returned, that means the log was deleted. Therefore, update the dogManager to indicate as such.
+                        self.dogManager.findDog(forDogId: dogId)?.dogLogs.removeLog(forLogId: logId)
+                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    }
+                    return
                 }
+                
+                self.delegate.didSelectLog(parentDogId: dogId, log: newLog)
             }
         }
     }

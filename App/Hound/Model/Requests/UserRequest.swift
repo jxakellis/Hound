@@ -55,9 +55,7 @@ extension UserRequest {
     // MARK: - Public Functions
     
     /**
-     Uses userIdentifier to retrieve the userConfiguration and userInformation, automatically setting them up if the information is successfully retrieved.
-     completionHandler returns a possible familyId and the ResponseStatus.
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+     completionHandler returns a userId, familyId, and response status. If the query is successful, automatically sets up userConfiguration and userInformation and returns userId and familyId. Otherwise, nil is returned
      */
     static func get(invokeErrorManager: Bool, completionHandler: @escaping (String?, String?, ResponseStatus) -> Void) -> Progress? {
         return UserRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in

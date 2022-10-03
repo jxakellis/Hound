@@ -163,6 +163,13 @@ final class LogManager: NSObject, NSCoding, NSCopying {
 
 extension LogManager {
     
+    // MARK: Locate
+    
+    /// finds and returns the reference of a reminder matching the given reminderId
+    func findLog(forLogId logId: Int) -> Log? {
+        return logs.first(where: { $0.logId == logId })
+    }
+    
     // MARK: Compare
     
     /// Combines the logs of an old log manager with the new log manager, forming a union with their log arrays. In the event that the newLogManager (this object) has a log with the same id as the oldLogManager, the log from the newLogManager will override that log

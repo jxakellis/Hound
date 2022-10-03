@@ -31,7 +31,7 @@ final class DogsTableViewController: UITableViewController {
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }
         if !(sender.localized is DogsReminderDisplayTableViewCell) && !(sender.origin is DogsTableViewController) {
-            self.reloadTable()
+            self.tableView.reloadData()
         }
         if sender.localized is DogsReminderDisplayTableViewCell {
             self.reloadVisibleCellsTimeLeftLabel()
@@ -77,7 +77,7 @@ final class DogsTableViewController: UITableViewController {
         super.viewWillAppear(animated)
         viewIsBeingViewed = true
         
-        self.reloadTable()
+        self.tableView.reloadData()
         
         loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
         
@@ -99,12 +99,8 @@ final class DogsTableViewController: UITableViewController {
             AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.refreshRemindersTitle, forSubtitle: VisualConstant.BannerTextConstant.refreshRemindersSubtitle, forStyle: .success)
             self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
             // manually reload table as the self sernder doesn't do that
-            self.reloadTable()
+            self.tableView.reloadData()
         }
-    }
-    
-    private func reloadTable() {
-        self.tableView.reloadData()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

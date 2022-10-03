@@ -100,7 +100,7 @@ extension DogsRequest {
     // MARK: - Public Functions
     
     /**
-     completionHandler returns a dog. If the query returned a 200 status and is successful, then the dog is returned (the client-side dog is combined with the server-side updated dog). Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
+     completionHandler returns a dog and response status. If the query is successful and the dog isn't deleted, then the dog is returned (the client-side dog is combined with the server-side updated dog). Otherwise, nil is returned.
      */
     static func get(invokeErrorManager: Bool, dog currentDog: Dog, completionHandler: @escaping (Dog?, ResponseStatus) -> Void) {
         
@@ -109,11 +109,10 @@ extension DogsRequest {
             case .successResponse:
                 // dog JSON {dog1:'foo'}
                 if let newDogBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any], newDogBody.isEmpty == false {
-                    
-                    // the dog was updated since last opened
                     let newDog = Dog(fromBody: newDogBody)
                     
                     guard newDog.dogIsDeleted == false else {
+                        DogIconManager.removeIcon(forDogId: newDog.dogId)
                         completionHandler(nil, responseStatus)
                         return
                     }
@@ -144,8 +143,7 @@ extension DogsRequest {
     }
     
     /**
-     completionHandler returns a dogManager and responseStatus.
-     If the query returned a 200 status and is successful, then the dogManager is returned (the client-side dogManager is combined with the server-side updated dogManager). Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
+     completionHandler returns a dogManager and response status. If the query is successful, then the dogManager is returned (the client-side dog is combined with the server-side updated dog). Otherwise, nil is returned.
      */
     static func get(invokeErrorManager: Bool, dogManager currentDogManager: DogManager, completionHandler: @escaping (DogManager?, ResponseStatus) -> Void) -> Progress? {
         

@@ -53,9 +53,7 @@ extension SubscriptionRequest {
     // MARK: - Public Functions
     
     /**
-     Retrieves the family's subscriptions, automatically setting it up if the information is successfully retrieved.
-     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+     completionHandler returns a bool and response status. If the query is successful, automatically sets up familyInformation and returns true. Otherwise, false is returned.
      */
     static func get(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
         

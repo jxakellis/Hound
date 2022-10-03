@@ -121,8 +121,7 @@ extension RemindersRequest {
     // MARK: - Public Functions
     
     /**
-     completionHandler returns a possible reminder and the ResponseStatus.
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+     completionHandler returns a reminder and response status. If the query is successful and the reminder isn't deleted, then the reminder is returned. Otherwise, nil is returned.
      */
     static func get(invokeErrorManager: Bool, forDogId dogId: Int, forReminderId reminderId: Int, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) {
         
@@ -130,36 +129,14 @@ extension RemindersRequest {
             switch responseStatus {
             case .successResponse:
                 if let result = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
-                    completionHandler(Reminder(fromBody: result), responseStatus)
-                }
-                else {
-                    completionHandler(nil, responseStatus)
-                }
-            case .failureResponse:
-                completionHandler(nil, responseStatus)
-            case .noResponse:
-                completionHandler(nil, responseStatus)
-            }
-        }
-    }
-    
-    /**
-     completionHandler returns a possible array of reminders and the ResponseStatus.
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
-    /*
-    static func get(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping ([Reminder]?, ResponseStatus) -> Void) {
-        
-        _ = RemindersRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderId: nil) { responseBody, responseStatus in
-            switch responseStatus {
-            case .successResponse:
-                if let result = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]] {
-                    var reminderArray: [Reminder] = []
-                    for reminderBody in result {
-                        let reminder = Reminder(fromBody: reminderBody)
-                        reminderArray.append(reminder)
+                    let newReminder = Reminder(fromBody: result)
+                    
+                    guard newReminder.reminderIsDeleted == false else {
+                        completionHandler(nil, responseStatus)
+                        return
                     }
-                    completionHandler(reminderArray, responseStatus)
+                    
+                    completionHandler(newReminder, responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)
@@ -171,7 +148,6 @@ extension RemindersRequest {
             }
         }
     }
-     */
     
     /**
      completionHandler returns a possible reminder and the ResponseStatus.

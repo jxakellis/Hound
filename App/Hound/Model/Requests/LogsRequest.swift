@@ -89,8 +89,7 @@ extension LogsRequest {
     // MARK: - Public Functions
     
     /**
-     completionHandler returns a possible log and the ResponseStatus.
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+     completionHandler returns a log and response status. If the query is successful and the log isn't deleted, then the log is returned. Otherwise, nil is returned.
      */
     static func get(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int, completionHandler: @escaping (Log?, ResponseStatus) -> Void) {
         
@@ -98,37 +97,14 @@ extension LogsRequest {
             switch responseStatus {
             case .successResponse:
                 if let result = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
-                    completionHandler(Log(fromBody: result), responseStatus)
-                }
-                else {
-                    completionHandler(nil, responseStatus)
-                }
-            case .failureResponse:
-                completionHandler(nil, responseStatus)
-            case .noResponse:
-                completionHandler(nil, responseStatus)
-            }
-        }
-    }
-    
-    /**
-     completionHandler returns a possible array of logs and the ResponseStatus.
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
-    /*
-    static func get(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping ([Log]?, ResponseStatus) -> Void) {
-        
-        _ = LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: nil) { responseBody, responseStatus in
-            switch responseStatus {
-            case .successResponse:
-                // Array of log JSON [{log1:'foo'},{log2:'bar'}]
-                if let result = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]] {
-                    var logArray: [Log] = []
-                    for logBody in result {
-                        let log = Log(fromBody: logBody)
-                        logArray.append(log)
+                    let newLog = Log(fromBody: result)
+                    
+                    guard newLog.logIsDeleted == false else {
+                        completionHandler(nil, responseStatus)
+                        return
                     }
-                    completionHandler(logArray, responseStatus)
+                    
+                    completionHandler(newLog, responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)
@@ -140,7 +116,6 @@ extension LogsRequest {
             }
         }
     }
-     */
     
     /**
      completionHandler returns a possible logId and the ResponseStatus.

@@ -50,18 +50,10 @@ final class AlarmManager {
             }
             
             guard let reminder = reminder else {
-                // We weren't able to retrieve the reminder. The reminder might have been deleted, the dog might have been deleted, or some other error with the query
-                // We can attempt to refresh the dog manager. If the reminder or dog were deleted, then this will update our local storage to remove them. If the query failed for other reasons, then this dogManager query will fail as well
-                _ = DogsRequest.get(invokeErrorManager: false, dogManager: dogManager) { newDogManager, _ in
-                    guard let newDogManager = newDogManager else {
-                        return
-                    }
-                    
-                    // RequestUtils.getFamilyGetDog was invoked because the reminder from RemindersRequest.get was missing. If for some reason the reminder actually exists, it would cause an infinite loop (as RemindersRequest.get would return missing again and then RequestUtils.getFamilyGetDog would be invoked again). Therefore, any reminder that has the same reminder id to prevent this from happening.
-                    // Don't persist change to server, as this is a bandaid fix of the local client being messed up.
-                    newDogManager.findDog(forDogId: dogId)?.dogReminders.removeReminder(forReminderId: reminderId)
-                    
-                    delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
+                if responseStatus == .successResponse {
+                    // If the response was successful but no reminder was returned, that means the reminder was deleted. Therefore, update the dogManager to indicate as such.
+                    dogManager.findDog(forDogId: dogId)?.dogReminders.removeReminder(forReminderId: reminderId)
+                    delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
                 }
                 return
             }
