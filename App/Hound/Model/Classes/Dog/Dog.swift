@@ -57,6 +57,7 @@ final class Dog: NSObject, NSCoding, NSCopying {
             
             self.dogId = dogId
             try changeDogName(forDogName: dogName)
+            self.dogIcon = DogIconManager.getIcon(forDogId: dogId)
         }
     
     /// Assume array of dog properties
@@ -99,19 +100,7 @@ final class Dog: NSObject, NSCoding, NSCopying {
     
     // MARK: - Traits
     
-    var dogIcon: UIImage? {
-        get {
-            return DogIconManager.getIcon(forDogId: dogId)
-        }
-        set (newDogIcon) {
-            guard let newDogIcon = newDogIcon else {
-                DogIconManager.removeIcon(forDogId: self.dogId)
-                return
-            }
-            
-            DogIconManager.addIcon(forDogId: self.dogId, forDogIcon: newDogIcon)
-        }
-    }
+    var dogIcon: UIImage?
     
     private(set) var dogName: String = ClassConstant.DogConstant.defaultDogName
     func changeDogName(forDogName: String?) throws {

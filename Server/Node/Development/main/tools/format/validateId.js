@@ -10,12 +10,13 @@ const { ValidationError } = require('../general/errors');
  */
 async function validateAppVersion(req, res, next) {
   const appVersion = formatString(req.params.appVersion);
+
   if (areAllDefined(appVersion) === false) {
     return res.sendResponseForStatusJSONError(400, undefined, new ValidationError('appVersion missing', global.constant.error.value.MISSING));
   }
   // the user isn't on the previous or current app version
   if (global.constant.server.COMPATIBLE_IOS_APP_VERSIONS.includes(appVersion) === false) {
-    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError(`App version of ${appVersion} is incompatible. Compatible versions: ${global.constant.server.COMPATIBLE_IOS_APP_VERSIONS}`, global.constant.error.general.APP_VERSION_OUTDATED));
+    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError(`App version of ${appVersion} is incompatible. Compatible version(s): ${global.constant.server.COMPATIBLE_IOS_APP_VERSIONS}`, global.constant.error.general.APP_VERSION_OUTDATED));
   }
 
   return next();

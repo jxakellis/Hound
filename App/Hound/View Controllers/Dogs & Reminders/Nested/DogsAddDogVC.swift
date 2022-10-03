@@ -88,7 +88,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             // try to initalize from a passed dog, if non exists, then we make a new one
             dog = try dogToUpdate ?? Dog(dogName: dogName.text)
             try dog.changeDogName(forDogName: dogName.text)
-            if let image = self.dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseImageForDog {
+            if let image = self.dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseDogIcon {
                 // DogsRequest handles .addIcon and .removeIcon. It will remove the dogIcon saved under the placeholder id (if creating an dog) and it will save the new dogIcon under the offical dogId
                 dog.dogIcon = image
             }
@@ -319,7 +319,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         if dogName.text != initalDogName {
             return true
         }
-        else if let image = dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseImageForDog && image != initalDogIcon {
+        else if let image = dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseDogIcon && image != initalDogIcon {
             return true
         }
         else if createdReminders.count > 0 {
@@ -358,7 +358,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         dogName.text = dogToUpdate?.dogName ?? ""
         dogName.delegate = self
         
-        dogIcon.setImage(dogToUpdate?.dogIcon ?? ClassConstant.DogConstant.chooseImageForDog, for: .normal)
+        dogIcon.setImage(dogToUpdate?.dogIcon ?? ClassConstant.DogConstant.chooseDogIcon, for: .normal)
         
         let remindersToPass = dogToUpdate?.dogReminders.copy() as? ReminderManager ?? ReminderManager(initReminders: ClassConstant.ReminderConstant.defaultReminders)
         // if we have a dogToUpdate available, then we pass a copy of its reminders, otherwise we pass a reminder manager filled with just default reminders

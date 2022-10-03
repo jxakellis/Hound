@@ -73,41 +73,47 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
         
         // no dogs so we create a new one for the user
         if dogManager.dogs.count == 0, let dog = try? Dog(dogName: dogName ?? ClassConstant.DogConstant.defaultDogName) {
-            // can only fail if dogName == "", but already checked for that and corrected if there was a problem
-            
-            // contact server to make their dog
-            DogsRequest.create(invokeErrorManager: true, forDog: dog) { dogId, _ in
-                self.continueButton.isEnabled = true
-                
-                guard let dogId = dogId else {
-                    return
-                }
-                // go to next page if dog good
-                dog.dogId = dogId
-                dog.dogIcon = {
-                    if let image = self.dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseImageForDog {
-                        return image
-                    }
-                    else {
-                        return nil
-                    }
-                }()
-                
-                self.dogManager.addDog(forDog: dog)
-                LocalConfiguration.localHasCompletedHoundIntroductionViewController = true
-                self.performSegueOnceInWindowHierarchy(segueIdentifier: "MainTabBarViewController")
-            }
-        }
-        // updating the icon of an existing dog
-        else if dogManager.dogs.count >= 1 {
-            dogManager.dogs[0].dogIcon = {
-                if let image = self.dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseImageForDog {
+            // set the dog objects dogIcon before contacting the server, then if the requset to the server is successful, dogsrequest will persist the icon
+            dog.dogIcon = {
+                if let image = self.dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseDogIcon {
                     return image
                 }
                 else {
                     return nil
                 }
             }()
+            
+            // contact server to make their dog
+            DogsRequest.create(invokeErrorManager: true, forDog: dog) { dogId, _ in
+                self.continueButton.isEnabled = true
+                guard let dogId = dogId else {
+                    return
+                }
+                dog.dogId = dogId
+                
+                self.dogManager.addDog(forDog: dog)
+                LocalConfiguration.localHasCompletedHoundIntroductionViewController = true
+                self.performSegueOnceInWindowHierarchy(segueIdentifier: "MainTabBarViewController")
+            }
+        }
+        
+        // updating the icon of an existing dog
+        else if dogManager.dogs.count >= 1 {
+            dogManager.dogs[0].dogIcon = {
+                if let image = self.dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseDogIcon {
+                    return image
+                }
+                else {
+                    return nil
+                }
+            }()
+            
+            // Normally the DogIcon persistance is taken care of by DogsRequest. However, in this case we don't contact the server about the updating the dog so have to manually update the icon.
+            if let dogIcon = dogManager.dogs[0].dogIcon {
+                DogIconManager.addIcon(forDogId: dogManager.dogs[0].dogId, forDogIcon: dogIcon)
+            }
+            
+            
             // close page because updated
             LocalConfiguration.localHasCompletedHoundIntroductionViewController = true
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "MainTabBarViewController")
@@ -152,7 +158,7 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
         
         // Dog Icon
         
-        dogIcon.setImage(ClassConstant.DogConstant.chooseImageForDog, for: .normal)
+        dogIcon.setImage(ClassConstant.DogConstant.chooseDogIcon, for: .normal)
         dogIcon.imageView?.layer.masksToBounds = true
         dogIcon.imageView?.layer.cornerRadius = dogIcon.frame.width / 2
         

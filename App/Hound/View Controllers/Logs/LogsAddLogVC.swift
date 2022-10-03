@@ -200,6 +200,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     
     // MARK: - IB
     
+    // TO DO NOW remove containerForAll. put all element just in common, default view. handle hiding a drop down by putting a blank view behind all of elements, then touching this blank view closes the drop downs. additionally, for each ibaction of all the elements, make sure those close the drop downs.
+    
     @IBOutlet private weak var containerForAll: UIView!
     @IBOutlet private weak var pageTitle: UINavigationItem!
     
