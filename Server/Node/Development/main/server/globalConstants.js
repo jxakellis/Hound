@@ -28,6 +28,8 @@ const server = {
   COMPATIBLE_IOS_APP_VERSIONS: IS_PRODUCTION_DATABASE ? ['2.0.0'] : ['2.0.0'],
   // How often each of the database connections are tested as being connected (in milliseconds)
   DATABASE_CONNECTION_TEST_INTERVAL: 1000 * 60 * 5,
+  // How long the database connection can stay idle before being killed (in seconds)
+  DATABASE_CONNECTION_WAIT_TIMEOUT: IS_PRODUCTION_DATABASE ? (60 * 60 * 3) : (60 * 60 * 1),
 };
 
 const limit = {
@@ -103,8 +105,6 @@ const subscription = {
   DEFAULT_SUBSCRIPTION_PRODUCT_ID,
   DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS,
   DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS,
-  // The amount of milliseconds that we allow a family's subscription to expire before we enforce restrictions
-  SUBSCRIPTION_GRACE_PERIOD: (0 * 60 * 60 * 1000),
   // The in app purchase offerings for subscriptions (default indicates free / no payment)
   SUBSCRIPTIONS: [
     {

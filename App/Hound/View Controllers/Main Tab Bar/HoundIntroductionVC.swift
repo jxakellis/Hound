@@ -113,7 +113,6 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
                 DogIconManager.addIcon(forDogId: dogManager.dogs[0].dogId, forDogIcon: dogIcon)
             }
             
-            
             // close page because updated
             LocalConfiguration.localHasCompletedHoundIntroductionViewController = true
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "MainTabBarViewController")

@@ -53,13 +53,12 @@ async function updateDatabaseConnectionsWaitTimeouts(...forDatabaseConnections) 
   // Iterate through all the databaseConnections
   for (let i = 0; i < databaseConnections.length; i += 1) {
     const databaseConnection = databaseConnections[i];
-    // Update the wait_timeout so that the databaseConnections can idle for up to the specified number of seconds (before being killed)
-    // This case, we allow the databaseConnection to idle for 1 day
+    // Aallow the databaseConnection to idle for DATABASE_CONNECTION_WAIT_TIMEOUT seconds before being killed
     promises.push(
       databaseQuery(
         databaseConnection,
         'SET session wait_timeout = ?',
-        [(60 * 60 * 24)],
+        [(global.constant.server.DATABASE_CONNECTION_WAIT_TIMEOUT)],
       ),
     );
   }

@@ -177,11 +177,12 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
         willAddLogBackground?.isHidden = dogManager.dogs.isEmpty
     }
     
-    /// viewDidLayoutSubviews is called repeatedly whenever views inside the viewcontroller are added or shifted. This causes the code inside viewDidLayoutSubviews to be repeatedly called. However, we use viewDidLayoutSubviews instead of viewDidAppear. Both of these functions are called when the view is already layed out, meaning we can perform accurate changes to the view (like adding and showing a drop down), though viewDidAppear has the downside of performing these changes once the user can see the view, meaning they will see views shift in front of them. Therefore, viewDidLayoutSubviews is the superior choice and we just need to limit it calling the code below once.
+    /// viewDidAppear is called repeatedly whenever the view is added to the view heirarchy. This causes the code inside viewDidAppear to be repeatedly called. Therefore, we just need to limit calling the code below once.
     private var didLayoutSubviews: Bool = false
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
         
         guard didLayoutSubviews == false else {
             return
@@ -237,11 +238,6 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
         dropDown.nib = UINib(nibName: "DropDownLogFilterTableViewCell", bundle: nil)
         dropDown.setRowHeight(height: DropDownUIView.rowHeightForLogFilter)
         self.view.addSubview(dropDown)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        AlertManager.globalPresenter = self
     }
     
     override func viewWillDisappear(_ animated: Bool) {

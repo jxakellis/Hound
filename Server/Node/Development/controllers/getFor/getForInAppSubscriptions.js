@@ -16,13 +16,8 @@ async function getActiveInAppSubscriptionForFamilyId(databaseConnection, familyI
   }
 
   // find the family's most recent subscription
-  // If it doesn't exist or its more expired than the SUBSCRIPTION_GRACE_PERIOD allows for, we get no result.
 
   const currentDate = new Date();
-  // If we subtract the SUBSCRIPTION_GRACE_PERIOD from currentDate, we get a date that is that amount of time in the past. E.g. currentDate: 6:00 PM, gracePeriod: 1:00 -> currentDate: 5:00PM
-  // Therefore when currentDate is compared to expirationDate, we allow for the expirationDate to be SUBSCRIPTION_GRACE_PERIOD amount of time expired.
-  // This effect could also be achieved by adding SUBSCRIPTION_GRACE_PERIOD to expirationDate, making it appear to expire later than it actually does.
-  currentDate.setTime(currentDate.getTime() - global.constant.subscription.SUBSCRIPTION_GRACE_PERIOD);
 
   let familySubscription = await databaseQuery(
     databaseConnection,
