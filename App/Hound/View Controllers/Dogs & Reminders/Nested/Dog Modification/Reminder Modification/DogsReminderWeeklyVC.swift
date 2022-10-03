@@ -118,6 +118,15 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
         }
     }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        for constraint in interDayOfWeekConstraints {
+            // the distance between week day buttons should be 8 points on a 414 point screen, so this adjusts that ratio to fit any width of screen
+            constraint.constant = (8.0 / 414.0) * self.view.safeAreaLayoutGuide.layoutFrame.width
+        }
+    }
+    
     private func setupWeekdays() {
         disableAllWeekdays()
         enableSelectedWeekDays()
@@ -183,29 +192,6 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
         }
         else {
             return days
-        }
-        
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-    
-    /// viewDidLayoutSubviews is called repeatedly whenever views inside the viewcontroller are added or shifted. This causes the code inside viewDidLayoutSubviews to be repeatedly called. However, we use viewDidLayoutSubviews instead of viewDidAppear. Both of these functions are called when the view is already layed out, meaning we can perform accurate changes to the view (like adding and showing a drop down), though viewDidAppear has the downside of performing these changes once the user can see the view, meaning they will see views shift in front of them. Therefore, viewDidLayoutSubviews is the superior choice and we just need to limit it calling the code below once.
-    private var didLayoutSubviews: Bool = false
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        guard didLayoutSubviews == false else {
-            return
-        }
-        
-        didLayoutSubviews = true
-        
-        for constraint in interDayOfWeekConstraints {
-            // the distance between week day buttons should be 8 points on a 414 point screen, so this adjusts that ratio to fit any width of screen
-            constraint.constant = (8.0 / 414.0) * self.view.safeAreaLayoutGuide.layoutFrame.width
         }
         
     }
