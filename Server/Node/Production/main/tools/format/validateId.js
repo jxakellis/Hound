@@ -1,26 +1,22 @@
 const { databaseQuery } = require('../database/databaseQuery');
-const { formatSHA256Hash, formatNumber, formatArray } = require('./formatObject');
+const {
+  formatSHA256Hash, formatString, formatArray, formatNumber,
+} = require('./formatObject');
 const { areAllDefined } = require('./validateDefined');
 const { ValidationError } = require('../general/errors');
 
 /**
- * Checks to see that the appBuild of the requester is either up to date or one version behind.
- * If a Hound update is publish, we want to support both the users who have updated to the brand new version and the ones who haven't.
- * If we didn't support both, then users could be locked out of Hound and unable to update as the app store takes a day or two to show the update
- *
- * However, if a user is on an old version, we kick them back.
- * E.g. User is on build 1000. The most recent build was 1500 but we just published 2000.
- * We reject the build 1000 user but support build 1500 and build 2000.
- * Build 1500 will no longer be supported once a new build (e.g. 2500) comes out.
+ * Checks to see that the appVersion of the requester is compatible
  */
-async function validateAppBuild(req, res, next) {
-  const appBuild = formatNumber(req.params.appBuild);
-  if (areAllDefined(appBuild) === false) {
-    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError('appBuild missing', global.constant.error.value.MISSING));
+async function validateAppVersion(req, res, next) {
+  const appVersion = formatString(req.params.appVersion);
+
+  if (areAllDefined(appVersion) === false) {
+    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError('appVersion missing', global.constant.error.value.MISSING));
   }
-  // the user isn't on the previous or current app build
-  if (global.constant.server.COMPATIBLE_IOS_APP_BUILDS.includes(appBuild) === false) {
-    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError(`App build of ${appBuild} is incompatible. Compatible builds: ${global.constant.server.COMPATIBLE_IOS_APP_BUILDS}`, global.constant.error.general.APP_BUILD_OUTDATED));
+  // the user isn't on the previous or current app version
+  if (global.constant.server.COMPATIBLE_IOS_APP_VERSIONS.includes(appVersion) === false) {
+    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError(`App version of ${appVersion} is incompatible. Compatible version(s): ${global.constant.server.COMPATIBLE_IOS_APP_VERSIONS}`, global.constant.error.general.APP_VERSION_OUTDATED));
   }
 
   return next();
@@ -105,7 +101,8 @@ async function validateFamilyId(req, res, next) {
 }
 
 /**
- * Checks to see that dogId is defined, a number, and exists in the database under familyId provided. If it does then the user owns the dog and invokes next().
+ * Checks to see that dogId is defined, a number, and exists in the database under familyId provided. Dog can be deleted.
+ * If it does then the user owns the dog and invokes next().
  */
 async function validateDogId(req, res, next) {
   // familyId should be validated already
@@ -124,7 +121,7 @@ async function validateDogId(req, res, next) {
     // JOIN families as dog must have a family attached to it
     const dog = await databaseQuery(
       req.databaseConnection,
-      'SELECT 1 FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE dogs.dogIsDeleted = 0 AND dogs.familyId = ? AND dogs.dogId = ? LIMIT 1',
+      'SELECT 1 FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE dogs.familyId = ? AND dogs.dogId = ? LIMIT 1',
       [familyId, dogId],
     );
 
@@ -146,7 +143,8 @@ async function validateDogId(req, res, next) {
 }
 
 /**
- * Checks to see that logId is defined, a number. and exists in the database under dogId provided. If it does then the dog owns that log and invokes next().
+ * Checks to see that logId is defined, a number. and exists in the database under dogId provided. Log can be deleted.
+ * If it does then the dog owns that log and invokes next().
  */
 async function validateLogId(req, res, next) {
   // dogId should be validated already
@@ -165,7 +163,7 @@ async function validateLogId(req, res, next) {
     // JOIN dogs as log has to have dog still attached to it
     const log = await databaseQuery(
       req.databaseConnection,
-      'SELECT 1 FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogLogs.logIsDeleted = 0 AND dogLogs.dogId = ? AND dogLogs.logId = ? LIMIT 1',
+      'SELECT 1 FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogLogs.dogId = ? AND dogLogs.logId = ? LIMIT 1',
       [dogId, logId],
     );
 
@@ -187,7 +185,8 @@ async function validateLogId(req, res, next) {
 }
 
 /**
- * Checks to see that reminderId is defined, a number, and exists in the database under the dogId provided. If it does then the dog owns that reminder and invokes next().
+ * Checks to see that reminderId is defined, a number, and exists in the database under the dogId provided. Reminder can be deleted
+ * If it does then the dog owns that reminder and invokes next().
  */
 async function validateParamsReminderId(req, res, next) {
   // dogId should be validated already
@@ -206,7 +205,7 @@ async function validateParamsReminderId(req, res, next) {
     // JOIN dogs as reminder must have dog attached to it
     const reminder = await databaseQuery(
       req.databaseConnection,
-      'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+      'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
       [dogId, reminderId],
     );
 
@@ -248,7 +247,7 @@ async function validateBodyReminderId(req, res, next) {
       // Attempt to locate a reminder. It must match the reminderId provided while being attached to a dog that the user has permission to use
       reminderPromises.push(databaseQuery(
         req.databaseConnection,
-        'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+        'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
         [dogId, reminderId],
       ));
     }
@@ -280,7 +279,7 @@ async function validateBodyReminderId(req, res, next) {
       // JOIN dogs as reminder must have dog attached to it
       const reminder = await databaseQuery(
         req.databaseConnection,
-        'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+        'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
         [dogId, singleReminderId],
       );
 
@@ -307,5 +306,5 @@ async function validateBodyReminderId(req, res, next) {
 }
 
 module.exports = {
-  validateAppBuild, validateUserId, validateFamilyId, validateDogId, validateLogId, validateParamsReminderId, validateBodyReminderId,
+  validateAppVersion, validateUserId, validateFamilyId, validateDogId, validateLogId, validateParamsReminderId, validateBodyReminderId,
 };

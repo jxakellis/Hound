@@ -57,7 +57,7 @@ async function deleteAllRemindersForFamilyIdDogId(databaseConnection, familyId, 
     // deletes reminders
     databaseQuery(
       databaseConnection,
-      'UPDATE dogReminders SET reminderIsDeleted = 1, reminderLastModified = ? WHERE dogId = ?',
+      'UPDATE dogReminders SET reminderIsDeleted = 1, reminderLastModified = ? WHERE reminderIsDeleted = 0 AND dogId = ?',
       [reminderLastModified, dogId],
     ),
     // update the dog last modified since one of its compoents was updated

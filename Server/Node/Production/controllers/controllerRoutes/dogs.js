@@ -12,11 +12,11 @@ Known:
 async function getDogs(req, res) {
   try {
     const { userId, familyId, dogId } = req.params;
-    const { lastDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs } = req.query;
+    const { userConfigurationPreviousDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs } = req.query;
     // if dogId is defined and it is a number then continue to find a single dog, otherwise, we are looking for all dogs
     const result = areAllDefined(dogId)
-      ? await getDogForDogId(req.databaseConnection, dogId, lastDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs)
-      : await getAllDogsForUserIdFamilyId(req.databaseConnection, userId, familyId, lastDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs);
+      ? await getDogForDogId(req.databaseConnection, dogId, userConfigurationPreviousDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs)
+      : await getAllDogsForUserIdFamilyId(req.databaseConnection, userId, familyId, userConfigurationPreviousDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs);
 
     return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
@@ -29,8 +29,8 @@ async function createDog(req, res) {
   try {
     const { familyId } = req.params;
     const { dogName } = req.body;
-    const { activeSubscription } = req;
-    const result = await createDogForFamilyId(req.databaseConnection, familyId, activeSubscription, dogName);
+    const { familyActiveSubscription } = req;
+    const result = await createDogForFamilyId(req.databaseConnection, familyId, familyActiveSubscription, dogName);
 
     return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }

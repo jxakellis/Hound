@@ -3,23 +3,23 @@ const { databaseQuery } = require('../../database/databaseQuery');
 const { formatBoolean, formatArray } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
-const userConfigurationColumns = 'userConfiguration.notificationSound, userConfiguration.isLoudNotification, userConfiguration.silentModeIsEnabled, userConfiguration.silentModeStartUTCHour, userConfiguration.silentModeEndUTCHour, userConfiguration.silentModeStartUTCMinute, userConfiguration.silentModeEndUTCMinute';
+const userConfigurationColumns = 'userConfiguration.userConfigurationNotificationSound, userConfiguration.userConfigurationIsLoudNotification, userConfiguration.userConfigurationSilentModeIsEnabled, userConfiguration.userConfigurationSilentModeStartUTCHour, userConfiguration.userConfigurationSilentModeEndUTCHour, userConfiguration.userConfigurationSilentModeStartUTCMinute, userConfiguration.userConfigurationSilentModeEndUTCMinute';
 const userConfigurationJoin = 'JOIN userConfiguration ON users.userId = userConfiguration.userId';
 const familyMembersJoin = 'JOIN familyMembers ON users.userId = familyMembers.userId';
 
 /**
  *  Takes a userId
- *  Returns the userNotificationToken and (optionally) notificationSound of the user if they have a defined userNotificationToken and are notificationEnabled
+ *  Returns the userNotificationToken and (optionally) userConfigurationNotificationSound of the user if they have a defined userNotificationToken and are notificationEnabled
  *  If an error is encountered, creates and throws custom error
  */
 async function getUserToken(userId) {
   if (areAllDefined(userId) === false) {
     return [];
   }
-  // retrieve userNotificationToken, notificationSound, and isLoudNotificaiton of a user with the userId, non-null userNotificationToken, and isNotificationEnabled
+  // retrieve userNotificationToken, userConfigurationNotificationSound, and isLoudNotificaiton of a user with the userId, non-null userNotificationToken, and userConfigurationIsNotificationEnabled
   const result = await databaseQuery(
     databaseConnectionForGeneral,
-    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 1`,
+    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.userConfigurationIsNotificationEnabled = 1 LIMIT 1`,
     [userId],
   );
 
@@ -38,7 +38,7 @@ async function getAllFamilyMemberTokens(familyId) {
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
     databaseConnectionForGeneral,
-    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
+    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.userConfigurationIsNotificationEnabled = 1 LIMIT 18446744073709551615`,
     [familyId],
   );
 
@@ -57,7 +57,7 @@ async function getOtherFamilyMemberTokens(userId, familyId) {
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
     databaseConnectionForGeneral,
-    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE users.userId != ? AND familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
+    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE users.userId != ? AND familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.userConfigurationIsNotificationEnabled = 1 LIMIT 18446744073709551615`,
     [userId, familyId],
   );
 
@@ -66,8 +66,8 @@ async function getOtherFamilyMemberTokens(userId, familyId) {
 
 /**
  * Helper method for this file
- * Takes the result from a query for userNotificationToken, notificationSound, and isLoudNotification
- * Returns an array of JSON with userNotificationToken and (if isLoudNotification disabled) notificationSound
+ * Takes the result from a query for userNotificationToken, userConfigurationNotificationSound, and userConfigurationIsLoudNotification
+ * Returns an array of JSON with userNotificationToken and (if userConfigurationIsLoudNotification disabled) userConfigurationNotificationSound
  */
 function parseNotificatonTokenQuery(forUserNotificationConfigurations) {
   const userNotificationConfigurations = formatArray(forUserNotificationConfigurations);
@@ -77,18 +77,18 @@ function parseNotificatonTokenQuery(forUserNotificationConfigurations) {
 
   const processedUserNotificationConfigurations = [];
 
-  // If the user isLoudNotification enabled, no need for sound in rawPayload as app plays a sound
-  // If the user isLoudNotification disabled, the APN itself have a sound (which will play if the ringer is on)
+  // If the user userConfigurationIsLoudNotification enabled, no need for sound in rawPayload as app plays a sound
+  // If the user userConfigurationIsLoudNotification disabled, the APN itself have a sound (which will play if the ringer is on)
   for (let i = 0; i < userNotificationConfigurations.length; i += 1) {
     const userNotificationConfiguration = userNotificationConfigurations[i];
 
-    if (formatBoolean(userNotificationConfiguration.isLoudNotification) === false && areAllDefined(userNotificationConfiguration.notificationSound)) {
+    if (formatBoolean(userNotificationConfiguration.userConfigurationIsLoudNotification) === false && areAllDefined(userNotificationConfiguration.userConfigurationNotificationSound)) {
       // loud notification is disabled therefore the notification itself plays a sound (APN needs to specify a notification sound)
-      userNotificationConfiguration.notificationSound = userNotificationConfiguration.notificationSound.toLowerCase();
+      userNotificationConfiguration.userConfigurationNotificationSound = userNotificationConfiguration.userConfigurationNotificationSound.toLowerCase();
     }
     else {
       // loud notification is enabled therefore the Hound app itself plays an audio file (APN shouldn't specify a notification sound)
-      delete userNotificationConfiguration.notificationSound;
+      delete userNotificationConfiguration.userConfigurationNotificationSound;
     }
 
     processedUserNotificationConfigurations.push(userNotificationConfiguration);

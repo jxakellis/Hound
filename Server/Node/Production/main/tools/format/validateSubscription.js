@@ -7,7 +7,7 @@ const { databaseQuery } = require('../database/databaseQuery');
 /**
  * Checks the family's subscription
  * Uses getActiveInAppSubscriptionForFamilyId to either get the family's paid subscription or the default free subscription
- * Attached the information to the req (under req.activeSubscription.xxx)
+ * Attached the information to the req (under req.familyActiveSubscription.xxx)
  */
 async function attachActiveSubscription(req, res, next) {
   try {
@@ -18,9 +18,9 @@ async function attachActiveSubscription(req, res, next) {
       throw new ValidationError('familyId missing', global.constant.error.value.MISSING);
     }
 
-    const activeSubscription = await getActiveInAppSubscriptionForFamilyId(req.databaseConnection, familyId);
+    const familyActiveSubscription = await getActiveInAppSubscriptionForFamilyId(req.databaseConnection, familyId);
 
-    req.activeSubscription = activeSubscription;
+    req.familyActiveSubscription = familyActiveSubscription;
 
     return next();
   }
@@ -36,7 +36,7 @@ async function attachActiveSubscription(req, res, next) {
 async function validateSubscription(req, res, next) {
   try {
     const { userId, familyId } = req.params;
-    const { numberOfFamilyMembers, numberOfDogs } = req.activeSubscription;
+    const { numberOfFamilyMembers, numberOfDogs } = req.familyActiveSubscription;
 
     if (areAllDefined(userId, familyId, numberOfFamilyMembers, numberOfDogs) === false) {
       throw new ValidationError('userId, familyId, numberOfFamilyMembers, or numberOfDogs missing', global.constant.error.value.MISSING);

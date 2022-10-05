@@ -22,13 +22,14 @@ const server = {
   SERVER_PORT,
   // True if we are using a development database, false if we are using a production database as we don't want lots of console logs from users (note: serverLogger logs regardless of this settings)
   CONSOLE_LOGGING_ENABLED: !IS_PRODUCTION_DATABASE,
-  // App builds of the iOS Hound app that work properly with the server.
+  // App versions of the iOS Hound app that work properly with the server.
   // A version would be depreciated if an endpoint path is changed or endpoint data return format is changed
-
   // Allows for testing of new versions in development but leave production alone
-  COMPATIBLE_IOS_APP_BUILDS: IS_PRODUCTION_DATABASE ? [8000, 8500, 9000, 9500, 10000] : [8000, 8500, 9000, 9500, 10000],
+  COMPATIBLE_IOS_APP_VERSIONS: IS_PRODUCTION_DATABASE ? ['2.0.0'] : ['2.0.0'],
   // How often each of the database connections are tested as being connected (in milliseconds)
   DATABASE_CONNECTION_TEST_INTERVAL: 1000 * 60 * 5,
+  // How long the database connection can stay idle before being killed (in seconds)
+  DATABASE_CONNECTION_WAIT_TIMEOUT: IS_PRODUCTION_DATABASE ? (60 * 60 * 3) : (60 * 60 * 1),
 };
 
 const limit = {
@@ -104,8 +105,6 @@ const subscription = {
   DEFAULT_SUBSCRIPTION_PRODUCT_ID,
   DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS,
   DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS,
-  // The amount of milliseconds that we allow a family's subscription to expire before we enforce restrictions
-  SUBSCRIPTION_GRACE_PERIOD: (0 * 60 * 60 * 1000),
   // The in app purchase offerings for subscriptions (default indicates free / no payment)
   SUBSCRIPTIONS: [
     {
@@ -139,7 +138,7 @@ const subscription = {
 const error = {
 /*
 Category: ER_GENERAL                        PREVIOUS NAME (pre 7/9/2022)
-ER_GENERAL_APP_BUILD_OUTDATED               (ER_APP_BUILD_OUTDATED)
+ER_GENERAL_APP_VERSION_OUTDATED               (ER_APP_VERSION_OUTDATED)
 ER_GENERAL_PARSE_FORM_DATA_FAILED           (ER_NO_PARSE_FORM_DATA)
 ER_GENERAL_PARSE_JSON_FAILED                (ER_NO_PARSE_JSON)
 ER_GENERAL_POOL_CONNECTION_FAILED           (ER_NO_POOL_CONNECTION)
@@ -169,7 +168,7 @@ ER_FAMILY_PERMISSION_INVALID                (ER_FAMILY_PERMISSION_INVALID)
 */
 
   general: {
-    APP_BUILD_OUTDATED: 'ER_GENERAL_APP_BUILD_OUTDATED',
+    APP_VERSION_OUTDATED: 'ER_GENERAL_APP_VERSION_OUTDATED',
     ENVIRONMENT_INVALID: 'ER_GENERAL_ENVIRONMENT_INVALID',
     PARSE_FORM_DATA_FAILED: 'ER_GENERAL_PARSE_FORM_DATA_FAILED',
     PARSE_JSON_FAILED: 'ER_GENERAL_PARSE_JSON_FAILED',
@@ -180,6 +179,7 @@ ER_FAMILY_PERMISSION_INVALID                (ER_FAMILY_PERMISSION_INVALID)
   value: {
     MISSING: 'ER_VALUE_MISSING',
     INVALID: 'ER_VALUE_INVALID',
+    NOT_UPDATE: 'ER_VALUE_NOT_UPDATED',
   },
   family: {
     limit: {

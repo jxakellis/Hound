@@ -14,12 +14,12 @@ Known:
 async function getLogs(req, res) {
   try {
     const { dogId, logId } = req.params;
-    const { lastDogManagerSynchronization } = req.query;
+    const { userConfigurationPreviousDogManagerSynchronization } = req.query;
     const result = areAllDefined(logId)
     // if logId is defined and it is a number then continue to find a single log
-      ? await getLogForLogId(req.databaseConnection, logId, lastDogManagerSynchronization)
+      ? await getLogForLogId(req.databaseConnection, logId, userConfigurationPreviousDogManagerSynchronization)
     // query for multiple logs
-      : await getAllLogsForDogId(req.databaseConnection, dogId, lastDogManagerSynchronization);
+      : await getAllLogsForDogId(req.databaseConnection, dogId, userConfigurationPreviousDogManagerSynchronization);
 
     return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }

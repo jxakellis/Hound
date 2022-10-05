@@ -54,7 +54,7 @@ async function updateInAppSubscriptionForUserIdFamilyIdTransactionInfo(databaseC
       [isAutoRenewing, transactionId],
     ));
   }
-  if (areAllDefined(isAutoRenewing)) {
+  if (areAllDefined(isRevoked)) {
     promises.push(databaseQuery(
       databaseConnection,
       'UPDATE transactions SET isRevoked = ? WHERE transactionId = ?',

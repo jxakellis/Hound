@@ -25,6 +25,8 @@ const { serverLogger } = require('../tools/logging/loggers');
 //
 //
 
+// TO DO NOW exposed certificate for ubuntu server. recreate before going public. additionally, stop using RDP and switch to SSH exclusively.
+
 // Create a NodeJS HTTPS listener on port that points to the Express app
 // We can only create an HTTPS server on the AWS instance. Otherwise we create a HTTP server.
 const HTTPOrHTTPSServer = global.constant.server.IS_PRODUCTION_SERVER

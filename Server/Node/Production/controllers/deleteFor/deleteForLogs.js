@@ -45,7 +45,7 @@ async function deleteAllLogsForDogId(databaseConnection, dogId) {
   const promises = [
     databaseQuery(
       databaseConnection,
-      'UPDATE dogLogs SET logIsDeleted = 1, logLastModified = ? WHERE dogId = ?',
+      'UPDATE dogLogs SET logIsDeleted = 1, logLastModified = ? WHERE logIsDeleted = 0 AND dogId = ?',
       [logLastModified, dogId],
     ),
     // update the dog last modified since one of its compoents was updated

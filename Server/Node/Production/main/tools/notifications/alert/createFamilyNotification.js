@@ -81,9 +81,9 @@ async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
   try {
     alertLogger.debug(`createFamilyLockedNotification ${userId}, ${familyId}, ${newIsLocked}`);
 
-    const isLocked = formatBoolean(newIsLocked);
+    const familyIsLocked = formatBoolean(newIsLocked);
     // make sure all params are defined
-    if (areAllDefined(userId, familyId, isLocked) === false) {
+    if (areAllDefined(userId, familyId, familyIsLocked) === false) {
       return;
     }
 
@@ -95,12 +95,12 @@ async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
 
     // now we can construct the messages
     // Maximum possible length of message: 30/32 (raw) + 0 (variable) = 30/32 ( <= ALERT_TITLE_LIMIT )
-    const alertTitle = isLocked
+    const alertTitle = familyIsLocked
       ? '🧍 Your family has been locked'
       : '🧍 Your family has been unlocked';
 
     // Maximum possible length of message: 65/58 (raw) + 34 (variable) = 99/92 ( <= ALERT_BODY_LIMIT )
-    const alertBody = isLocked
+    const alertBody = familyIsLocked
       ? `${abreviatedFullName}'s updated your family settings to prevent new users from joining`
       : `${abreviatedFullName}'s updated your family settings to allow new users to join`;
 

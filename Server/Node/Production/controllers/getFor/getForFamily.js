@@ -3,20 +3,15 @@ const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { formatSHA256Hash } = require('../../main/tools/format/formatObject');
 
-// Select every column except for userEmail, userIdentifier, and userNotificationToken (by not transmitting, increases network efficiency)
-// userEmail, userIdentifier, and userNotificationToken are all private so shouldn't be shown.
 const usersColumns = 'users.userId, users.userFirstName, users.userLastName';
-// Select every column except for familyId, familyLeaveDate familyLeaveReason
 const previousFamilyMembersColumns = 'previousFamilyMembers.userId, previousFamilyMembers.userFirstName, previousFamilyMembers.userLastName';
-// Select every column except for familyId, lastPause, and lastUnpause (by not transmitting, increases network efficiency)
-// familyId is already known, lastPause + lastUnpause + familyAccountCreationDate have no use client-side
-const familiesColumns = 'userId, familyCode, isLocked';
+const familiesColumns = 'userId, familyCode, familyIsLocked';
 
 /**
- *  If the query is successful, returns the userId, familyCode, isLocked, and familyMembers for the familyId.
+ *  If the query is successful, returns the userId, familyCode, familyIsLocked, and familyMembers for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
-async function getAllFamilyInformationForFamilyId(databaseConnection, familyId, activeSubscription) {
+async function getAllFamilyInformationForFamilyId(databaseConnection, familyId, familyActiveSubscription) {
   // validate that a familyId was passed, assume that its in the correct format
   if (areAllDefined(databaseConnection, familyId) === false) {
     throw new ValidationError('databaseConnection or familyId missing', global.constant.error.value.MISSING);
@@ -40,7 +35,7 @@ async function getAllFamilyInformationForFamilyId(databaseConnection, familyId, 
     ...family,
     familyMembers,
     previousFamilyMembers,
-    activeSubscription,
+    familyActiveSubscription,
   };
 
   return result;
@@ -71,7 +66,7 @@ async function getAllPreviousFamilyMembersForFamilyId(databaseConnection, family
   // get family members
   const result = await databaseQuery(
     databaseConnection,
-    `SELECT ${previousFamilyMembersColumns} FROM previousFamilyMembers WHERE familyId = ? ORDER BY familyLeaveDate DESC LIMIT 18446744073709551615`,
+    `SELECT ${previousFamilyMembersColumns} FROM previousFamilyMembers WHERE familyId = ? ORDER BY familyMemberLeaveDate DESC LIMIT 18446744073709551615`,
     [familyId],
   );
 

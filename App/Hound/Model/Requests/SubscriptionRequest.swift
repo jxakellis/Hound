@@ -62,7 +62,6 @@ extension SubscriptionRequest {
             case .successResponse:
                 if let result = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]] {
                     
-                    print(responseBody)
                     FamilyInformation.clearAllFamilySubscriptions()
                     for subscription in result {
                         FamilyInformation.addFamilySubscription(forSubscription: Subscription(fromBody: subscription))
