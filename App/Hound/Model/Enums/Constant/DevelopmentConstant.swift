@@ -15,7 +15,7 @@ enum DevelopmentConstant {
             AppDelegate.generalLogger.info("DEBUG configuration for server")
             // Return true to connect to AWS EC2 instance
             // Return false to connect to local
-            return false
+            return true
 #else
             AppDelegate.generalLogger.info("RELEASE configuration for server")
             // MARK: ALWAYS RETURN TRUE, WANT PROD SERVER FOR RELEASE
