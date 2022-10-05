@@ -4,7 +4,6 @@ const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { formatSHA256Hash } = require('../../main/tools/format/formatObject');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
-const { deleteAllDogsForFamilyId } = require('./deleteForDogs');
 const { getUserFirstNameLastNameForUserId } = require('../getFor/getForUser');
 const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
 
@@ -85,16 +84,11 @@ async function deleteFamily(databaseConnection, userId, familyId, familyActiveSu
     //   However, they are safe from an accidential renewal
 
     // There is only one user left in the family, which is the API requester
-    promises = [
-      getUserFirstNameLastNameForUserId(databaseConnection, userId),
-      databaseQuery(
-        databaseConnection,
-        'SELECT familyAccountCreationDate FROM families WHERE familyId = ? LIMIT 1',
-        [familyId],
-      ),
-    ];
-
-    const [leftUserFullName, [familyAccountCreationDate]] = await Promise.all(promises);
+    const [familyAccountCreationDate] = await databaseQuery(
+      databaseConnection,
+      'SELECT familyAccountCreationDate FROM families WHERE familyId = ? LIMIT 1',
+      [familyId],
+    );
 
     if (areAllDefined(familyAccountCreationDate) === false) {
       throw new ValidationError('familyAccountCreationDate missing', global.constant.error.value.MISSING);
@@ -107,12 +101,6 @@ async function deleteFamily(databaseConnection, userId, familyId, familyActiveSu
         'DELETE FROM families WHERE familyId = ?',
         [familyId],
       ),
-      // keep record of family being delted
-      databaseQuery(
-        databaseConnection,
-        'INSERT INTO previousFamilies(userId, familyId, familyAccountCreationDate, familyAccountDeletionDate) VALUES (?,?,?,?)',
-        [userId, familyId, familyAccountCreationDate.familyAccountCreationDate, new Date()],
-      ),
       // deletes all users from the family (should only be one)
       databaseQuery(
         databaseConnection,
@@ -122,8 +110,8 @@ async function deleteFamily(databaseConnection, userId, familyId, familyActiveSu
       // keep record of user leaving
       databaseQuery(
         databaseConnection,
-        'INSERT INTO previousFamilyMembers(userId, familyId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
-        [userId, familyId, leftUserFullName.userFirstName, leftUserFullName.userLastName, new Date(), 'familyDeleted'],
+        'DELETE FROM previousFamilyMembers WHERE familyId = ?',
+        [familyId],
       ),
       // delete all the corresponding dog, reminder, and log data
       databaseQuery(
@@ -131,14 +119,21 @@ async function deleteFamily(databaseConnection, userId, familyId, familyActiveSu
         'DELETE dogs, dogReminders, dogLogs FROM dogs LEFT JOIN dogLogs ON dogs.dogId = dogLogs.dogId LEFT JOIN dogReminders ON dogs.dogId = dogReminders.dogId WHERE dogs.familyId = ?',
         [familyId],
       ),
-      // delete all the dogs
-      deleteAllDogsForFamilyId(databaseConnection, familyId),
     ];
     await Promise.all(promises);
   }
   // User is not the head of the family, so no obligation
   else {
-    const leftUserFullName = await getUserFirstNameLastNameForUserId(databaseConnection, userId);
+    promises = [
+      getUserFirstNameLastNameForUserId(databaseConnection, userId),
+      databaseQuery(
+        databaseConnection,
+        'SELECT familyMemberJoinDate FROM familyMembers WHERE userId = ? LIMIT 1',
+        [userId],
+      ),
+    ];
+    const [userFullName, [familyMemberJoinDate]] = await Promise.all(promises);
+    const { userFirstName, userLastName } = userFullName;
 
     promises = [
       // can leave the family
@@ -151,8 +146,8 @@ async function deleteFamily(databaseConnection, userId, familyId, familyActiveSu
       // keep record of user leaving
       databaseQuery(
         databaseConnection,
-        'INSERT INTO previousFamilyMembers(userId, familyId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
-        [userId, familyId, leftUserFullName.userFirstName, leftUserFullName.userLastName, new Date(), 'userLeft'],
+        'INSERT INTO previousFamilyMembers(familyId, userId, familyMemberJoinDate, userFirstName, userLastName, familyMemberLeaveDate, familyMemberLeaveReasonn) VALUES (?,?,?,?,?,?,?)',
+        [familyId, userId, familyMemberJoinDate.familyMemberJoinDate, userFirstName, userLastName, new Date(), 'userLeft'],
       ),
     ];
 
@@ -186,10 +181,18 @@ async function kickFamilyMember(databaseConnection, userId, familyId, forKickUse
     throw new ValidationError('You are not the family head. Only the family head can kick family members', global.constant.error.family.permission.INVALID);
   }
 
-  const kickedUserFullName = await getUserFirstNameLastNameForUserId(databaseConnection, familyKickUserId);
-  const { userFirstName, userLastName } = kickedUserFullName;
+  let promises = [
+    getUserFirstNameLastNameForUserId(databaseConnection, userId),
+    databaseQuery(
+      databaseConnection,
+      'SELECT familyMemberJoinDate FROM familyMembers WHERE userId = ? LIMIT 1',
+      [userId],
+    ),
+  ];
+  const [userFullName, [familyMemberJoinDate]] = await Promise.all(promises);
+  const { userFirstName, userLastName } = userFullName;
 
-  const promises = [
+  promises = [
     // familyKickUserId is valid, familyKickUserId is different then the requester, requester is the family head so everything is valid
   // kick the user by deleting them from the family
     databaseQuery(
@@ -200,8 +203,8 @@ async function kickFamilyMember(databaseConnection, userId, familyId, forKickUse
     // keep a record of user kicked
     databaseQuery(
       databaseConnection,
-      'INSERT INTO previousFamilyMembers(userId, familyId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
-      [familyKickUserId, familyId, userFirstName, userLastName, new Date(), 'userKicked'],
+      'INSERT INTO previousFamilyMembers(familyId, userId, familyMemberJoinDate, userFirstName, userLastName, familyMemberLeaveDate, familyMemberLeaveReasonn) VALUES (?,?,?,?,?,?,?)',
+      [familyId, userId, familyMemberJoinDate.familyMemberJoinDate, userFirstName, userLastName, new Date(), 'userKicked'],
     ),
   ];
 

@@ -52,8 +52,6 @@ async function createReminder(req, res) {
       );
     }
 
-    console.log(result);
-
     return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {

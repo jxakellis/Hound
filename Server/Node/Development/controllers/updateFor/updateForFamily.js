@@ -89,8 +89,8 @@ async function addFamilyMember(databaseConnection, userId, forFamilyCode) {
   // insert the user into the family as a family member.
   await databaseQuery(
     databaseConnection,
-    'INSERT INTO familyMembers(userId, familyId) VALUES (?, ?)',
-    [userId, familyId],
+    'INSERT INTO familyMembers(userId, familyId, familyMemberJoinDate) VALUES (?, ?, ?)',
+    [userId, familyId, new Date()],
   );
 
   createFamilyMemberJoinNotification(userId, family.familyId);

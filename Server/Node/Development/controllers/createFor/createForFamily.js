@@ -41,8 +41,8 @@ async function createFamilyForUserId(databaseConnection, userId) {
     ),
     databaseQuery(
       databaseConnection,
-      'INSERT INTO familyMembers(userId, familyId) VALUES (?, ?)',
-      [userId, familyId],
+      'INSERT INTO familyMembers(userId, familyId, familyMemberJoinDate) VALUES (?, ?, ?)',
+      [userId, familyId, new Date()],
     ),
   ];
 
