@@ -1,6 +1,6 @@
 -- MariaDB dump 10.19  Distrib 10.8.3-MariaDB, for osx10.17 (arm64)
 --
--- Host: developmenthound.czbmbrfbsczi.us-east-2.rds.amazonaws.com    Database: developmentHound
+-- Host: productionhound.czbmbrfbsczi.us-east-2.rds.amazonaws.com    Database: productionHound
 -- ------------------------------------------------------
 -- Server version	10.6.8-MariaDB-log
 
@@ -88,7 +88,7 @@ CREATE TABLE `dogLogs` (
   `dogId` bigint(20) unsigned NOT NULL,
   `userId` char(64) NOT NULL COMMENT 'Tracks the user who created the log',
   `logDate` datetime(3) NOT NULL,
-  `logNote` varchar(1000) NOT NULL,
+  `logNote` varchar(500) NOT NULL,
   `logAction` enum('Custom','Feed','Fresh Water','Treat','Potty: Pee','Potty: Poo','Potty: Both','Potty: Didn''t Go','Accident','Walk','Brush','Bathe','Medicine','Wake Up','Sleep','Crate','Training Session','Doctor Visit') NOT NULL,
   `logCustomActionName` varchar(32) DEFAULT NULL COMMENT 'If the logAction is ''Custom'', tracks whether or not the user input a custom name that is used in place of ''Custom''',
   `logLastModified` datetime(3) NOT NULL COMMENT 'Tracks when the log was last modified',
@@ -96,6 +96,51 @@ CREATE TABLE `dogLogs` (
   PRIMARY KEY (`logId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`admin`@`%`*/ /*!50003 TRIGGER BEFORE_INSERT_dogLogs_CHECK_dogIsDeleted
+	BEFORE INSERT
+	ON dogLogs FOR EACH ROW
+BEGIN
+	IF 1 in (SELECT dogIsDeleted FROM dogs WHERE dogId = NEW.dogId) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Unable to insert log to dog marked as deleted';
+	END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`admin`@`%`*/ /*!50003 TRIGGER BEFORE_UPDATE_dogLogs_CHECK_logIsDeleted
+  BEFORE UPDATE 
+  ON dogLogs
+  FOR EACH ROW
+BEGIN
+  IF OLD.logIsDeleted = 1 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Unable to update log marked as deleted';
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `dogReminders`
@@ -115,13 +160,10 @@ CREATE TABLE `dogReminders` (
   `reminderExecutionDate` datetime(3) DEFAULT NULL,
   `reminderLastModified` datetime(3) NOT NULL,
   `reminderIsDeleted` tinyint(1) NOT NULL DEFAULT 0,
-  `snoozeIsEnabled` tinyint(1) NOT NULL,
-  `snoozeExecutionInterval` mediumint(8) unsigned NOT NULL,
-  `snoozeIntervalElapsed` int(10) unsigned NOT NULL,
+  `snoozeExecutionInterval` mediumint(8) unsigned DEFAULT NULL,
   `countdownExecutionInterval` mediumint(8) unsigned NOT NULL,
-  `countdownIntervalElapsed` int(10) unsigned NOT NULL,
-  `weeklyHour` tinyint(3) unsigned NOT NULL,
-  `weeklyMinute` tinyint(3) unsigned NOT NULL,
+  `weeklyUTCHour` tinyint(3) unsigned NOT NULL,
+  `weeklyUTCMinute` tinyint(3) unsigned NOT NULL,
   `weeklySunday` tinyint(1) NOT NULL,
   `weeklyMonday` tinyint(1) NOT NULL,
   `weeklyTuesday` tinyint(1) NOT NULL,
@@ -129,20 +171,62 @@ CREATE TABLE `dogReminders` (
   `weeklyThursday` tinyint(1) NOT NULL,
   `weeklyFriday` tinyint(1) NOT NULL,
   `weeklySaturday` tinyint(1) NOT NULL,
-  `weeklyIsSkipping` tinyint(1) NOT NULL,
-  `weeklyIsSkippingDate` datetime(3) DEFAULT NULL,
-  `monthlyDay` tinyint(3) unsigned NOT NULL,
-  `monthlyHour` tinyint(3) unsigned NOT NULL,
-  `monthlyMinute` tinyint(3) unsigned NOT NULL,
-  `monthlyIsSkipping` tinyint(1) NOT NULL,
-  `monthlyIsSkippingDate` datetime(3) DEFAULT NULL,
+  `weeklySkippedDate` datetime(3) DEFAULT NULL,
+  `monthlyUTCDay` tinyint(3) unsigned NOT NULL,
+  `monthlyUTCHour` tinyint(3) unsigned NOT NULL,
+  `monthlyUTCMinute` tinyint(3) unsigned NOT NULL,
+  `monthlySkippedDate` datetime(3) DEFAULT NULL,
   `oneTimeDate` datetime(3) NOT NULL,
   PRIMARY KEY (`reminderId`),
-  CONSTRAINT `CHECK_monthly` CHECK (`monthlyHour` >= 0 and `monthlyHour` <= 24 and `monthlyMinute` >= 0 and `monthlyMinute` <= 60 and `monthlyDay` >= 0 and `monthlyDay` <= 31 and (`monthlyIsSkipping` = 0 or `monthlyIsSkipping` = 1 and `monthlyIsSkippingDate` is not null)),
-  CONSTRAINT `CHECK_snooze` CHECK (`snoozeIsEnabled` = 0 or `snoozeIsEnabled` = 1 and `snoozeExecutionInterval` is not null and `snoozeIntervalElapsed` is not null),
-  CONSTRAINT `CHECK_weekly` CHECK (`weeklyHour` >= 0 and `weeklyHour` <= 24 and `weeklyMinute` >= 0 and `weeklyMinute` <= 60 and (`weeklyIsSkipping` is false or `weeklyIsSkipping` is true and `weeklyIsSkippingDate` is not null) and (`weeklySunday` = 1 or `weeklyMonday` = 1 or `weeklyTuesday` = 1 or `weeklyWednesday` = 1 or `weeklyThursday` = 1 or `weeklyFriday` = 1 or `weeklySaturday` = 1))
+  CONSTRAINT `CHECK_monthly` CHECK (`monthlyUTCHour` >= 0 and `monthlyUTCHour` <= 23 and `monthlyUTCMinute` >= 0 and `monthlyUTCMinute` <= 59 and `monthlyUTCDay` >= 0 and `monthlyUTCDay` <= 31),
+  CONSTRAINT `CHECK_weekly` CHECK (`weeklyUTCHour` >= 0 and `weeklyUTCHour` <= 23 and `weeklyUTCMinute` >= 0 and `weeklyUTCMinute` <= 59 and (`weeklySunday` = 1 or `weeklyMonday` = 1 or `weeklyTuesday` = 1 or `weeklyWednesday` = 1 or `weeklyThursday` = 1 or `weeklyFriday` = 1 or `weeklySaturday` = 1))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`admin`@`%`*/ /*!50003 TRIGGER BEFORE_INSERT_dogReminders_CHECK_dogIsDeleted
+	BEFORE INSERT
+	ON dogReminders FOR EACH ROW
+BEGIN
+	IF 1 in (SELECT dogIsDeleted FROM dogs WHERE dogId = NEW.dogId) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Unable to insert reminder to dog marked as deleted';
+	END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`admin`@`%`*/ /*!50003 TRIGGER BEFORE_UPDATE_dogReminders_CHECK_reminderIsDeleted
+  BEFORE UPDATE 
+  ON dogReminders
+  FOR EACH ROW
+BEGIN
+  IF OLD.reminderIsDeleted = 1 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Unable to update reminder marked as deleted';
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `dogs`
@@ -160,6 +244,28 @@ CREATE TABLE `dogs` (
   PRIMARY KEY (`dogId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`admin`@`%`*/ /*!50003 TRIGGER BEFORE_UPDATE_dogs_CHECK_dogIsDeleted
+	BEFORE UPDATE 
+	ON dogs FOR EACH ROW
+BEGIN
+  IF OLD.dogIsDeleted = 1 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Unable to update dog marked as deleted';
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `families`
@@ -172,10 +278,7 @@ CREATE TABLE `families` (
   `familyId` char(64) NOT NULL,
   `userId` char(64) NOT NULL COMMENT 'familyHead userId',
   `familyCode` char(8) NOT NULL,
-  `isLocked` tinyint(1) NOT NULL,
-  `isPaused` tinyint(1) NOT NULL,
-  `lastPause` datetime(3) DEFAULT NULL,
-  `lastUnpause` datetime(3) DEFAULT NULL,
+  `familyIsLocked` tinyint(1) NOT NULL,
   `familyAccountCreationDate` datetime(3) NOT NULL,
   PRIMARY KEY (`familyId`),
   UNIQUE KEY `UN_familyCode` (`familyCode`,`userId`),
@@ -193,23 +296,9 @@ DROP TABLE IF EXISTS `familyMembers`;
 CREATE TABLE `familyMembers` (
   `familyId` char(64) NOT NULL,
   `userId` char(64) NOT NULL,
+  `familyMemberJoinDate` datetime(3) NOT NULL,
   PRIMARY KEY (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `previousFamilies`
---
-
-DROP TABLE IF EXISTS `previousFamilies`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `previousFamilies` (
-  `familyId` char(64) NOT NULL,
-  `userId` char(64) NOT NULL COMMENT 'familyHead userId',
-  `familyAccountCreationDate` datetime(3) NOT NULL,
-  `familyAccountDeletionDate` datetime(3) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Stores records of any families that have been deleted';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -220,13 +309,14 @@ DROP TABLE IF EXISTS `previousFamilyMembers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `previousFamilyMembers` (
-  `userId` char(64) NOT NULL,
   `familyId` char(64) NOT NULL,
-  `userFirstName` varchar(32) DEFAULT NULL,
-  `userLastName` varchar(32) DEFAULT NULL,
-  `familyLeaveDate` datetime(3) NOT NULL,
-  `familyLeaveReason` enum('userLeft','userKicked','familyDeleted') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Stores records of any families that users have left';
+  `userId` char(64) NOT NULL,
+  `familyMemberJoinDate` datetime(3) NOT NULL,
+  `userFirstName` varchar(32) NOT NULL,
+  `userLastName` varchar(32) NOT NULL,
+  `familyMemberLeaveDate` datetime(3) NOT NULL,
+  `familyMemberLeaveReason` enum('userLeft','userKicked') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -238,10 +328,10 @@ DROP TABLE IF EXISTS `previousRequests`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `previousRequests` (
   `requestId` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `requestAppBuild` smallint(5) unsigned DEFAULT NULL,
+  `requestAppVersion` varchar(10) DEFAULT NULL,
   `requestIP` varchar(32) DEFAULT NULL,
   `requestDate` datetime(3) NOT NULL,
-  `requestMethod` varchar(6) NOT NULL,
+  `requestMethod` enum('GET','POST','PUT','DELETE') NOT NULL,
   `requestOriginalURL` varchar(500) NOT NULL,
   PRIMARY KEY (`requestId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -292,7 +382,7 @@ DROP TABLE IF EXISTS `transactions`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `transactions` (
   `transactionId` bigint(20) unsigned NOT NULL COMMENT 'The unique identifier of the transaction.',
-  `originalTransactionId` bigint(20) unsigned DEFAULT NULL COMMENT 'The transaction identifier of the original purchase.',
+  `originalTransactionId` bigint(20) unsigned NOT NULL COMMENT 'The transaction identifier of the original purchase.',
   `userId` char(64) NOT NULL COMMENT 'The user that made this transaction',
   `familyId` char(64) NOT NULL COMMENT 'The family that the user was in when they made this transaction',
   `productId` enum('com.jonathanxakellis.hound.twofamilymemberstwodogs.monthly','com.jonathanxakellis.hound.fourfamilymembersfourdogs.monthly','com.jonathanxakellis.hound.sixfamilymemberssixdogs.monthly','com.jonathanxakellis.hound.tenfamilymemberstendogs.monthly') NOT NULL COMMENT 'The product identifier of the in-app purchase.',
@@ -301,11 +391,11 @@ CREATE TABLE `transactions` (
   `expirationDate` datetime(3) NOT NULL COMMENT 'The UNIX time, in milliseconds, the subscription expires or renews.',
   `numberOfFamilyMembers` tinyint(3) unsigned DEFAULT NULL COMMENT 'The number of family members this transaction, if its a subscription, gives the family access to',
   `numberOfDogs` tinyint(3) unsigned DEFAULT NULL,
-  `quantity` tinyint(3) unsigned DEFAULT NULL COMMENT 'The number of consumable products the user purchased.',
-  `webOrderLineItemId` bigint(20) unsigned DEFAULT NULL COMMENT 'The unique identifier of subscription purchase events across devices, including subscription renewals.',
-  `inAppOwnershipType` enum('FAMILY_SHARED','PURCHASED') DEFAULT NULL COMMENT 'A string that describes whether the transaction was purchased by the user, or is available to them through Family Sharing.',
-  `isAutoRenewing` tinyint(1) DEFAULT 1 COMMENT 'The renewal status for an auto-renewable subscription.',
-  `isRevoked` tinyint(1) DEFAULT 0 COMMENT 'The revocation status for a transaction that has been refunded by the App Store or revoked from family sharing',
+  `quantity` tinyint(3) unsigned NOT NULL COMMENT 'The number of consumable products the user purchased.',
+  `webOrderLineItemId` bigint(20) unsigned NOT NULL COMMENT 'The unique identifier of subscription purchase events across devices, including subscription renewals.',
+  `inAppOwnershipType` enum('FAMILY_SHARED','PURCHASED') NOT NULL COMMENT 'A string that describes whether the transaction was purchased by the user, or is available to them through Family Sharing.',
+  `isAutoRenewing` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'The renewal status for an auto-renewable subscription.',
+  `isRevoked` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'The revocation status for a transaction that has been refunded by the App Store or revoked from family sharing',
   PRIMARY KEY (`transactionId`),
   CONSTRAINT `CHECK_quantity` CHECK (`quantity` is null or `quantity` >= 1),
   CONSTRAINT `CHECK_numberOfFamilyMembers` CHECK (`numberOfFamilyMembers` is null or `numberOfFamilyMembers` >= 1),
@@ -322,20 +412,25 @@ DROP TABLE IF EXISTS `userConfiguration`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `userConfiguration` (
   `userId` char(64) NOT NULL,
-  `isNotificationEnabled` tinyint(1) NOT NULL,
-  `isLoudNotification` tinyint(1) NOT NULL,
-  `isFollowUpEnabled` tinyint(1) NOT NULL,
-  `followUpDelay` mediumint(8) unsigned NOT NULL,
-  `interfaceStyle` tinyint(3) unsigned NOT NULL,
-  `snoozeLength` mediumint(8) unsigned NOT NULL,
-  `notificationSound` enum('Radar','Apex','Beacon','Bulletin','By The Seaside','Chimes','Circuit','Constellation','Crystals','Illuminate','Night Owl','Opening','Presto','Reflection','Ripples','Sencha','Signal','Silk','Stargaze','Twinkle','Waves') NOT NULL,
-  `logsInterfaceScale` enum('Small','Medium','Large') NOT NULL,
-  `remindersInterfaceScale` enum('Small','Medium','Large') NOT NULL,
-  `maximumNumberOfLogsDisplayed` smallint(5) unsigned NOT NULL,
-  `lastDogManagerSynchronization` datetime(3) NOT NULL DEFAULT '1970-01-01 00:00:00.000',
+  `userConfigurationIsNotificationEnabled` tinyint(1) NOT NULL,
+  `userConfigurationIsLoudNotification` tinyint(1) NOT NULL,
+  `userConfigurationInterfaceStyle` tinyint(3) unsigned NOT NULL,
+  `userConfigurationSnoozeLength` mediumint(8) unsigned NOT NULL,
+  `userConfigurationNotificationSound` enum('Radar','Apex','Beacon','Bulletin','By The Seaside','Chimes','Circuit','Constellation','Crystals','Illuminate','Night Owl','Opening','Presto','Reflection','Ripples','Sencha','Signal','Silk','Stargaze','Twinkle','Waves') NOT NULL,
+  `userConfigurationLogsInterfaceScale` enum('Small','Medium','Large') NOT NULL,
+  `userConfigurationRemindersInterfaceScale` enum('Small','Medium','Large') NOT NULL,
+  `userConfigurationMaximumNumberOfLogsDisplayed` smallint(5) unsigned NOT NULL,
+  `userConfigurationPreviousDogManagerSynchronization` datetime(3) NOT NULL DEFAULT '1970-01-01 00:00:00.000',
+  `userConfigurationSilentModeIsEnabled` tinyint(1) NOT NULL,
+  `userConfigurationSilentModeStartUTCHour` tinyint(3) unsigned NOT NULL,
+  `userConfigurationSilentModeEndUTCHour` tinyint(3) unsigned NOT NULL,
+  `userConfigurationSilentModeStartUTCMinute` tinyint(3) unsigned NOT NULL,
+  `userConfigurationSilentModeEndUTCMinute` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`userId`),
-  CONSTRAINT `CHECK_interfaceStyle` CHECK (`interfaceStyle` <= 2),
-  CONSTRAINT `CHECK_maximumNumberOfLogsDisplayed` CHECK (`maximumNumberOfLogsDisplayed` <= 5000)
+  CONSTRAINT `CHECK_interfaceStyle` CHECK (`userConfigurationInterfaceStyle` <= 2),
+  CONSTRAINT `CHECK_silentModeUTCHour` CHECK (`userConfigurationSilentModeStartUTCHour` >= 0 and `userConfigurationSilentModeStartUTCHour` <= 23 and `userConfigurationSilentModeEndUTCHour` >= 0 and `userConfigurationSilentModeStartUTCHour` <= 23),
+  CONSTRAINT `CHECK_silentModeUTCMinute` CHECK (`userConfigurationSilentModeStartUTCMinute` >= 0 and `userConfigurationSilentModeStartUTCMinute` <= 59 and `userConfigurationSilentModeEndUTCMinute` >= 0 and `userConfigurationSilentModeStartUTCMinute` <= 59),
+  CONSTRAINT `CHECK_maximumNumberOfLogsDisplayed` CHECK (`userConfigurationMaximumNumberOfLogsDisplayed` <= 1000)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -364,7 +459,7 @@ CREATE TABLE `users` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping routines for database 'developmentHound'
+-- Dumping routines for database 'productionHound'
 --
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -376,4 +471,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-08-20  0:18:51
+-- Dump completed on 2022-10-04 21:08:22

@@ -10,27 +10,18 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
  */
 async function updateLogForDogIdLogId(databaseConnection, dogId, logId, forLogDate, logAction, forLogCustomActionName, forLogNote) {
   const logDate = formatDate(forLogDate);
-  const dogLastModified = new Date();
-  const logLastModified = dogLastModified;
+  const logLastModified = new Date();
   const logCustomActionName = formatString(forLogCustomActionName, 32);
   const logNote = formatString(forLogNote, 500);
 
-  // logCustomActionName optional
-  if (areAllDefined(databaseConnection, dogId, logId, logDate, logAction, logNote) === false) {
-    throw new ValidationError('databaseConnection, dogId, logId, logDate, logAction, or logNote missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, dogId, logId, logDate, logAction, logCustomActionName, logNote) === false) {
+    throw new ValidationError('databaseConnection, dogId, logId, logDate, logAction, logCustomActionName, or logNote missing', global.constant.error.value.MISSING);
   }
 
   await databaseQuery(
     databaseConnection,
     'UPDATE dogLogs SET logDate = ?, logAction = ?, logCustomActionName = ?, logNote = ?, logLastModified = ? WHERE logId = ?',
     [logDate, logAction, logCustomActionName, logNote, logLastModified, logId],
-  );
-
-  // update the dog last modified since one of its compoents was updated
-  await databaseQuery(
-    databaseConnection,
-    'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
-    [dogLastModified, dogId],
   );
 }
 

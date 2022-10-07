@@ -123,20 +123,13 @@ extension RemindersRequest {
     /**
      completionHandler returns a reminder and response status. If the query is successful and the reminder isn't deleted, then the reminder is returned. Otherwise, nil is returned.
      */
-    static func get(invokeErrorManager: Bool, forDogId dogId: Int, forReminderId reminderId: Int, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) {
+    @discardableResult static func get(invokeErrorManager: Bool, forDogId dogId: Int, forReminderId reminderId: Int, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) -> Progress? {
         
-        _ = RemindersRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderId: reminderId) { responseBody, responseStatus in
+        return RemindersRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderId: reminderId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
-                    let newReminder = Reminder(fromBody: result)
-                    
-                    guard newReminder.reminderIsDeleted == false else {
-                        completionHandler(nil, responseStatus)
-                        return
-                    }
-                    
-                    completionHandler(newReminder, responseStatus)
+                if let reminderBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
+                    completionHandler(Reminder(forReminderBody: reminderBody, overrideReminder: nil), responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)
@@ -153,13 +146,13 @@ extension RemindersRequest {
      completionHandler returns a possible reminder and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) {
+    @discardableResult static func create(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) -> Progress? {
         
-        _ = RemindersRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminder: reminder) { responseBody, responseStatus in
+        return RemindersRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminder: reminder) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let reminderBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
-                    completionHandler(Reminder(fromBody: reminderBody), responseStatus)
+                    completionHandler(Reminder(forReminderBody: reminderBody, overrideReminder: nil), responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)
@@ -176,16 +169,17 @@ extension RemindersRequest {
      completionHandler returns a possible array of reminders and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([Reminder]?, ResponseStatus) -> Void) {
+    @discardableResult static func create(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([Reminder]?, ResponseStatus) -> Void) -> Progress? {
         
-        _ = RemindersRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { responseBody, responseStatus in
+        return RemindersRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let remindersBody = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]] {
                     var reminderArray: [Reminder] = []
                     for reminderBody in remindersBody {
-                        let reminder = Reminder(fromBody: reminderBody)
-                        reminderArray.append(reminder)
+                        if let reminder = Reminder(forReminderBody: reminderBody, overrideReminder: nil) {
+                            reminderArray.append(reminder)
+                        }
                     }
                     completionHandler(reminderArray, responseStatus)
                 }
@@ -204,9 +198,9 @@ extension RemindersRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func update(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
+    @discardableResult static func update(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         
-        _ = RemindersRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: [reminder]) { _, responseStatus in
+        return RemindersRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: [reminder]) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)
@@ -222,9 +216,9 @@ extension RemindersRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func update(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
+    @discardableResult static func update(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         
-        _ = RemindersRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { _, responseStatus in
+        return RemindersRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)
@@ -240,8 +234,8 @@ extension RemindersRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
-        _ = RemindersRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: [reminder]) { _, responseStatus in
+    @discardableResult static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
+        return RemindersRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: [reminder]) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)
@@ -257,8 +251,8 @@ extension RemindersRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
-        _ = RemindersRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { _, responseStatus in
+    @discardableResult static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
+        return RemindersRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)

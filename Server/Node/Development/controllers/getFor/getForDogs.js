@@ -9,7 +9,8 @@ const { getAllRemindersForDogId } = require('./getForReminders');
 
 // Select every column except for familyId, and dogLastModified (by not transmitting, increases network efficiency)
 // familyId is already known, and dogLastModified has no use client-side
-const dogsColumns = 'dogId, dogName, dogIsDeleted';
+// TO DO FUTURE only select dogId and dogIsDeleted if dogIsDeleted = 0, otherwise include all columns
+const dogsColumns = 'dogs.dogId, dogs.dogName, dogs.dogIsDeleted';
 
 /**
  *  If the query is successful, returns the dog for the dogId.
@@ -27,12 +28,14 @@ async function getDogForDogId(databaseConnection, dogId, forUserConfigurationPre
   let dog = areAllDefined(userConfigurationPreviousDogManagerSynchronization)
     ? await databaseQuery(
       databaseConnection,
-      `SELECT ${dogsColumns} FROM dogs WHERE dogLastModified >= ? AND dogId = ? LIMIT 1`,
-      [userConfigurationPreviousDogManagerSynchronization, dogId],
+      `SELECT ${dogsColumns} FROM dogs LEFT JOIN dogReminders ON dogs.dogId = dogReminders.dogId LEFT JOIN dogLogs ON dogs.dogId = dogLogs.dogId WHERE (dogLastModified >= ? OR reminderLastModified >= ? OR logLastModified >= ?) AND dogs.dogId = ? GROUP BY dogs.dogId LIMIT 1`,
+      [userConfigurationPreviousDogManagerSynchronization, userConfigurationPreviousDogManagerSynchronization, userConfigurationPreviousDogManagerSynchronization, dogId],
     )
+    // User is requesting a complete copy of dogs, therefore we can assume they have a blank copy
+    // If they have a blank copy, no need to include deleted dogs that indicate whether to delete their local dog store
     : await databaseQuery(
       databaseConnection,
-      `SELECT ${dogsColumns} FROM dogs WHERE dogId = ? LIMIT 1`,
+      `SELECT ${dogsColumns} FROM dogs WHERE dogIsDeleted = 0 AND dogId = ? GROUP BY dogs.dogId LIMIT 1`,
       [dogId],
     );
 
@@ -78,12 +81,14 @@ async function getAllDogsForUserIdFamilyId(databaseConnection, userId, familyId,
   const dogs = areAllDefined(userConfigurationPreviousDogManagerSynchronization)
     ? await databaseQuery(
       databaseConnection,
-      `SELECT ${dogsColumns} FROM dogs WHERE dogLastModified >= ? AND familyId = ? LIMIT 18446744073709551615`,
-      [userConfigurationPreviousDogManagerSynchronization, familyId],
+      `SELECT ${dogsColumns} FROM dogs LEFT JOIN dogReminders ON dogs.dogId = dogReminders.dogId LEFT JOIN dogLogs ON dogs.dogId = dogLogs.dogId WHERE (dogLastModified >= ? OR reminderLastModified >= ? OR logLastModified >= ?) AND dogs.familyId = ? GROUP BY dogs.dogId LIMIT 18446744073709551615`,
+      [userConfigurationPreviousDogManagerSynchronization, userConfigurationPreviousDogManagerSynchronization, userConfigurationPreviousDogManagerSynchronization, familyId],
     )
+    // User is requesting a complete copy of dogs, therefore we can assume they have a blank copy
+    // If they have a blank copy, no need to include deleted dogs that indicate whether to delete their local dog store
     : await databaseQuery(
       databaseConnection,
-      `SELECT ${dogsColumns} FROM dogs WHERE familyId = ? LIMIT 18446744073709551615`,
+      `SELECT ${dogsColumns} FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? GROUP BY dogs.dogId LIMIT 18446744073709551615`,
       [familyId],
     );
 
@@ -142,6 +147,8 @@ async function getAllDogsForUserIdFamilyId(databaseConnection, userId, familyId,
       [userConfigurationPreviousDogManagerSynchronization, userId],
     );
   }
+
+  console.log(dogs);
 
   return dogs;
 }

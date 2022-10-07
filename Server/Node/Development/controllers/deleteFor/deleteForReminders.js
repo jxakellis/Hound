@@ -9,29 +9,17 @@ const { deleteAlarmNotificationsForReminder } = require('../../main/tools/notifi
  *  If an error is encountered, creates and throws custom error
  */
 async function deleteReminderForFamilyIdDogIdReminderId(databaseConnection, familyId, dogId, reminderId) {
-  const dogLastModified = new Date();
-  const reminderLastModified = dogLastModified;
+  const reminderLastModified = new Date();
 
   if (areAllDefined(databaseConnection, familyId, dogId, reminderId) === false) {
     throw new ValidationError('databaseConnection, familyId, dogId, or reminderId missing', global.constant.error.value.MISSING);
   }
 
-  const promises = [
-    // deletes reminder
-    databaseQuery(
-      databaseConnection,
-      'UPDATE dogReminders SET reminderIsDeleted = 1, reminderLastModified = ? WHERE reminderId = ?',
-      [reminderLastModified, reminderId],
-    ),
-    // update the dog last modified since one of its compoents was updated
-    databaseQuery(
-      databaseConnection,
-      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
-      [dogLastModified, dogId],
-    ),
-  ];
-
-  await Promise.all(promises);
+  await databaseQuery(
+    databaseConnection,
+    'UPDATE dogReminders SET reminderIsDeleted = 1, reminderLastModified = ? WHERE reminderId = ?',
+    [reminderLastModified, reminderId],
+  );
   // everything here succeeded so we shoot off a request to delete the alarm notification for the reminder
   deleteAlarmNotificationsForReminder(familyId, reminderId);
 }
@@ -41,8 +29,7 @@ async function deleteReminderForFamilyIdDogIdReminderId(databaseConnection, fami
  *  If an error is encountered, creates and throws custom error
  */
 async function deleteAllRemindersForFamilyIdDogId(databaseConnection, familyId, dogId) {
-  const dogLastModified = new Date();
-  const reminderLastModified = dogLastModified;
+  const reminderLastModified = new Date();
 
   if (areAllDefined(databaseConnection, familyId, dogId) === false) {
     throw new ValidationError('databaseConnection, familyId, or dogId missing', global.constant.error.value.MISSING);
@@ -59,12 +46,6 @@ async function deleteAllRemindersForFamilyIdDogId(databaseConnection, familyId, 
       databaseConnection,
       'UPDATE dogReminders SET reminderIsDeleted = 1, reminderLastModified = ? WHERE reminderIsDeleted = 0 AND dogId = ?',
       [reminderLastModified, dogId],
-    ),
-    // update the dog last modified since one of its compoents was updated
-    databaseQuery(
-      databaseConnection,
-      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
-      [dogLastModified, dogId],
     ),
   ];
 

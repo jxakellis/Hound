@@ -39,17 +39,32 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
     
     // MARK: - Main
     
-    init(initReminders: [Reminder] = []) {
+    init(forReminders: [Reminder] = []) {
         super.init()
-        addReminders(forReminders: initReminders)
+        addReminders(forReminders: forReminders)
     }
     
-    convenience init(fromBody reminderBodies: [[String: Any]]) {
-        self.init()
+    /// Provide an array of dictionary literal of reminder properties to instantiate reminders. Provide a reminderManager to have the reminders add themselves into, update themselves in, or delete themselves from.
+    convenience init(fromReminderBodies reminderBodies: [[String: Any]], overrideReminderManager: ReminderManager?) {
+        self.init(forReminders: overrideReminderManager?.reminders ?? [])
         
         for reminderBody in reminderBodies {
-            let reminder = Reminder(fromBody: reminderBody)
-            addReminder(forReminder: reminder)
+            let reminderId = reminderBody[KeyConstant.reminderId.rawValue] as? Int
+            let reminderIsDeleted = reminderBody[KeyConstant.reminderIsDeleted.rawValue] as? Bool
+            
+            guard let reminderId = reminderId, let reminderIsDeleted = reminderIsDeleted else {
+                // couldn't construct essential components to intrepret reminder
+                continue
+            }
+            
+            guard reminderIsDeleted == false else {
+                removeReminder(forReminderId: reminderId)
+                continue
+            }
+            
+            if let reminder = Reminder(forReminderBody: reminderBody, overrideReminder: findReminder(forReminderId: reminderId)) {
+                addReminder(forReminder: reminder)
+            }
         }
     }
     
@@ -58,14 +73,19 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
     /// Array of reminders
     private(set) var reminders: [Reminder] = []
     
-    // MARK: Add Reminders
+    // MARK: Functions
     
     /// Helper function allows us to use the same logic for addReminder and addReminders and allows us to only sort at the end. Without this function, addReminders would invoke addReminder repeadly and sortReminders() with each call.
-    private func addReminderWithoutSorting(forReminder newReminder: Reminder) {
+    private func addReminderWithoutSorting(forReminder newReminder: Reminder, shouldOverridePlaceholderReminder: Bool) {
         
         // removes any existing reminders that have the same reminderId as they would cause problems. Placeholder Ids aren't real so they can be shifted .reversed() is needed to make it work, without it there will be an index of out bounds error.
         reminders.removeAll { oldReminder in
-            guard oldReminder.reminderId == newReminder.reminderId && oldReminder.reminderId >= 0 else {
+            guard oldReminder.reminderId == newReminder.reminderId else {
+                return false
+            }
+            
+            guard (shouldOverridePlaceholderReminder == true) ||
+                    (shouldOverridePlaceholderReminder == false && oldReminder.reminderId >= 0) else {
                 return false
             }
             
@@ -95,9 +115,9 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
     }
     
     /// Checks to see if a reminder is already present. If its reminderId is, then is removes the old one and replaces it with the new. If the reminder has a placeholder reminderId and a reminder with the same reminderId already exists, then the placeholder id is shifted and the reminder is added
-    func addReminder(forReminder reminder: Reminder) {
+    func addReminder(forReminder reminder: Reminder, shouldOverridePlaceholderReminder: Bool = false) {
         
-        addReminderWithoutSorting(forReminder: reminder)
+        addReminderWithoutSorting(forReminder: reminder, shouldOverridePlaceholderReminder: shouldOverridePlaceholderReminder)
         
         sortReminders()
     }
@@ -105,7 +125,7 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
     /// Invokes addReminder(forReminder: Reminder) for newReminder.count times (but only sorts once at the end to be more efficent)
     func addReminders(forReminders reminders: [Reminder]) {
         for reminder in reminders {
-            addReminderWithoutSorting(forReminder: reminder)
+            addReminderWithoutSorting(forReminder: reminder, shouldOverridePlaceholderReminder: false)
         }
         
         sortReminders()
@@ -228,40 +248,6 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
         }
     }
     
-    // MARK: Update Reminders
-    
-    /// Helper function allows us to use the same logic for updateReminder and updateReminders and allows us to only sort at the end. Without this function, updateReminders would invoke updateReminder repeadly and sortReminders() with each call.
-    private func updateReminderWithoutSorting(forReminder: Reminder) {
-        // Removes any existing reminders that have the same reminderId as they would cause problems.
-        for (reminderIndex, reminder) in reminders.enumerated().reversed() where reminder.reminderId == forReminder.reminderId {
-            
-            // remove the old reminder
-            reminder.timer?.invalidate()
-            reminders.remove(at: reminderIndex)
-        }
-        
-        reminders.append(forReminder)
-    }
-    
-    /// Checks to see if a reminder is already present. If its reminderId is, then is removes the old one and replaces it with the new. If the reminder has a placeholder reminderId and a reminder with the same reminderId already exists, then the existing reminder is overridden
-    func updateReminder(forReminder reminder: Reminder) {
-        
-        updateReminderWithoutSorting(forReminder: reminder)
-        
-        sortReminders()
-    }
-    
-    /// Invokes updateReminder(forReminder: Reminder) for updatedReminder.count times  (but only sorts once at the end to be more efficent)
-    func updateReminders(forReminders reminders: [Reminder]) {
-        for reminder in reminders {
-            updateReminderWithoutSorting(forReminder: reminder)
-        }
-        
-        sortReminders()
-    }
-    
-    // MARK: Remove Reminders
-    
     /// Tries to find a reminder with the matching reminderId, if found then it removes the reminder, if not found then throws error
     func removeReminder(forReminderId reminderId: Int) {
         // finds index of given reminder (through reminder name), returns nil if not found
@@ -288,20 +274,5 @@ extension ReminderManager {
     /// finds and returns the reference of a reminder matching the given reminderId
     func findReminder(forReminderId reminderId: Int) -> Reminder? {
         return reminders.first(where: { $0.reminderId == reminderId })
-    }
-    
-    // MARK: Compare
-    
-    /// Combines the reminders of an old reminder manager with the new reminder manager, forming a union with their reminders arrays. In the event that the newReminderManager (this object) has a reminder with the same id as the oldReminderManager, the reminder from the newReminderManager will override that reminder
-    func combine(withOldReminderManager oldReminderManager: ReminderManager) {
-        // We need to copy oldReminderManager as it might still be in use and the combining process modifies oldReminderManager. Therefore, copy is necessary to keep oldReminderManager integrity.
-        guard let oldReminderManagerCopy = oldReminderManager.copy() as? ReminderManager else {
-            return
-        }
-        
-        // the addReminders function overwrites reminders if it finds them, so we must add the reminders to the old reminders (allowing the newReminderManager to overwrite the oldReminderManager reminders if there is an overlap)
-        oldReminderManagerCopy.addReminders(forReminders: reminders)
-        // now that the oldReminderManager contains its original reminders, our new reminders, and has had its old reminders overwritten (in the case old & new both had a reminder with same reminderId), we have an updated array.
-        reminders = oldReminderManagerCopy.reminders
     }
 }

@@ -66,6 +66,8 @@ enum InternalRequestUtils {
                 ?? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String: Any]
             }
             
+            print(responseBody)
+            
             guard error == nil, let responseBody = responseBody, let responseStatusCode = responseStatusCode else {
                 // assume an error is no response as that implies request/response failure, meaning the end result of no response is the same
                 AppDelegate.APIResponseLogger.warning(

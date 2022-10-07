@@ -37,15 +37,6 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
         CheckManager.checkForReview()
     }
     
-    func didUpdateReminder(sender: Sender, parentDogId: Int, forReminder reminder: Reminder) {
-        
-        dogManager.findDog(forDogId: parentDogId)?.dogReminders.updateReminder(forReminder: reminder)
-        
-        setDogManager(sender: sender, forDogManager: dogManager)
-        
-        CheckManager.checkForReview()
-    }
-    
     func didRemoveReminder(sender: Sender, parentDogId: Int, reminderId: Int) {
         
         dogManager.findDog(forDogId: parentDogId)?.dogReminders.removeReminder(forReminderId: reminderId)
@@ -123,7 +114,7 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
     @IBAction private func willRefresh(_ sender: Any) {
         self.refreshButton.isEnabled = false
         ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
-        _ = DogsRequest.get(invokeErrorManager: true, dogManager: dogManager) { newDogManager, _ in
+        DogsRequest.get(invokeErrorManager: true, dogManager: dogManager) { newDogManager, _ in
             self.refreshButton.isEnabled = true
             ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
             

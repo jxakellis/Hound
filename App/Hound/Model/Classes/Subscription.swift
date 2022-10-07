@@ -23,13 +23,13 @@ enum SubscriptionGroup20965379Product: String, CaseIterable {
         
         switch subscriptionGroup20965379Product {
         case .twoFMTwoDogs:
-            return "Duo 👫"
+            return "Partner 👫"
         case .fourFMFourDogs:
-            return "Quad 👨‍👩‍👧‍👦"
+            return "Household 👨‍👩‍👧‍👦"
         case .sixFMSixDogs:
-            return "Hexad 👨‍👩‍👧‍👦👫"
+            return "Neighborhood 👨‍👩‍👧‍👦👫"
         case .tenFMTenDogs:
-            return "Decad 👨‍👩‍👧‍👦👨‍👩‍👧‍👦👫"
+            return "Community 👨‍👩‍👧‍👦👨‍👩‍👧‍👦👫"
         }
     }
     

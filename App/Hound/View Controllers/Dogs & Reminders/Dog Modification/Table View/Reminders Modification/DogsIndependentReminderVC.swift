@@ -10,7 +10,6 @@ import UIKit
 
 protocol DogsIndependentReminderViewControllerDelegate: AnyObject {
     func didAddReminder(sender: Sender, parentDogId: Int, forReminder: Reminder)
-    func didUpdateReminder(sender: Sender, parentDogId: Int, forReminder: Reminder)
     func didRemoveReminder(sender: Sender, parentDogId: Int, reminderId: Int)
     /// Reinitalizes timers that were possibly destroyed
     func didCancel(sender: Sender)
@@ -45,12 +44,13 @@ final class DogsIndependentReminderViewController: UIViewController {
                 self.saveReminderButtonBackground.endQuerying(isBackgroundButton: true)
                 if requestWasSuccessful == true {
                     // the query was successful so we should now persist the reminderCustomActionName to LocalConfiguration if there was one
-                    if let reminderCustomActionName = reminder.reminderCustomActionName, reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                    let reminderCustomActionName = reminder.reminderCustomActionName
+                    if reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                         LocalConfiguration.addReminderCustomAction(forName: reminderCustomActionName)
                     }
                     
                     // successful so persist the data locally
-                    self.delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: reminder)
+                    self.delegate.didAddReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: reminder)
                     self.navigationController?.popViewController(animated: true)
                 }
             }
@@ -64,8 +64,9 @@ final class DogsIndependentReminderViewController: UIViewController {
                     return
                 }
                 
+                let reminderCustomActionName = reminder.reminderCustomActionName
                 // the query was successful so we should now persist the reminderCustomActionName to LocalConfiguration if there was one
-                if let reminderCustomActionName = reminder.reminderCustomActionName, reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                if reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                     LocalConfiguration.addReminderCustomAction(forName: reminderCustomActionName)
                 }
                 

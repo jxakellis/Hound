@@ -260,7 +260,7 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
     
     private func signInUser() {
         // Don't begin RequestUtils.beginRequestIndictator() as we already have one from signUpUser
-        _ = UserRequest.get(invokeErrorManager: true) { userId, _, _ in
+        UserRequest.get(invokeErrorManager: true) { userId, _, _ in
             // the user config is already automatically setup with this function
             RequestUtils.endRequestIndictator {
                 if userId != nil {

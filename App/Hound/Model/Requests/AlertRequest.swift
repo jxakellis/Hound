@@ -34,8 +34,8 @@ extension AlertRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
-        _ = AlertRequest.internalCreate { _, responseStatus in
+    @discardableResult static func create(completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
+        return AlertRequest.internalCreate { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)

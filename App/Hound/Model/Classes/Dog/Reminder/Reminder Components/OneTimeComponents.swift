@@ -34,9 +34,9 @@ final class OneTimeComponents: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
-    convenience init(date: Date?) {
+    convenience init(date: Date) {
         self.init()
-        oneTimeDate = date ?? oneTimeDate
+        self.oneTimeDate = date
     }
     
     // MARK: Properties

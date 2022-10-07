@@ -91,20 +91,13 @@ extension LogsRequest {
     /**
      completionHandler returns a log and response status. If the query is successful and the log isn't deleted, then the log is returned. Otherwise, nil is returned.
      */
-    static func get(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int, completionHandler: @escaping (Log?, ResponseStatus) -> Void) {
+    @discardableResult static func get(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int, completionHandler: @escaping (Log?, ResponseStatus) -> Void) -> Progress? {
         
-        _ = LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { responseBody, responseStatus in
+        return LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
-                    let newLog = Log(fromBody: result)
-                    
-                    guard newLog.logIsDeleted == false else {
-                        completionHandler(nil, responseStatus)
-                        return
-                    }
-                    
-                    completionHandler(newLog, responseStatus)
+                if let logBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
+                    completionHandler(Log(forLogBody: logBody, overrideLog: nil), responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)
@@ -121,9 +114,9 @@ extension LogsRequest {
      completionHandler returns a possible logId and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
+    @discardableResult static func create(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping (Int?, ResponseStatus) -> Void) -> Progress? {
         
-        _ = LogsRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLog: log) { responseBody, responseStatus in
+        return LogsRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLog: log) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let logId = responseBody?[KeyConstant.result.rawValue] as? Int {
@@ -144,9 +137,9 @@ extension LogsRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func update(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
+    @discardableResult static func update(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         
-        _ = LogsRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLog: log) { _, responseStatus in
+        return LogsRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLog: log) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)
@@ -162,8 +155,8 @@ extension LogsRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
-        _ = LogsRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { _, responseStatus in
+    @discardableResult static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
+         return LogsRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)

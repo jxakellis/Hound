@@ -166,6 +166,10 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 // Since its the first time a user is selecting a dog, go through the normal flow of creating a log. next open the log action drop down for them
                 dropDownLogAction.showDropDown(numberOfRowsToShow: dropDownLogActionNumberOfRows, animated: true)
             }
+            // selected every dog in the drop down, close the drop down
+            else if parentDogIdsSelected?.count == dogManager.dogs.count {
+                dropDownParentDog.hideDropDown()
+            }
         }
         else if dropDownUIViewIdentifier == "DropDownLogAction", let selectedCell = dropDownLogAction.dropDownTableView?.cellForRow(at: indexPath) as? DropDownTableViewCell {
             selectedCell.willToggleDropDownSelection(forSelected: true)
@@ -313,9 +317,17 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                     }
                 }
                 
+                let newLog = Log()
+                newLog.logAction = logActionSelected
+                try newLog.changeLogCustomActionName(forLogCustomActionName: logCustomActionNameTextField.text ?? "")
+                newLog.logDate = logDateDatePicker.date
+                try newLog.changeLogNote(forLogNote: logNoteTextView.text ?? "")
+                
                 parentDogIdsSelected.forEach { dogId in
                     // Each dog needs it's own newLog object.
-                    let newLog = Log(logAction: logActionSelected, logCustomActionName: logCustomActionNameTextField.text, logDate: logDateDatePicker.date, logNote: logNoteTextView.text ?? ClassConstant.LogConstant.defaultLogNote)
+                    guard let newLog = newLog.copy() as? Log else {
+                        return
+                    }
                     
                     LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: newLog) { logId, _ in
                         guard let logId = logId else {
@@ -323,8 +335,9 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                             return
                         }
                         
+                        let logCustomActionName = newLog.logCustomActionName
                         // request was successful so we can now add the new logCustomActionName (if present)
-                        if let logCustomActionName = newLog.logCustomActionName, logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                        if logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                             LocalConfiguration.addLogCustomAction(forName: logCustomActionName)
                         }
                         newLog.logId = logId
@@ -346,8 +359,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             logToUpdate.logAction = logActionSelected
             try logToUpdate.changeLogCustomActionName(forLogCustomActionName:
                                                         logActionSelected == LogAction.custom
-                                                      ? logCustomActionNameTextField.text
-                                                      : nil)
+                                                      ? logCustomActionNameTextField.text ?? ""
+                                                      : "")
             try logToUpdate.changeLogNote(forLogNote: logNoteTextView.text ?? ClassConstant.LogConstant.defaultLogNote)
             
             addLogButton.beginQuerying()
@@ -358,7 +371,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
                 if requestWasSuccessful == true {
                     // request was successful so we can now add the new logCustomActionName (if present)
-                    if let logCustomActionName = logToUpdate.logCustomActionName, logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                    let logCustomActionName = logToUpdate.logCustomActionName
+                    if logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                         LocalConfiguration.addLogCustomAction(forName: logCustomActionName)
                     }
                     

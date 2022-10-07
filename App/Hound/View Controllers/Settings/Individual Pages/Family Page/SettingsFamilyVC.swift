@@ -25,7 +25,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     @IBAction private func willRefresh(_ sender: Any) {
         self.refreshButton.isEnabled = false
         ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
-        _ = FamilyRequest.get(invokeErrorManager: true) { requestWasSuccessful, _ in
+        FamilyRequest.get(invokeErrorManager: true) { requestWasSuccessful, _ in
             self.refreshButton.isEnabled = true
             ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
             

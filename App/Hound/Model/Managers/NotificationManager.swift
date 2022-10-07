@@ -16,12 +16,14 @@ enum NotificationManager {
      DOES update local UserConfiguration. Requests permission to send notifications to the user then invokes updateServerUserNotificationConfiguration. If the server returned a 200 status and is successful, then return. Otherwise, if the user didn't grant permission or there was a problem with the  query, then return and (if needed) ErrorManager is automatically invoked
      */
     static func requestNotificationAuthorization(shouldAdviseUserBeforeRequestingNotifications: Bool, completionHandler: @escaping () -> Void) {
-        // If adviseUserBeforeRequestingNotifications == true:
-        // We can ignore the localIsNotificationAuthorized status. This is because we want to always invoke our view controller to ask the user if they want notification. If they say yes, then it either immediately turns everything on (if localIsNotificationAuthorized == true) or we invoke the apple 'Allow Notifications' prompt to then turn everything on (if localIsNotificationAuthorized == false).
+        // If adviseUserBeforeRequestingNotifications == true, we can ignore the localIsNotificationAuthorized status.
+        // This is because we want to always invoke our view controller to ask the user if they want notification. If they say yes, then it either immediately turns everything on (if localIsNotificationAuthorized == true) or we invoke the apple 'Allow Notifications' prompt to then turn everything on (if localIsNotificationAuthorized == false).
         
-        // If adviseUserBeforeRequestingNotifications == false:
-        // We want to check the localIsNotificationAuthorized status. If already localIsNotificationAuthorized, then re-register for remote notifications (repeated re-registering recommended by apple). Don't change user's notification settings as they could have already configured them since localIsNotificationAuthorized == true. Although, if localIsNotificationAuthorized == false, then notification haven't been approved. Therefore, we can request notifications and override any non-user-configured notification settings
-        guard shouldAdviseUserBeforeRequestingNotifications == true || LocalConfiguration.localIsNotificationAuthorized == false else {
+        if shouldAdviseUserBeforeRequestingNotifications == false && LocalConfiguration.localIsNotificationAuthorized == true {
+            // If adviseUserBeforeRequestingNotifications == false, check the localIsNotificationAuthorized status.
+            // If localIsNotificationAuthorized == true, then re-register for remote notifications (repeated re-registering recommended by apple). Don't change user's notification settings as they could have already configured them since localIsNotificationAuthorized == true.
+            // If localIsNotificationAuthorized == false, then notification haven't been approved. Therefore, we can request notifications and override any non-user-configured notification settings
+            
             // A user could potentially be localIsNotificationAuthorized == true but unregistered for remoteNotications
             UIApplication.shared.registerForRemoteNotifications()
             completionHandler()

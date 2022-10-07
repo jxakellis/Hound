@@ -102,33 +102,14 @@ extension DogsRequest {
     /**
      completionHandler returns a dog and response status. If the query is successful and the dog isn't deleted, then the dog is returned (the client-side dog is combined with the server-side updated dog). Otherwise, nil is returned.
      */
-    static func get(invokeErrorManager: Bool, dog currentDog: Dog, completionHandler: @escaping (Dog?, ResponseStatus) -> Void) {
+    @discardableResult static func get(invokeErrorManager: Bool, dog currentDog: Dog, completionHandler: @escaping (Dog?, ResponseStatus) -> Void) -> Progress? {
         
-        _ = DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: currentDog.dogId) { responseBody, responseStatus in
+        return DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: currentDog.dogId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // dog JSON {dog1:'foo'}
-                if let newDogBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any], newDogBody.isEmpty == false {
-                    let newDog = Dog(fromBody: newDogBody)
-                    
-                    guard newDog.dogIsDeleted == false else {
-                        DogIconManager.removeIcon(forDogId: newDog.dogId)
-                        completionHandler(nil, responseStatus)
-                        return
-                    }
-                    
-                    newDog.combine(withOldDog: currentDog)
-                    
-                    // delete any newReminder with the marker that they should be deleted
-                    for newReminder in newDog.dogReminders.reminders where newReminder.reminderIsDeleted == true {
-                        newDog.dogReminders.removeReminder(forReminderId: newReminder.reminderId)
-                    }
-                    // delere any newLog with the marker that they should be deleted
-                    for newLog in newDog.dogLogs.logs where newLog.logIsDeleted == true {
-                        newDog.dogLogs.removeLog(forLogId: newLog.logId)
-                    }
-                    
-                    completionHandler(newDog, responseStatus)
+                if let newDogBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
+                    completionHandler(Dog(forDogBody: newDogBody, overrideDog: currentDog), responseStatus)
                 }
                 else {
                     // Don't return nil. This is because we pass through userConfigurationPreviousDogManagerSynchronization. That means a successful result could be completely blank (and fail the above if statement), indicating that the user is fully up to date.
@@ -145,7 +126,7 @@ extension DogsRequest {
     /**
      completionHandler returns a dogManager and response status. If the query is successful, then the dogManager is returned (the client-side dog is combined with the server-side updated dog). Otherwise, nil is returned.
      */
-    static func get(invokeErrorManager: Bool, dogManager currentDogManager: DogManager, completionHandler: @escaping (DogManager?, ResponseStatus) -> Void) -> Progress? {
+    @discardableResult static func get(invokeErrorManager: Bool, dogManager currentDogManager: DogManager, completionHandler: @escaping (DogManager?, ResponseStatus) -> Void) -> Progress? {
         
         // we want this Date() to be slightly in the past. If we set  LocalConfiguration.userConfigurationPreviousDogManagerSynchronization = Date() after the request is successful then any changes that might have occured DURING our query (e.g. we are querying and at the exact same moment a family member creates a log) will not be saved. Therefore, this is more redundant and makes sure nothing is missed
         let userConfigurationPreviousDogManagerSynchronization = Date()
@@ -154,35 +135,11 @@ extension DogsRequest {
         return DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: nil) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let newDogManagerBody = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]], newDogManagerBody.isEmpty == false, let newDogManager = DogManager(fromBody: newDogManagerBody) {
+                if let newDogBodies = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]], let currentDogManagerCopy = currentDogManager.copy() as? DogManager {
                     // successful sync, so we can update value
                     LocalConfiguration.userConfigurationPreviousDogManagerSynchronization = userConfigurationPreviousDogManagerSynchronization
                     
-                    newDogManager.combine(withOldDogManager: currentDogManager)
-                    
-                    // Check to see if any dogs have the marker that they should be deleted
-                    // We do it this way as if we immediatly deleted the dog/reminder/log when converting the JSON to object, then the dog/reminder/log from the oldDogManager would still be present. This way allows us to create a dog/reminder/log that overwrites the oldDogManager's dog/reminder/log, but leaves this boolean in place to tell us whether it belongs or not.
-                    newDogManager.dogs.filter { dog in
-                        // find any newDogs with the marker that they should be deleted, if they need to be, then no point to iterating through their logs/reminders
-                        return dog.dogIsDeleted
-                    }.forEach { deletedDog in
-                        // dog is offically removed so delete its icon as we have no reason to store it now
-                        DogIconManager.removeIcon(forDogId: deletedDog.dogId)
-                        newDogManager.removeDog(forDogId: deletedDog.dogId)
-                    }
-                    
-                    for newDog in newDogManager.dogs {
-                        // delete any newReminder with the marker that they should be deleted
-                        for newReminder in newDog.dogReminders.reminders where newReminder.reminderIsDeleted == true {
-                            newDog.dogReminders.removeReminder(forReminderId: newReminder.reminderId)
-                        }
-                        // delere any newLog with the marker that they should be deleted
-                        for newLog in newDog.dogLogs.logs where newLog.logIsDeleted == true {
-                            newDog.dogLogs.removeLog(forLogId: newLog.logId)
-                        }
-                    }
-                    
-                    completionHandler(newDogManager, responseStatus)
+                    completionHandler(DogManager(forDogBodies: newDogBodies, overrideDogManager: currentDogManagerCopy), responseStatus)
                 }
                 else {
                     // Don't return nil. This is because we pass through userConfigurationPreviousDogManagerSynchronization. That means a successful result could be completely blank (and fail the above if statement), indicating that the user is fully up to date.
@@ -201,8 +158,8 @@ extension DogsRequest {
      completionHandler returns a possible dogId and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
-        _ = DogsRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDog: dog) { responseBody, responseStatus in
+    @discardableResult static func create(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping (Int?, ResponseStatus) -> Void) -> Progress? {
+        return DogsRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDog: dog) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let dogId = responseBody?[KeyConstant.result.rawValue] as? Int {
@@ -233,8 +190,8 @@ extension DogsRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func update(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
-        _ = DogsRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDog: dog) { _, responseStatus in
+    @discardableResult static func update(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
+        return DogsRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDog: dog) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // Successfully saved to server, so update dogIcon locally
@@ -256,8 +213,8 @@ extension DogsRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func delete(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
-        _ = DogsRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId) { _, responseStatus in
+    @discardableResult static func delete(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
+        return DogsRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // Successfully saved to server, so remove the stored dogIcons that have the same dogId as the removed dog

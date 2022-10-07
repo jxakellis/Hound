@@ -44,10 +44,10 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
-    convenience init(UTCHour: Int?, UTCMinute: Int?, skippedDate: Date?, sunday: Bool?, monday: Bool?, tuesday: Bool?, wednesday: Bool?, thursday: Bool?, friday: Bool?, saturday: Bool?) {
+    convenience init(UTCHour: Int, UTCMinute: Int, skippedDate: Date?, sunday: Bool, monday: Bool, tuesday: Bool, wednesday: Bool, thursday: Bool, friday: Bool, saturday: Bool) {
         self.init()
-        self.UTCHour = UTCHour ?? self.UTCHour
-        self.UTCMinute = UTCMinute ?? self.UTCMinute
+        self.UTCHour = UTCHour
+        self.UTCMinute = UTCMinute
         self.skippedDate = skippedDate
         
         var weekdays: [Int] = []
@@ -75,7 +75,6 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         
         // if the array has at least one week day in it (aka its valid) then we can save it
         weekdays = (weekdays.isEmpty == false) ? weekdays : weekdays
-        
     }
     
     // MARK: - Properties

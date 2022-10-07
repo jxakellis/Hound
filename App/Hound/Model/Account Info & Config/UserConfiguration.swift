@@ -86,7 +86,11 @@ enum UserConfiguration {
         // We want hour 22 of the day in the users local timezone (10:__ PM)
         let defaultUTCHour = 22
         let hoursFromUTC = Calendar.localCalendar.timeZone.secondsFromGMT() / 3600
-        var localHour = defaultUTCHour + hoursFromUTC
+        
+        // UTCHour + hoursFromUTC = localHour
+        // UTCHour = localHour - hoursFromUTC
+        
+        var localHour = defaultUTCHour - hoursFromUTC
         // localHour could be negative, so roll over into positive
         localHour += 24
         // Make sure localHour [0, 23]
@@ -100,7 +104,11 @@ enum UserConfiguration {
         // We want hour 5 of the day in the users local timezone (5:__ AM)
         let defaultUTCHour = 5
         let hoursFromUTC = Calendar.localCalendar.timeZone.secondsFromGMT() / 3600
-        var localHour = defaultUTCHour + hoursFromUTC
+        
+        // UTCHour + hoursFromUTC = localHour
+        // UTCHour = localHour - hoursFromUTC
+        
+        var localHour = defaultUTCHour - hoursFromUTC
         // localHour could be negative, so roll over into positive
         localHour += 24
         // Make sure localHour [0, 23]
@@ -113,7 +121,11 @@ enum UserConfiguration {
         // We want minute 0 of the day in the users local timezone (_:?? AM)
         let defaultUTCMinute = 0
         let minutesFromUTC = (Calendar.localCalendar.timeZone.secondsFromGMT() % 3600) / 60
-        var localMinute = defaultUTCMinute + minutesFromUTC
+        
+        // UTCMinute + minuteFromUTC = localMinute
+        // UTCMinute = localMinute - minuteFromUTC
+        
+        var localMinute = defaultUTCMinute - minutesFromUTC
         // localMinute could be negative, so roll over into positive
         localMinute += 60
         // Make sure localMinute [0, 59]
@@ -126,7 +138,11 @@ enum UserConfiguration {
         // We want minute 0 of the day in the users local timezone (_:?? AM)
         let defaultUTCMinute = 0
         let minutesFromUTC = (Calendar.localCalendar.timeZone.secondsFromGMT() % 3600) / 60
-        var localMinute = defaultUTCMinute + minutesFromUTC
+        
+        // UTCMinute + minuteFromUTC = localMinute
+        // UTCMinute = localMinute - minuteFromUTC
+        
+        var localMinute = defaultUTCMinute - minutesFromUTC
         // localMinute could be negative, so roll over into positive
         localMinute += 60
         // Make sure localMinute [0, 59]

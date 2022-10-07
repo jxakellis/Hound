@@ -57,7 +57,7 @@ extension UserRequest {
     /**
      completionHandler returns a userId, familyId, and response status. If the query is successful, automatically sets up userConfiguration and userInformation and returns userId and familyId. Otherwise, nil is returned
      */
-    static func get(invokeErrorManager: Bool, completionHandler: @escaping (String?, String?, ResponseStatus) -> Void) -> Progress? {
+    @discardableResult static func get(invokeErrorManager: Bool, completionHandler: @escaping (String?, String?, ResponseStatus) -> Void) -> Progress? {
         return UserRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
@@ -88,8 +88,8 @@ extension UserRequest {
      completionHandler returns a possible userId and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(invokeErrorManager: Bool, completionHandler: @escaping (String?, ResponseStatus) -> Void) {
-        _ = UserRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+    @discardableResult static func create(invokeErrorManager: Bool, completionHandler: @escaping (String?, ResponseStatus) -> Void) -> Progress? {
+        return UserRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let userId = responseBody?[KeyConstant.result.rawValue] as? String {
@@ -111,8 +111,8 @@ extension UserRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func update(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
-        _ = UserRequest.internalUpdate(invokeErrorManager: invokeErrorManager, body: body) { _, responseStatus in
+    @discardableResult static func update(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
+        return UserRequest.internalUpdate(invokeErrorManager: invokeErrorManager, body: body) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)

@@ -254,7 +254,7 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
             let dogsProgress =
             (self.getDogsProgress?.fractionCompleted ?? 0.0) * self.getDogsProgressFractionOfWhole
             
-            self.getRequestsProgressView.progress = Float(userProgress + familyProgress + dogsProgress)
+            self.getRequestsProgressView.setProgress(Float(userProgress + familyProgress + dogsProgress), animated: true)
         }
     }
     

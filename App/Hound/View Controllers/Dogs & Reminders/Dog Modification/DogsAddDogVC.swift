@@ -14,7 +14,7 @@ protocol DogsAddDogViewControllerDelegate: AnyObject {
     func didCancel(sender: Sender)
 }
 
-final class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewControllerDelegate, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIGestureRecognizerDelegate {
+final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIGestureRecognizerDelegate {
     
     // MARK: - UIImagePickerControllerDelegate
     
@@ -31,20 +31,6 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
-    }
-    
-    // MARK: - DogsReminderNavigationViewControllerDelegate
-    
-    func didAddReminder(forReminder reminder: Reminder) {
-        createdReminders.append(reminder)
-    }
-    
-    func didUpdateReminder(forReminder reminder: Reminder) {
-        updatedReminders.append(reminder)
-    }
-    
-    func didRemoveReminder(forReminder reminder: Reminder) {
-        deletedReminders.append(reminder)
     }
     
     // MARK: - UITextFieldDelegate
@@ -101,6 +87,54 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         addDogButton.beginQuerying()
         addDogButtonBackground.beginQuerying(isBackgroundButton: true)
         
+        let initalReminders = initalReminders?.reminders ?? []
+        let currentReminders = dogsReminderNavigationViewController?.dogsReminderTableViewController?.reminderManager.reminders ?? []
+        // create reminders have placeholder ids
+        let createdReminders = currentReminders.filter({ currentReminder in
+            return currentReminder.reminderId <= -1
+        })
+        
+        createdReminders.forEach { reminder in
+            // If the user created countdown reminder(s) and then sat on the create a dog page, those countdown reminders will be 'counting down' as time has passed from their reminderExecutionBasis's. Therefore we must reset their executionBasis so they are fresh.
+            guard reminder.reminderType == .countdown else {
+                return
+            }
+            reminder.prepareForNextAlarm()
+        }
+        
+        let updatedReminders = currentReminders.filter { currentReminder in
+            // current remoinders have to have a real reminderId as we are contacting the server
+            guard currentReminder.reminderId >= 1 else {
+                return false
+            }
+            
+            // updated reminders have to have a corresponding inital reminder
+            guard let initalReminder = initalReminders.first(where: { initalReminder in
+                return initalReminder.reminderId == currentReminder.reminderId
+            }) else {
+                return false
+            }
+            
+            // if current reminder is different that its corresponding inital reminder, then its been updated
+            return currentReminder.isSame(asReminder: initalReminder) == false
+        }
+        
+        // looks for reminders that were present in initalReminders but not in currentReminders
+        let deletedReminders = initalReminders.filter({ initalReminder in
+            // deleted reminders have to have a real reminderId as we are contacting the server
+            guard initalReminder.reminderId >= 1 else {
+                return false
+            }
+            
+            let currentRemindersContainsInitalReminder = currentReminders.contains(where: { currentReminder in
+                return initalReminder.reminderId == currentReminder.reminderId
+            })
+            // if current reminders contains the target inital reminder, then that inital reminder wasn't deleted and shouldnt be included
+            return !currentRemindersContainsInitalReminder
+        })
+        
+        print(createdReminders, updatedReminders, deletedReminders)
+        
         if dogToUpdate != nil {
             
             // dog + created reminders + updated reminders + deleted reminders
@@ -142,8 +176,8 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
                 // Updated dog
                 completionTracker.completedTask()
                 
-                if self.createdReminders.count >= 1 {
-                    RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: self.createdReminders) { reminders, _ in
+                if createdReminders.count >= 1 {
+                    RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
                         if let reminders = reminders {
                             dog.dogReminders.addReminders(forReminders: reminders)
                             completionTracker.completedTask()
@@ -154,11 +188,11 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
                     }
                 }
                 
-                if self.updatedReminders.count >= 1 {
-                    RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: self.updatedReminders) { requestWasSuccessful2, _ in
+                if updatedReminders.count >= 1 {
+                    RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: updatedReminders) { requestWasSuccessful2, _ in
                         if requestWasSuccessful2 == true {
                             // add updated reminders as they already have their reminderId
-                            dog.dogReminders.updateReminders(forReminders: self.updatedReminders)
+                            dog.dogReminders.addReminders(forReminders: updatedReminders)
                             completionTracker.completedTask()
                         }
                         else {
@@ -167,10 +201,10 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
                     }
                 }
                 
-                if self.deletedReminders.count >= 1 {
-                    RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminders: self.deletedReminders) { requestWasSuccessful2, _ in
+                if deletedReminders.count >= 1 {
+                    RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminders: deletedReminders) { requestWasSuccessful2, _ in
                         if requestWasSuccessful2 == true {
-                            for deletedReminder in self.deletedReminders {
+                            for deletedReminder in deletedReminders {
                                 dog.dogReminders.removeReminder(forReminderId: deletedReminder.reminderId)
                             }
                             completionTracker.completedTask()
@@ -195,15 +229,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
                 // dog was successfully created
                 dog.dogId = dogId
                 
-                self.createdReminders.forEach { reminder in
-                    // If the user created countdown reminder(s) and then sat on the create a dog page, those countdown reminders will be 'counting down' as time has passed from their reminderExecutionBasis's. Therefore we must reset their executionBasis so they are fresh.
-                    guard reminder.reminderType == .countdown else {
-                        return
-                    }
-                    reminder.prepareForNextAlarm()
-                }
-                
-                RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: self.createdReminders) { reminders, _ in
+                RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
                     self.addDogButton.endQuerying()
                     self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
                     if let reminders = reminders {
@@ -300,20 +326,12 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     
     weak var delegate: DogsAddDogViewControllerDelegate! = nil
     
-    /// This keeps track of the reminders added to a dog. This could be a new dog being created or an existing dog being updated
-    var createdReminders: [Reminder] = []
-    
-    /// This keeps track of the reminders updated to the dog. This can only be for an existing dog being updated
-    var updatedReminders: [Reminder] = []
-    
-    /// This keeps track of the reminders deleted from a dog. This can only be for an existing dog being updated
-    var deletedReminders: [Reminder] = []
-    
     /// VC uses this to initalize its values, its absense or presense indicates whether or not we are editing or creating a dog
     var dogToUpdate: Dog?
     
     var initalDogName: String?
     var initalDogIcon: UIImage?
+    var initalReminders: ReminderManager?
     
     var initalValuesChanged: Bool {
         if dogName.text != initalDogName {
@@ -322,18 +340,30 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         else if let image = dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseDogIcon && image != initalDogIcon {
             return true
         }
-        else if createdReminders.count > 0 {
+        // need to check count, make sure the arrays are 1:1. if current reminders has more reminders than inital reminders, the loop below won't catch it, as the loop below just looks to see if each inital reminder is still present in current reminders.
+        else if initalReminders?.reminders.count != dogsReminderNavigationViewController?.dogsReminderTableViewController?.reminderManager.reminders.count {
             return true
         }
-        else if updatedReminders.count > 0 {
-            return true
+        
+        if let initalReminders = initalReminders?.reminders {
+            let currentReminders = dogsReminderNavigationViewController?.dogsReminderTableViewController?.reminderManager
+            // make sure each inital reminder has a corresponding current reminder, otherwise current reminders have been updated
+            for initalReminder in initalReminders {
+                let currentReminder = currentReminders?.findReminder(forReminderId: initalReminder.reminderId)
+                
+                guard let currentReminder = currentReminder else {
+                    // no corresponding reminder
+                    return true
+                }
+                
+                // if any of the corresponding reminders are different, then return true to indicate that a reminder has been updated
+                if initalReminder.isSame(asReminder: currentReminder) == false {
+                    return true
+                }
+            }
         }
-        else if deletedReminders.count > 0 {
-            return true
-        }
-        else {
-            return false
-        }
+        
+        return false
     }
     var imagePickMethodAlertController: GeneralUIAlertController!
     
@@ -360,12 +390,11 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         
         dogIcon.setImage(dogToUpdate?.dogIcon ?? ClassConstant.DogConstant.chooseDogIcon, for: .normal)
         
-        let remindersToPass = dogToUpdate?.dogReminders.copy() as? ReminderManager ?? ReminderManager(initReminders: ClassConstant.ReminderConstant.defaultReminders)
+        var passedReminders: ReminderManager {
+            return dogToUpdate?.dogReminders.copy() as? ReminderManager ?? ReminderManager(forReminders: ClassConstant.ReminderConstant.defaultReminders)
+        }
         // if we have a dogToUpdate available, then we pass a copy of its reminders, otherwise we pass a reminder manager filled with just default reminders
-        dogsReminderNavigationViewController?.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: remindersToPass)
-        
-        // if we passed a reminder manager full of default reminders, then add those reminders to our created reminders array
-        createdReminders += remindersToPass.reminders.filter({ $0.reminderId <= -1 })
+        dogsReminderNavigationViewController?.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: passedReminders)
         
         // buttons
         dogIcon.layer.masksToBounds = true
@@ -375,6 +404,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         
         initalDogName = dogName.text
         initalDogIcon = dogIcon.imageView?.image
+        initalReminders = passedReminders
         
         // Setup AlertController for dogIcon button now, increases responsiveness
         let (picker, viewController) = DogIconManager.setupDogIconImagePicker(forViewController: self)
@@ -401,9 +431,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let dogsReminderNavigationViewController = segue.destination as? DogsReminderNavigationViewController {
             self.dogsReminderNavigationViewController = dogsReminderNavigationViewController
-            dogsReminderNavigationViewController.passThroughDelegate = self
-            
-            dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: dogToUpdate?.dogReminders.copy() as? ReminderManager ?? ReminderManager(initReminders: ClassConstant.ReminderConstant.defaultReminders))
+            dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: dogToUpdate?.dogReminders.copy() as? ReminderManager ?? ReminderManager(forReminders: ClassConstant.ReminderConstant.defaultReminders))
         }
         
     }

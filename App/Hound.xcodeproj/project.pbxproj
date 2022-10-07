@@ -374,7 +374,7 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		A20C87DB2636338700CC6AEF /* Main */ = {
+		A20C87DB2636338700CC6AEF /* Dog Display */ = {
 			isa = PBXGroup;
 			children = (
 				A2C014D42628AEEE00DDE288 /* DogsNavigationVC.swift */,
@@ -382,19 +382,17 @@
 				A247B96725C883680017FE66 /* DogsTableVC.swift */,
 				A20C87E12636355D00CC6AEF /* Table View Cells */,
 			);
-			path = Main;
+			path = "Dog Display";
 			sourceTree = "<group>";
 		};
-		A20C87DC2636339700CC6AEF /* Nested */ = {
+		A20C87DC2636339700CC6AEF /* Dog Modification */ = {
 			isa = PBXGroup;
 			children = (
 				A27C3D8A25B781B4005F46BA /* DogsAddDogVC.swift */,
 				A28A0B4B25B923BA0057BEC7 /* DogsReminderNavigationVC.swift */,
-				A28A0B4725B922E80057BEC7 /* DogsReminderTableVC.swift */,
-				A249619227E3A75E006CFDCC /* DogsReminderTVC.swift */,
-				A278ED912610FF45000575FC /* Dog Modification */,
+				A2F1E45B28EFCD2A00AABDC0 /* Table View */,
 			);
-			path = Nested;
+			path = "Dog Modification";
 			sourceTree = "<group>";
 		};
 		A20C87E12636355D00CC6AEF /* Table View Cells */ = {
@@ -618,14 +616,14 @@
 			path = General;
 			sourceTree = "<group>";
 		};
-		A278ED912610FF45000575FC /* Dog Modification */ = {
+		A278ED912610FF45000575FC /* Reminders Modification */ = {
 			isa = PBXGroup;
 			children = (
 				A27C3D8E25B8A213005F46BA /* DogsNestedReminderVC.swift */,
 				A28AF46C25E9C7C80018B575 /* DogsIndependentReminderVC.swift */,
 				A278ED922610FF55000575FC /* Reminder Modification */,
 			);
-			path = "Dog Modification";
+			path = "Reminders Modification";
 			sourceTree = "<group>";
 		};
 		A278ED922610FF55000575FC /* Reminder Modification */ = {
@@ -643,8 +641,8 @@
 		A27C138A25AD2A520031B6A0 /* Dogs & Reminders */ = {
 			isa = PBXGroup;
 			children = (
-				A20C87DB2636338700CC6AEF /* Main */,
-				A20C87DC2636339700CC6AEF /* Nested */,
+				A20C87DB2636338700CC6AEF /* Dog Display */,
+				A20C87DC2636339700CC6AEF /* Dog Modification */,
 			);
 			path = "Dogs & Reminders";
 			sourceTree = "<group>";
@@ -831,6 +829,16 @@
 				A2EB7A82285ACEE60063A3B9 /* SettingsTierTVC.swift */,
 			);
 			path = "Subscription Page";
+			sourceTree = "<group>";
+		};
+		A2F1E45B28EFCD2A00AABDC0 /* Table View */ = {
+			isa = PBXGroup;
+			children = (
+				A28A0B4725B922E80057BEC7 /* DogsReminderTableVC.swift */,
+				A249619227E3A75E006CFDCC /* DogsReminderTVC.swift */,
+				A278ED912610FF45000575FC /* Reminders Modification */,
+			);
+			path = "Table View";
 			sourceTree = "<group>";
 		};
 		A2F996A227569F4400605D03 /* mp3 */ = {

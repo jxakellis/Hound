@@ -32,7 +32,7 @@ enum ClassConstant {
             return UserInformation.userId ?? Hash.defaultSHA256Hash
         }
         static let defaultLogAction = LogAction.feed
-        static let defaultLogCustomActionName: String? = nil
+        static let defaultLogCustomActionName: String = ""
         static let defaultLogNote: String = ""
         static var defaultLogDate: Date { return Date() }
         /// when looking to unskip a reminder, we look for a log that has its time unmodified. if its logDate within a certain percision of the skipdate, then we assume that log is from that reminder skipping.

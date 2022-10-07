@@ -11,7 +11,7 @@ import UIKit
 /*
  protocol DogsReminderManagerViewControllerDelegate: AnyObject {
  func didAddReminder(newReminder: Reminder)
- func didUpdateReminder(updatedReminder: Reminder)
+ func didAddReminder(updatedReminder: Reminder)
  }
  */
 
@@ -329,9 +329,9 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
             reminder.reminderAction = selectedReminderAction
             
             if selectedReminderAction == ReminderAction.custom {
-                let trimmedReminderCustomActionName = reminderCustomActionNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+                let trimmedReminderCustomActionName = reminderCustomActionNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
                 // if the trimmedReminderCustomActionName is not "", meaning it has text, then we save it. Otherwise, the trimmedReminderCustomActionName is "" or nil so we save its value as nil
-                try reminder.changeReminderCustomActionName(forReminderCustomActionName: (trimmedReminderCustomActionName != "") ? trimmedReminderCustomActionName : nil)
+                try reminder.changeReminderCustomActionName(forReminderCustomActionName: trimmedReminderCustomActionName)
             }
             reminder.reminderIsEnabled = reminderIsEnabledSwitch.isOn
             

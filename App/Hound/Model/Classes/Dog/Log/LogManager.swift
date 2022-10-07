@@ -42,14 +42,33 @@ final class LogManager: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
-    convenience init(fromBody logBodies: [[String: Any]]) {
-        self.init()
+    init(forLogs: [Log] = []) {
+        super.init()
+        addLogs(forLogs: forLogs)
+    }
+    
+    /// Provide an array of dictionary literal of log properties to instantiate logs. Provide a logManager to have the logs add themselves into, update themselves in, or delete themselves from.
+    convenience init(fromLogBodies logBodies: [[String: Any]], overrideLogManager: LogManager?) {
+        self.init(forLogs: overrideLogManager?.logs ?? [])
         
         for logBody in logBodies {
-            let log = Log(fromBody: logBody)
-            addLog(forLog: log)
+            let logId: Int? = logBody[KeyConstant.logId.rawValue] as? Int
+            let logIsDeleted: Bool? = logBody[KeyConstant.logIsDeleted.rawValue] as? Bool
+            
+            guard let logId = logId, let logIsDeleted = logIsDeleted else {
+                // couldn't construct essential components to intrepret log
+                continue
+            }
+            
+            guard logIsDeleted == false else {
+                removeLog(forLogId: logId)
+                continue
+            }
+            
+            if let log = Log(forLogBody: logBody, overrideLog: findLog(forLogId: logId)) {
+                addLog(forLog: log)
+            }
         }
-        
     }
     
     // MARK: - Properties
@@ -61,10 +80,35 @@ final class LogManager: NSObject, NSCoding, NSCopying {
     // MARK: - Functions
     
     /// Helper function allows us to use the same logic for addLog and addLogs and allows us to only sort at the end. Without this function, addLogs would invoke addLog repeadly and sortLogs() with each call.
-    private func addLogWithoutSorting(forLog newLog: Log) {
+    private func addLogWithoutSorting(forLog newLog: Log, shouldOverridePlaceholderLog: Bool) {
         // removes any existing logs that have the same logId as they would cause problems.
         logs.removeAll { oldLog in
-            return newLog.logId == oldLog.logId
+            guard oldLog.logId == newLog.logId else {
+                return false
+            }
+            
+            guard (shouldOverridePlaceholderLog == true) ||
+                    (shouldOverridePlaceholderLog == false && oldLog.logId >= 0) else {
+                return false
+            }
+            
+            return true
+        }
+        
+        // check to see if we are dealing with a placeholder id log
+        if newLog.logId < 0 {
+            // If there are multiple logs with placeholder ids, set the new log's placeholder id to the lowest possible, therefore no overlap.
+            var lowestLogId = Int.max
+            logs.forEach { log in
+                if log.logId < lowestLogId {
+                    lowestLogId = log.logId
+                }
+            }
+            
+            // the lowest log is is <0 so there are other placeholder logs, that means we should set our new log to a placeholder id that is 1 below the lowest (making this log the new lowest)
+            if lowestLogId < 0 {
+                newLog.logId = lowestLogId - 1
+            }
         }
         
         logs.append(newLog)
@@ -72,9 +116,9 @@ final class LogManager: NSObject, NSCoding, NSCopying {
         uniqueLogActionsResult = nil
     }
     
-    func addLog(forLog log: Log) {
+    func addLog(forLog log: Log, shouldOverridePlaceholderLog: Bool = false) {
         
-        addLogWithoutSorting(forLog: log)
+        addLogWithoutSorting(forLog: log, shouldOverridePlaceholderLog: shouldOverridePlaceholderLog)
         
         sortLogs()
         
@@ -82,7 +126,7 @@ final class LogManager: NSObject, NSCoding, NSCopying {
     
     func addLogs(forLogs logs: [Log]) {
         for log in logs {
-            addLogWithoutSorting(forLog: log)
+            addLogWithoutSorting(forLog: log, shouldOverridePlaceholderLog: false)
         }
         
         sortLogs()
@@ -165,24 +209,8 @@ extension LogManager {
     
     // MARK: Locate
     
-    /// finds and returns the reference of a reminder matching the given reminderId
+    /// finds and returns the reference of a log matching the given logId
     func findLog(forLogId logId: Int) -> Log? {
         return logs.first(where: { $0.logId == logId })
-    }
-    
-    // MARK: Compare
-    
-    /// Combines the logs of an old log manager with the new log manager, forming a union with their log arrays. In the event that the newLogManager (this object) has a log with the same id as the oldLogManager, the log from the newLogManager will override that log
-    func combine(withOldLogManager oldLogManager: LogManager) {
-        // we need to copy oldLogManager as it might still be in use and the combining process modifies oldLogManager. Therefore, copy is necessary to keep oldLogManager integrity.
-        guard let oldLogManagerCopy = oldLogManager.copy() as? LogManager else {
-            return
-        }
-        
-        // the addLogs function overwrites logs if it finds them, so we must add the logs to the old log (allowing the newLogManager to overwrite the oldLogManager logs if there is an overlap)
-        oldLogManagerCopy.addLogs(forLogs: self.logs)
-        // now that the oldLogManager contains its original logs, our new logs, and has had its old logs overwritten (in the case old & new both had a log with same logId), we have an updated array.
-        logs = oldLogManagerCopy.logs
-        uniqueLogActionsResult = nil
     }
 }

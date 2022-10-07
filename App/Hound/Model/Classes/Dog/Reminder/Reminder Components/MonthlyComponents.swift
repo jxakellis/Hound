@@ -44,12 +44,11 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
-    convenience init(UTCDay: Int?, UTCHour: Int?, UTCMinute: Int?, skippedDate: Date?) {
+    convenience init(UTCDay: Int, UTCHour: Int, UTCMinute: Int, skippedDate: Date?) {
         self.init()
         self.UTCDay = UTCDay
-        ?? self.UTCDay
-        self.UTCHour = UTCHour ?? self.UTCHour
-        self.UTCMinute = UTCMinute ?? self.UTCMinute
+        self.UTCHour = UTCHour
+        self.UTCMinute = UTCMinute
         self.skippedDate = skippedDate
         
     }

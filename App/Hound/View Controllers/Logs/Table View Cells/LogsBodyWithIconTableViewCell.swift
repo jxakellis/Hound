@@ -70,19 +70,19 @@ final class LogsBodyWithIconTableViewCell: UITableViewCell {
         // Log Date Constant
         logDateTopConstraint.constant = 5.0 * sizeRatio
         logDateBottomConstraint.constant = shouldHideLogNote ? 0.0 : 0.0 * sizeRatio
-        logDateTrailingConstraint.constant = 10.0 * sizeRatio
+        logDateTrailingConstraint.constant = 7.5 * sizeRatio
         logDateHeightConstraint.constant = 20.0 * sizeRatio
         
         // Log Action
         logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
         logActionLabel.font = logActionLabel.font.withSize(fontSize * sizeRatio)
         // Log Action Constant
-        logActionTrailingConstraint.constant = 10.0 * sizeRatio
+        logActionTrailingConstraint.constant = 7.5 * sizeRatio
         
         // Family Member
         familyMemberNameLabel.font = familyMemberNameLabel.font.withSize(fontSize * sizeRatio)
         // Family Member Constant
-        familyMemberTrailingConstraint.constant = 10.0 * sizeRatio
+        familyMemberTrailingConstraint.constant = 7.5 * sizeRatio
         
         // Log Note
         logNoteLabel.text = log.logNote
@@ -93,7 +93,7 @@ final class LogsBodyWithIconTableViewCell: UITableViewCell {
         logNoteHeightConstraint.constant = shouldHideLogNote ? 0.0 : 15.0 * sizeRatio
         
         // Right Chevron Constant
-        rightChevronTrailingConstraint.constant = 10.0 * sizeRatio
+        rightChevronTrailingConstraint.constant = 7.5 * sizeRatio
         rightChevronWidthConstraint.constant = 15.0 * sizeRatio
         
         // The leading constrant for the dogIcon should be the same regardless of whether its on top or on bottom. Therefore, we can use dogIconLeadingConstraint.constant as the expected constant on the top and bottom of dogIcon.

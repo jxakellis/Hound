@@ -45,9 +45,9 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
         setDogManager(sender: sender, forDogManager: dogManager)
     }
     
-    func didUpdateReminder(sender: Sender, forDogId dogId: Int, forReminder reminder: Reminder) {
+    func didAddReminder(sender: Sender, forDogId dogId: Int, forReminder reminder: Reminder) {
         
-        dogManager.findDog(forDogId: dogId)?.dogReminders.updateReminder(forReminder: reminder)
+        dogManager.findDog(forDogId: dogId)?.dogReminders.addReminder(forReminder: reminder)
         
         setDogManager(sender: sender, forDogManager: dogManager)
     }
@@ -112,7 +112,7 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
             }
             
             // MainTabBarViewController is in the hierarchy so have it refresh
-            _ = DogsRequest.get(invokeErrorManager: false, dogManager: dogManager) { newDogManager, _ in
+            DogsRequest.get(invokeErrorManager: false, dogManager: dogManager) { newDogManager, _ in
                 // No matter the outcome, set storedShouldRefreshDogManager to false so we don't keep invoking refreshDogManager
                 self.storedShouldRefreshDogManager = false
                 guard let newDogManager = newDogManager else {
@@ -143,7 +143,7 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
             }
             
             // MainTabBarViewController is in the hierarchy so have it refresh
-            _ = FamilyRequest.get(invokeErrorManager: false, completionHandler: { _, _ in
+            FamilyRequest.get(invokeErrorManager: false, completionHandler: { _, _ in
                 self.storedShouldRefreshFamily = false
             })
             
@@ -185,7 +185,7 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
         
         if shouldRefreshDogManager == true {
-            _ = DogsRequest.get(invokeErrorManager: false, dogManager: dogManager) { newDogManager, _ in
+            DogsRequest.get(invokeErrorManager: false, dogManager: dogManager) { newDogManager, _ in
                 // No matter the outcome, set storedShouldRefreshDogManager to false so we don't keep invoking refreshDogManager
                 self.storedShouldRefreshDogManager = false
                 guard let newDogManager = newDogManager else {
@@ -195,7 +195,7 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
             }
         }
         if shouldRefreshFamily == true {
-            _ = FamilyRequest.get(invokeErrorManager: false, completionHandler: { _, _ in
+            FamilyRequest.get(invokeErrorManager: false, completionHandler: { _, _ in
                 self.storedShouldRefreshFamily = false
             })
         }

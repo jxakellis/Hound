@@ -15,138 +15,14 @@
     "_timeRate" : 15
   },
   "subscriptionGroups" : [
-    {
-      "id" : "F471D28F",
-      "localizations" : [
 
-      ],
-      "name" : "Family Subscriptions",
-      "subscriptions" : [
-        {
-          "adHocOffers" : [
-
-          ],
-          "codeOffers" : [
-
-          ],
-          "displayPrice" : "2.99",
-          "familyShareable" : false,
-          "groupNumber" : 1,
-          "internalID" : "43431BDA",
-          "introductoryOffer" : {
-            "internalID" : "C0C269DF",
-            "paymentMode" : "free",
-            "subscriptionPeriod" : "P1W"
-          },
-          "localizations" : [
-            {
-              "description" : "Up to two family members and dogs",
-              "displayName" : "Duoo",
-              "locale" : "en_US"
-            }
-          ],
-          "productID" : "com.jonathanxakellis.hound.twofamilymemberstwodogs.monthly",
-          "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Two Family Members & Two Dogs Monthly",
-          "subscriptionGroupID" : "F471D28F",
-          "type" : "RecurringSubscription"
-        },
-        {
-          "adHocOffers" : [
-
-          ],
-          "codeOffers" : [
-
-          ],
-          "displayPrice" : "4.99",
-          "familyShareable" : false,
-          "groupNumber" : 1,
-          "internalID" : "220F953E",
-          "introductoryOffer" : {
-            "internalID" : "FD7981A0",
-            "paymentMode" : "free",
-            "subscriptionPeriod" : "P1W"
-          },
-          "localizations" : [
-            {
-              "description" : "Up to four family members and dogs",
-              "displayName" : "Quadd",
-              "locale" : "en_US"
-            }
-          ],
-          "productID" : "com.jonathanxakellis.hound.fourfamilymembersfourdogs.monthly",
-          "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Four Family Members & Four Dogs Monthly",
-          "subscriptionGroupID" : "F471D28F",
-          "type" : "RecurringSubscription"
-        },
-        {
-          "adHocOffers" : [
-
-          ],
-          "codeOffers" : [
-
-          ],
-          "displayPrice" : "6.99",
-          "familyShareable" : false,
-          "groupNumber" : 1,
-          "internalID" : "CC3122E7",
-          "introductoryOffer" : {
-            "internalID" : "41329169",
-            "paymentMode" : "free",
-            "subscriptionPeriod" : "P1W"
-          },
-          "localizations" : [
-            {
-              "description" : "Up to six family members and dogs",
-              "displayName" : "Hexadd",
-              "locale" : "en_US"
-            }
-          ],
-          "productID" : "com.jonathanxakellis.hound.sixfamilymemberssixdogs.monthly",
-          "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Six Family Members & Six Dogs Monthly",
-          "subscriptionGroupID" : "F471D28F",
-          "type" : "RecurringSubscription"
-        },
-        {
-          "adHocOffers" : [
-
-          ],
-          "codeOffers" : [
-
-          ],
-          "displayPrice" : "9.99",
-          "familyShareable" : false,
-          "groupNumber" : 1,
-          "internalID" : "F48F6A48",
-          "introductoryOffer" : {
-            "internalID" : "6852CCB3",
-            "paymentMode" : "free",
-            "subscriptionPeriod" : "P1W"
-          },
-          "localizations" : [
-            {
-              "description" : "Up to ten family members and dogs",
-              "displayName" : "Decadd",
-              "locale" : "en_US"
-            }
-          ],
-          "productID" : "com.jonathanxakellis.hound.tenfamilymemberstendogs.monthly",
-          "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Ten Family Members & Ten Dogs Monthly",
-          "subscriptionGroupID" : "F471D28F",
-          "type" : "RecurringSubscription"
-        }
-      ]
-    }
   ],
   "subscriptionOffersKeyPair" : {
     "id" : "ACDDB759",
     "privateKey" : "MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgd/qUqqKk8WqetxW322aAiI+P+OeTOcLM18E1JwbGPfqgCgYIKoZIzj0DAQehRANCAAQAOngzvjQci/dK/21PclatrebHbyMqw18cRrwuz/JP9AxhPNa7gCNx1tYwq6A77dVciAC8ojnOdiqwTKTfCaBu"
   },
   "version" : {
-    "major" : 1,
-    "minor" : 2
+    "major" : 2,
+    "minor" : 0
   }
 }

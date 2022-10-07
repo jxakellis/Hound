@@ -39,23 +39,30 @@ final class DogManager: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
-    convenience init(forDogs dogs: [Dog]) {
+    /// Provide an array of dictionary literal of dog properties to instantiate dogs. Provide a dogManager to have the dogs add themselves into, update themselves in, or delete themselves from.
+    convenience init?(forDogBodies dogBodies: [[String: Any]], overrideDogManager: DogManager?) {
         self.init()
-        // verifys dogs and fixes if broken
-        self.addDogs(forDogs: dogs)
-    }
-    
-    /// Init from an array of dog JSON
-    convenience init?(fromBody dogBodies: [[String: Any]]) {
-        var dogArray: [Dog] = []
+        self.addDogs(forDogs: overrideDogManager?.dogs ?? [])
         
-        // Array of dog JSON [{dog1:'foo'},{dog2:'bar'}]
         for dogBody in dogBodies {
-            let dog = Dog(fromBody: dogBody)
-            dogArray.append(dog)
+            let dogId: Int? = dogBody[KeyConstant.dogId.rawValue] as? Int
+            let dogIsDeleted: Bool? = dogBody[KeyConstant.dogIsDeleted.rawValue] as? Bool
+            
+            guard let dogId = dogId, let dogIsDeleted = dogIsDeleted else {
+                // couldn't construct essential components to intrepret dog
+                continue
+            }
+            
+            guard dogIsDeleted == false else {
+                DogIconManager.removeIcon(forDogId: dogId)
+                overrideDogManager?.removeDog(forDogId: dogId)
+                continue
+            }
+            
+            if let dog = Dog(forDogBody: dogBody, overrideDog: findDog(forDogId: dogId)) {
+                addDog(forDog: dog)
+            }
         }
-        
-        self.init(forDogs: dogArray)
     }
     
     /// Stores all the dogs. This is get only to make sure integrite of dogs added is kept
@@ -65,13 +72,7 @@ final class DogManager: NSObject, NSCoding, NSCopying {
     func addDogWithoutSorting(forDog newDog: Dog) {
         // If we discover a newDog has the same dogId as an existing dog, we remove
         dogs.removeAll { oldDog in
-            guard oldDog.dogId == newDog.dogId else {
-                return false
-            }
-            // we should combine the currentDog's reminders/logs into the new dog
-            newDog.combine(withOldDog: oldDog)
-            
-            return true
+            return oldDog.dogId == newDog.dogId
         }
         
         dogs.append(newDog)
@@ -279,22 +280,4 @@ extension DogManager {
         
         return groupedLogsByUniqueDate
     }
-    
-    // MARK: Compare
-    
-    /// Combines all of the dogs, reminders, and logs in union fashion to the dogManager. If a dog, reminder, or log exists in either of the dogManagers, then they will be present after this function is done. Dogs, reminders, or logs in the newDogManager (this object) overwrite dogs, reminders, or logs in the oldDogManager. Note: if one dog is to overwrite another dog, it will first combine the reminder/logs, again the reminders/logs of the newDog will take precident over the reminders/logs of the oldDog.
-    func combine(withOldDogManager oldDogManager: DogManager) {
-        // we need to copy oldDogManager as it might still be in use and the combining process modifies oldDogManager. Therefore, copy is necessary to keep oldDogManager integrity.
-        guard let oldDogManagerCopy = oldDogManager.copy() as? DogManager else {
-            return
-        }
-        
-        // the addDogs function overwrites the dog info (e.g. dogName) but combines the reminders / logs in the event that the oldDogManager and the newDogManager both contain a dog with the same dogId. Therefore, we must add the dogs to the oldDogManager (allowing the newDogManager to overwrite the oldDogManager dogs if there is an overlap)
-        oldDogManagerCopy.addDogs(forDogs: self.dogs)
-        
-        // now that the oldDogManager contains its original dogs, our new dogs, and has had its old dogs overwritten (in the case old & new both had a dog with same dogId), we have an updated array.
-        dogs = oldDogManagerCopy.dogs
-        sortDogs()
-    }
-    
 }

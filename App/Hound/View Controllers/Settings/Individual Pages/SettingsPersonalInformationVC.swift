@@ -38,7 +38,7 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
         // manually set userConfigurationPreviousDogManagerSynchronization to default value so we will retrieve everything from the server
         LocalConfiguration.userConfigurationPreviousDogManagerSynchronization = ClassConstant.DateConstant.default1970Date
         
-        _ = DogsRequest.get(invokeErrorManager: true, dogManager: DogManager()) { newDogManager, _ in
+        DogsRequest.get(invokeErrorManager: true, dogManager: DogManager()) { newDogManager, _ in
             RequestUtils.endRequestIndictator {
                 
                 guard let newDogManager = newDogManager else {

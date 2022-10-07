@@ -38,12 +38,9 @@ final class CountdownComponents: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
-    convenience init(executionInterval: TimeInterval?) {
+    convenience init(executionInterval: TimeInterval) {
         self.init()
-        
-        if let executionInterval = executionInterval {
-            self.executionInterval = executionInterval
-        }
+        self.executionInterval = executionInterval
     }
     
     /// Interval at which a timer should be triggered for reminder

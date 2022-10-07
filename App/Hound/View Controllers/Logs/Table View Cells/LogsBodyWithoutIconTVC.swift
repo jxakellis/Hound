@@ -54,8 +54,8 @@ final class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         // Dog Name Constant
         dogNameTopConstraint.constant = 5.0 * sizeRatio
         dogNameBottomConstraint.constant = shouldHideLogNote ? 0.0 : 0.0 * sizeRatio
-        dogNameLeadingConstraint.constant = 10.0 * sizeRatio
-        dogNameTrailingConstraint.constant = 10.0 * sizeRatio
+        dogNameLeadingConstraint.constant = 7.5 * sizeRatio
+        dogNameTrailingConstraint.constant = 7.5 * sizeRatio
         dogNameHeightConstraint.constant = 20.0 * sizeRatio
         
         // Log Date
@@ -64,19 +64,19 @@ final class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         logDateLabel.text = dateFormatter.string(from: log.logDate)
         logDateLabel.font = logDateLabel.font.withSize(fontSize * sizeRatio)
         // Log Date Constant
-        logDateTrailingConstraint.constant = 10.0 * sizeRatio
+        logDateTrailingConstraint.constant = 7.5 * sizeRatio
         
         // Log Action
         logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
         logActionLabel.font = logActionLabel.font.withSize(fontSize * sizeRatio)
         // Log Action Constant
-        logActionTrailingConstraint.constant = 10.0 * sizeRatio
+        logActionTrailingConstraint.constant = 7.5 * sizeRatio
         
         // Family Member
         familyMemberNameLabel.text = FamilyInformation.findFamilyMember(forUserId: log.userId)?.displayFirstName ?? VisualConstant.TextConstant.unknownText
         familyMemberNameLabel.font = familyMemberNameLabel.font.withSize(fontSize * sizeRatio)
         // Family Member Constant
-        familyMemberTrailingConstraint.constant = 10.0 * sizeRatio
+        familyMemberTrailingConstraint.constant = 7.5 * sizeRatio
         
         // Log Note
         logNoteLabel.text = log.logNote
@@ -87,7 +87,7 @@ final class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         logNoteHeightConstraint.constant = shouldHideLogNote ? 0.0 : 15.0 * sizeRatio
         
         // Right Chevron Constant
-        rightChevronTrailingConstraint.constant = 10.0 * sizeRatio
+        rightChevronTrailingConstraint.constant = 7.5 * sizeRatio
         rightChevronWidthConstraint.constant = 15.0 * sizeRatio
     }
     

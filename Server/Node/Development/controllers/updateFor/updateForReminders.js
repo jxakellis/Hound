@@ -20,12 +20,11 @@ async function updateReminderForDogIdReminder(databaseConnection, dogId, reminde
   const {
     reminderId, reminderAction, reminderType,
   } = reminder;
-  const reminderCustomActionName = formatString(reminder.reminderCustomActionName, 32); // optional
+  const reminderCustomActionName = formatString(reminder.reminderCustomActionName, 32);
   const reminderIsEnabled = formatBoolean(reminder.reminderIsEnabled);
   const reminderExecutionBasis = formatDate(reminder.reminderExecutionBasis);
   const reminderExecutionDate = formatDate(reminder.reminderExecutionDate);
-  const dogLastModified = new Date();
-  const reminderLastModified = dogLastModified;
+  const reminderLastModified = new Date();
 
   // snooze components
   const snoozeExecutionInterval = formatNumber(reminder.snoozeExecutionInterval);
@@ -55,8 +54,8 @@ async function updateReminderForDogIdReminder(databaseConnection, dogId, reminde
   const oneTimeDate = formatDate(reminder.oneTimeDate);
 
   // check to see that necessary generic reminder components are present
-  if (areAllDefined(reminderId, reminderAction, reminderType, reminderIsEnabled, reminderExecutionBasis) === false) {
-    throw new ValidationError('reminderId, reminderAction, reminderType, reminderIsEnabled, or reminderExecutionBasis missing', global.constant.error.value.MISSING);
+  if (areAllDefined(reminderId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis) === false) {
+    throw new ValidationError('reminderId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, or reminderExecutionBasis missing', global.constant.error.value.MISSING);
   }
   else if (reminderType !== 'countdown' && reminderType !== 'weekly' && reminderType !== 'monthly' && reminderType !== 'oneTime') {
     throw new ValidationError('reminderType invalid', global.constant.error.value.INVALID);
@@ -91,13 +90,6 @@ async function updateReminderForDogIdReminder(databaseConnection, dogId, reminde
       oneTimeDate,
       reminderId,
     ],
-  );
-
-  // update the dog last modified since one of its compoents was updated
-  await databaseQuery(
-    databaseConnection,
-    'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
-    [dogLastModified, dogId],
   );
 
   return reminder;

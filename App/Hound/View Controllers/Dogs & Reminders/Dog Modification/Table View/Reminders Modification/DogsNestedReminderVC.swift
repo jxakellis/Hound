@@ -24,7 +24,6 @@ final class DogsNestedReminderViewController: UIViewController {
     @IBOutlet private weak var saveButton: UIBarButtonItem!
     // Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured reminder back to table view.
     @IBAction private func willSave(_ sender: Any) {
-        
         // Since this is the nested reminders view controller, meaning its nested in the larger Add Dog VC, we only perform the server queries when the user decides to create / update the greater dog.
         
         let reminder = dogsReminderManagerViewController.applyReminderSettings()
@@ -34,17 +33,18 @@ final class DogsNestedReminderViewController: UIViewController {
         }
         
         // we were able to add the reminder successfully, so persist the possible reminderCustomActionName to the local storage. Technically, we should wait until the server query to complete to add this to memory but that will add significantly more complexity as this VC is nested.
-        if let reminderCustomActionName = reminder.reminderCustomActionName, reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+        let reminderCustomActionName = reminder.reminderCustomActionName
+        if reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
             LocalConfiguration.addReminderCustomAction(forName: reminderCustomActionName)
         }
         
-        if isUpdating == true {
-            delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forReminder: reminder)
-        }
-        else {
+        if isUpdating == false {
             delegate.didAddReminder(sender: Sender(origin: self, localized: self), forReminder: reminder)
         }
-        
+        else {
+            delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forReminder: reminder)
+        }
+       
         navigationController?.popViewController(animated: true)
     }
     

@@ -29,13 +29,19 @@ extension String {
             readableString.append("\(numMinutes) Minute\(numMinutes > 1 ? "s" : "") ")
         case 3600..<86400:
             readableString.append("\(numHours) Hour\(numHours > 1 ? "s" : "") ")
-            readableString.append("\(numMinutes) Minute\(numMinutes > 1 ? "s" : "") ")
+            if numMinutes > 0 {
+                readableString.append("\(numMinutes) Minute\(numMinutes > 1 ? "s" : "") ")
+            }
         case 86400..<604800:
             readableString.append("\(numDays) Day\(numDays > 1 ? "s" : "") ")
-            readableString.append("\(numHours) Hour\(numHours > 1 ? "s" : "") ")
+            if numHours > 0 {
+                readableString.append("\(numHours) Hour\(numHours > 1 ? "s" : "") ")
+            }
         default:
             readableString.append("\(numWeeks) Week\(numWeeks > 1 ? "s" : "") ")
-            readableString.append("\(numDays) Day\(numDays > 1 ? "s" : "") ")
+            if numDays > 0 {
+                readableString.append("\(numDays) Day\(numDays > 1 ? "s" : "") ")
+            }
         }
         
         if readableString.last == " "{
