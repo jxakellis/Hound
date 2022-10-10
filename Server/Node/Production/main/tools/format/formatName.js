@@ -1,4 +1,5 @@
 const { areAllDefined } = require('./validateDefined');
+const { formatString } = require('./formatObject');
 
 // Returned string with whitespaces and new lines removed. If parameter is not a string, returns undefined
 function formatName(string) {
@@ -49,8 +50,10 @@ function formatIntoAbreviatedFullName(userFirstName, userLastName) {
   return `${trimmedFirstName} ${trimmedLastName.charAt(0)}`;
 }
 
-function formatLogAction(logAction, logCustomActionName) {
-  if (areAllDefined(logAction) === false) {
+function formatLogAction(forLogAction, forLogCustomActionName) {
+  const logAction = formatString(forLogAction);
+  const logCustomActionName = formatString(forLogCustomActionName);
+  if (areAllDefined(logAction, logCustomActionName) === false) {
     return undefined;
   }
 
@@ -90,8 +93,8 @@ function formatLogAction(logAction, logCustomActionName) {
     case 'Doctor Visit':
       return `${logAction} 🩺`;
     case 'Custom':
-      // check to make sure logCustomActionName is defined, is string, and isn't just a blank string (e.g. '      ')
-      if (areAllDefined(logCustomActionName) === false || typeof logCustomActionName !== 'string' || logCustomActionName.trim() === '') {
+      // check to make sure logCustomActionName isn't just a blank string (e.g. '      ')
+      if (logCustomActionName.trim() === '') {
         return `${logAction} 📝`;
       }
       return logCustomActionName;
@@ -100,8 +103,10 @@ function formatLogAction(logAction, logCustomActionName) {
   }
 }
 
-function formatReminderAction(reminderAction, reminderCustomActionName) {
-  if (areAllDefined(reminderAction) === false) {
+function formatReminderAction(forReminderAction, forReminderCustomActionName) {
+  const reminderAction = formatString(forReminderAction);
+  const reminderCustomActionName = formatString(forReminderCustomActionName);
+  if (areAllDefined(reminderAction, reminderCustomActionName) === false) {
     return undefined;
   }
 
@@ -127,8 +132,8 @@ function formatReminderAction(reminderAction, reminderCustomActionName) {
     case 'Doctor Visit':
       return `${reminderAction} 🩺`;
     case 'Custom':
-      // check to make sure reminderCustomActionName is defined, is string, and isn't just a blank string (e.g. '      ')
-      if (areAllDefined(reminderCustomActionName) === false || typeof reminderCustomActionName !== 'string' || reminderCustomActionName.trim() === '') {
+      // check to make sure reminderCustomActionName isn't just a blank string (e.g. '      ')
+      if (reminderCustomActionName.trim() === '') {
         return `${reminderAction} 📝`;
       }
       return reminderCustomActionName;

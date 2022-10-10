@@ -12,13 +12,7 @@ protocol DogsReminderMonthlyViewControllerDelegate: AnyObject {
     func willDismissKeyboard()
 }
 
-final class DogsReminderMonthlyViewController: UIViewController, UIGestureRecognizerDelegate {
-    
-    // MARK: - UIGestureRecognizerDelegate
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
+final class DogsReminderMonthlyViewController: UIViewController {
     
     // MARK: - IB
     @IBOutlet weak var timeOfDayDatePicker: UIDatePicker! // swiftlint:disable:this private_outlet

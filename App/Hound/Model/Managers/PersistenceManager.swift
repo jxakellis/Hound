@@ -14,14 +14,6 @@ enum PersistenceManager {
     /// Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
     static func applicationDidFinishLaunching() {
         
-        // TO DO NOW PRODUCTION flow: delete Hound. download Hound 1.3.5, add some data, enable notifications. Update to Hound 2.0.0, create account, create family. Check notifiations settings page to see if settings loaded. Check if family and reminders introduction pages load. Check if user is prompted to enable notifications.
-        
-        // TO DO NOW PRODUCTION flow: delete Hound. download Hound 1.3.5, add some data, leave notifications disabled. Update to Hound 2.0.0, create account, create family. Check if family and reminders introduction pages load. Check if user is prompted to enable notifications.
-        
-        // TO DO NOW PRODUCTION flow: delete Hound. Download Hound 2.0.0, create account, create family. Check if family and reminders introduction pages load. Check if user is prompted to enable notifications. Configure family plus dogs and reminders.
-        
-        // TO DO NOW PRODUCTION flow: delete Hound. Download Hound 2.0.0, create account, join family. Check if family and reminders introduction pages load. Check if user is prompted to enable notifications. Check to see if all the family information loaded
-        
         // TO DO NOW PRODUCTION create image ec2 instance. truncate development database and review production database (potentially truncate certain data). review backup configuration of database servers, make sure backing up frequently.
         
         // MARK: Log Launch
@@ -48,10 +40,6 @@ enum PersistenceManager {
         
         UserInformation.userIdentifier = keychain.get(KeyConstant.userIdentifier.rawValue)
         
-        if DevelopmentConstant.isProductionDatabase == false {
-            // UserInformation.userIdentifier = "1f66dbb1e7df20e51a8cd88c2334f5e4def79a2ebc1444f6766ff4160ea6927a"
-        }
-        
         UserInformation.userEmail = keychain.get(KeyConstant.userEmail.rawValue) ?? UserInformation.userEmail
         UserInformation.userFirstName = keychain.get(KeyConstant.userFirstName.rawValue) ?? UserInformation.userFirstName
         UserInformation.userLastName = keychain.get(KeyConstant.userLastName.rawValue) ?? UserInformation.userLastName
@@ -59,16 +47,16 @@ enum PersistenceManager {
         // MARK: Load User Information
         
         UserInformation.userId = UserDefaults.standard.value(forKey: KeyConstant.userId.rawValue) as? String ?? UserInformation.userId
-        
-        if DevelopmentConstant.isProductionDatabase == false {
-            // UserInformation.userId = "b753a74a0c2f9392ea68066772f5d5a37a1e7798c436ef5f21d62f955e4b7963"
-        }
        
         UserInformation.familyId = UserDefaults.standard.value(forKey: KeyConstant.familyId.rawValue) as? String ?? UserInformation.familyId
         
         // MARK: Load Local Configuration
         // <= build 8000 lastDogManagerSynchronization
         LocalConfiguration.userConfigurationPreviousDogManagerSynchronization = UserDefaults.standard.value(forKey: KeyConstant.userConfigurationPreviousDogManagerSynchronization.rawValue) as? Date ?? UserDefaults.standard.value(forKey: "lastDogManagerSynchronization") as? Date ?? LocalConfiguration.userConfigurationPreviousDogManagerSynchronization
+        
+        if UIApplication.previousAppVersion == "1.3.5" {
+            UserDefaults.standard.removeObject(forKey: "dogManager")
+        }
         
         if let dataDogManager: Data = UserDefaults.standard.data(forKey: KeyConstant.dogManager.rawValue), let unarchiver = try? NSKeyedUnarchiver.init(forReadingFrom: dataDogManager) {
             unarchiver.requiresSecureCoding = false
@@ -205,6 +193,9 @@ enum PersistenceManager {
         UserDefaults.standard.setValue(LocalConfiguration.localHasCompletedHoundIntroductionViewController, forKey: KeyConstant.localHasCompletedHoundIntroductionViewController.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.localHasCompletedRemindersIntroductionViewController, forKey: KeyConstant.localHasCompletedRemindersIntroductionViewController.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.localHasCompletedSettingsFamilyIntroductionViewController, forKey: KeyConstant.localHasCompletedSettingsFamilyIntroductionViewController.rawValue)
+        
+        // Don't persist value. This is purposefully reset everytime the app reopens
+        LocalConfiguration.localDateWhenAppLastEnteredBackground = Date()
     }
     
     static func willEnterForeground() {
@@ -217,6 +208,12 @@ enum PersistenceManager {
         // stop any loud notifications that may have occured
         AudioManager.stopLoudNotification()
         
+        // If the app has been closed for more than a certain amount of time, then refresh the data
+        if LocalConfiguration.localDateWhenAppLastEnteredBackground.distance(to: Date()) >= 60 * 60 {
+            MainTabBarViewController.mainTabBarViewController?.shouldRefreshDogManager = true
+            MainTabBarViewController.mainTabBarViewController?.shouldRefreshFamily = true
+        }
+    
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         
     }

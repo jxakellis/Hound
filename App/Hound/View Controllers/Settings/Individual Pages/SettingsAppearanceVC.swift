@@ -8,13 +8,7 @@
 
 import UIKit
 
-final class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDelegate, UIPickerViewDataSource, UIPickerViewDelegate {
-    
-    // MARK: - UIGestureRecognizerDelegate
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
+final class SettingsAppearanceViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
     
     // MARK: - Main
     

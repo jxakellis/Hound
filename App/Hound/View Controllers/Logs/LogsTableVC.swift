@@ -252,45 +252,6 @@ final class LogsTableViewController: UITableViewController {
             }
             
             self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-            
-            // TO DO BUG PRIO: MEDIUM, if the number of logs that exist is greater than the logsTableViewControllermaximumNumberOfLogsDisplayed, then when one log gets deleted, another will take its place. This will cause a crash as the tableView is expecting there to be one less row but there is the same amount still. Solution is to probably insert the new row using the tableView.insert thing at the same time we delete.
-            /*
-             // batch update so doesn't freak out
-             tableView.performBatchUpdates {
-             
-             tableView.deleteRows(at: [indexPath], with: .fade)
-             
-             var shouldShowFilterIndicator: Bool {
-             if indexPath.section == 0 && self.logsFilter != [:] {
-             return true
-             }
-             else {
-             return false
-             }
-             }
-             
-             // removed final log and must update header (no logs are left at all)
-             if self.groupedLogsByUniqueDate.count == 0 {
-             
-             let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsHeaderTableViewCell
-             headerCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
-             }
-             // removed final log of a given section and must remove all headers and body in that now gone-from-the-data section
-             else if originalNumberOfSections != self.groupedLogsByUniqueDate.count {
-             tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
-             
-             // removed section that has filter indicator
-             if indexPath.section == 0 && self.groupedLogsByUniqueDate.count >= 1 {
-             // for whatever header will be at the top (section 1 currently but will soon be section 0) the filter indicator will be shown if calculated shouldShowFilterIndicator returnd true (! converts to proper isHidden:)
-             
-             let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsHeaderTableViewCell
-             headerCell.filterImageView.isHidden = !shouldShowFilterIndicator
-             }
-             
-             }
-             }
-             */
-            
         }
     }
     

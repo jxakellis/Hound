@@ -108,8 +108,8 @@ extension DogsRequest {
             switch responseStatus {
             case .successResponse:
                 // dog JSON {dog1:'foo'}
-                if let newDogBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
-                    completionHandler(Dog(forDogBody: newDogBody, overrideDog: currentDog), responseStatus)
+                if let newDogBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any], let currentDogCopy = currentDog.copy() as? Dog {
+                    completionHandler(Dog(forDogBody: newDogBody, overrideDog: currentDogCopy), responseStatus)
                 }
                 else {
                     // Don't return nil. This is because we pass through userConfigurationPreviousDogManagerSynchronization. That means a successful result could be completely blank (and fail the above if statement), indicating that the user is fully up to date.

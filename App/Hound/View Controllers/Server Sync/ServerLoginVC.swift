@@ -187,14 +187,7 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
         func setupSignInWithAppleDisclaimer() {
             let signInWithAppleDisclaimer = ScaledUILabel()
             
-            if UserInformation.userIdentifier != nil {
-                // pre existing data
-                signInWithAppleDisclaimer.text = "Currently, Hound only offers accounts through the 'Sign In With Apple' feature. This requires you have an Apple ID with two-factor authentication enabled."
-            }
-            else {
-                // no preexisting data, new
-                signInWithAppleDisclaimer.text = "Currently, Hound only offers accounts through the 'Sign Up With Apple' feature. This requires you have an Apple ID with two-factor authentication enabled."
-            }
+            signInWithAppleDisclaimer.text = "Currently, Hound only offers accounts through the 'Sign \(UserInformation.userIdentifier == nil ? "Up" : "In") With Apple' feature. This requires you have an Apple ID with two-factor authentication enabled."
             
             signInWithAppleDisclaimer.translatesAutoresizingMaskIntoConstraints = false
             signInWithAppleDisclaimer.numberOfLines = 0

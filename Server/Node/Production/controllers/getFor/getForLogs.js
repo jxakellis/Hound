@@ -5,6 +5,7 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 // Select every column except for dogId and logLastModified (by not transmitting, increases network efficiency)
 // dogId is already known and dogLastModified has no use client-side
+// TO DO FUTURE only select logId and logIsDeleted if logIsDeleted = 0, otherwise include all columns
 const dogLogsColumns = 'logId, userId, logDate, logNote, logAction, logCustomActionName, logIsDeleted';
 
 /**
@@ -15,7 +16,6 @@ async function getLogForLogId(databaseConnection, logId, forUserConfigurationPre
   if (areAllDefined(databaseConnection, logId) === false) {
     throw new ValidationError('databaseConnection or logId missing', global.constant.error.value.MISSING);
   }
-
   const userConfigurationPreviousDogManagerSynchronization = formatDate(forUserConfigurationPreviousDogManagerSynchronization);
 
   let result = areAllDefined(userConfigurationPreviousDogManagerSynchronization)

@@ -72,7 +72,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
     @IBOutlet private weak var willAddLogBackground: ScaledUIButton!
     
     @IBAction private func willShowFilter(_ sender: Any) {
-        
+        // TO DO FUTURE allow the user to filter logs by family members
         var numRowsDisplayed: Int {
             
             // finds the total count of rows needed
@@ -111,21 +111,29 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
     func setDogManager(sender: Sender, forDogManager: DogManager) {
         dogManager = forDogManager
         
-        if (sender.localized is LogsTableViewController) == true {
-            // If LogsTableViewController deleted the last log of all the dog(s), then clear the filter and disable the logsFilter button
-            if familyHasAtLeastOneLog == false {
-                logsFilter = [:]
-                logsTableViewController?.logsFilter = logsFilter
-                filterButton.isEnabled = false
+        // verify logs filter is valid, something could have been deleted
+        for (dogId, logActions) in logsFilter {
+            guard let dog = dogManager.findDog(forDogId: dogId) else {
+                // there is no corresponding dog in the dogManager for the dogId in the logs filter, remove that dog from the logs filter
+                logsFilter.removeValue(forKey: dogId)
+                continue
+            }
+            
+            for logAction in logActions where dog.dogLogs.uniqueLogActions.contains(logAction) == false {
+                // there is no corresponding log action in the dog for the log action in the logs filter, remove that log action from the logs filter
+                logsFilter[dogId]?.removeAll(where: { $0 == logAction })
+                
+                if logsFilter[dogId]?.count == 0 {
+                    // if we removed the last log action for a given dogId, then also remove that dogId
+                    logsFilter.removeValue(forKey: dogId)
+                }
             }
         }
+        logsTableViewController?.logsFilter = logsFilter
+        filterButton.isEnabled = familyHasAtLeastOneLog
+        
         if (sender.localized is LogsTableViewController) == false {
             logsTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
-            
-            // Since a VC that isn't LogsTableViewController made the change, we should clear the filter as external changes (e.g. add logs, update log...) could have made filter invalid.
-            logsFilter = [:]
-            logsTableViewController?.logsFilter = logsFilter
-            filterButton.isEnabled = familyHasAtLeastOneLog
         }
         
         if (sender.localized is MainTabBarViewController) == true {
@@ -163,11 +171,10 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
         super.viewDidLoad()
         self.view.bringSubviewToFront(willAddLog)
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(hideDropDown))
-        tap.delegate = self
-        tap.cancelsTouchesInView = false
-        containerView.addGestureRecognizer(tap)
-        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideDropDown))
+        tapGestureRecognizer.delegate = self
+        tapGestureRecognizer.cancelsTouchesInView = false
+        containerView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     override func viewWillAppear(_ animated: Bool) {

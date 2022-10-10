@@ -9,14 +9,12 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
  */
 async function createLogForUserIdDogId(databaseConnection, userId, dogId, forLogDate, logAction, forLogCustomActionName, forLogNote) {
   const logDate = formatDate(forLogDate);
-  const dogLastModified = new Date();
-  const logLastModified = dogLastModified;
+  const logLastModified = new Date();
   const logCustomActionName = formatString(forLogCustomActionName, 32);
   const logNote = formatString(forLogNote, 500);
 
-  // logCustomActionName optional
-  if (areAllDefined(databaseConnection, userId, dogId, logDate, logAction, logNote) === false) {
-    throw new ValidationError('databaseConnection, userId, dogId, logDate, logAction, or logNote missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, userId, dogId, logDate, logAction, logCustomActionName, logNote) === false) {
+    throw new ValidationError('databaseConnection, userId, dogId, logDate, logAction, logCustomActionName, or logNote missing', global.constant.error.value.MISSING);
   }
 
   // only retrieve enough not deleted logs that would exceed the limit
@@ -31,21 +29,11 @@ async function createLogForUserIdDogId(databaseConnection, userId, dogId, forLog
     throw new ValidationError(`Dog log limit of ${global.constant.limit.NUMBER_OF_LOGS_PER_DOG} exceeded`, global.constant.error.family.limit.LOG_TOO_LOW);
   }
 
-  const promises = [
-    databaseQuery(
-      databaseConnection,
-      'INSERT INTO dogLogs(userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified],
-    ),
-    // update the dog last modified since one of its compoents was updated
-    databaseQuery(
-      databaseConnection,
-      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
-      [dogLastModified, dogId],
-    ),
-  ];
-
-  const [result] = await Promise.all(promises);
+  const result = await databaseQuery(
+    databaseConnection,
+    'INSERT INTO dogLogs(userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified],
+  );
 
   return result.insertId;
 }

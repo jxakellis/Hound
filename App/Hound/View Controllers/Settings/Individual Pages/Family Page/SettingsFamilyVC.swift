@@ -8,13 +8,7 @@
 
 import UIKit
 
-final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource {
-    
-    // MARK: - UIGestureRecognizerDelegate
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
+final class SettingsFamilyViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - IB
     

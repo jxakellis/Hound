@@ -12,13 +12,7 @@ protocol DogsReminderOneTimeViewControllerDelegate: AnyObject {
     func willDismissKeyboard()
 }
 
-final class DogsReminderOneTimeViewController: UIViewController, UIGestureRecognizerDelegate {
-    
-    // MARK: - UIGestureRecognizerDelegate
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
+final class DogsReminderOneTimeViewController: UIViewController {
     
     // MARK: - IB
     @IBOutlet private weak var datePicker: UIDatePicker!

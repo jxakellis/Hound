@@ -12,13 +12,7 @@ protocol SettingsPersonalInformationViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
-final class SettingsPersonalInformationViewController: UIViewController, UIGestureRecognizerDelegate {
-    
-    // MARK: - UIGestureRecognizerDelegate
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
+final class SettingsPersonalInformationViewController: UIViewController {
     
     // MARK: - IB
     
@@ -30,6 +24,7 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
     
     @IBOutlet private weak var redownloadDataButton: UIButton!
     @IBAction private func didClickRedownloadData(_ sender: Any) {
+        // TO DO FUTURE add progress indicator for redownload data
         
         RequestUtils.beginRequestIndictator()
         

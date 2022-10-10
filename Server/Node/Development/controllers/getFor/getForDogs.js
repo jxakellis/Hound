@@ -10,6 +10,7 @@ const { getAllRemindersForDogId } = require('./getForReminders');
 // Select every column except for familyId, and dogLastModified (by not transmitting, increases network efficiency)
 // familyId is already known, and dogLastModified has no use client-side
 // TO DO FUTURE only select dogId and dogIsDeleted if dogIsDeleted = 0, otherwise include all columns
+// TO DO FUTURE if userConfigurationPreviousDogManagerSynchronization > dogLastModified, only select dogId and dogIdDeleted. Otherwise, select all columns (including dogIcon)
 const dogsColumns = 'dogs.dogId, dogs.dogName, dogs.dogIsDeleted';
 
 /**

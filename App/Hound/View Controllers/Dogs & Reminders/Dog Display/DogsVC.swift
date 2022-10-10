@@ -12,7 +12,13 @@ protocol DogsViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
-final class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate, DogsTableViewControllerDelegate, DogsIndependentReminderViewControllerDelegate {
+final class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate, DogsTableViewControllerDelegate, DogsIndependentReminderViewControllerDelegate, UIGestureRecognizerDelegate {
+    
+    // MARK: - UIGestureRecognizerDelegate
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
     
     // MARK: - Dual Delegate Implementation
     
@@ -172,17 +178,17 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let dimScreenForAddDog = UIView(frame: self.view.frame)
+        dimScreenForAddDog.alpha = 0
+        dimScreenForAddDog.backgroundColor = UIColor.black
+        self.dimScreenForAddDog = dimScreenForAddDog
+        
         let dismissAddDogTap = UITapGestureRecognizer(target: self, action: #selector(toggleAddStatusToFalse))
+        dismissAddDogTap.delegate = self
         self.dismissAddDogTap = dismissAddDogTap
+        dimScreenForAddDog.addGestureRecognizer(dismissAddDogTap)
         
-        let dimView = UIView(frame: self.view.frame)
-        dimView.alpha = 0
-        dimView.backgroundColor = UIColor.black
-        dimScreenView = dimView
-        dimScreenView.addGestureRecognizer(dismissAddDogTap)
-        
-        self.view.addSubview(dimView)
-        
+        self.view.addSubview(dimScreenForAddDog)
         self.view.bringSubviewToFront(willAddButtonBackground)
         self.view.bringSubviewToFront(willAddButton)
     }
@@ -211,7 +217,7 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
     
     // MARK: - Programmically Added Add Reminder To Dog / Add Dog Buttons
     
-    private var dimScreenView: UIView!
+    private var dimScreenForAddDog: UIView!
     private var dismissAddDogTap: UITapGestureRecognizer!
     
     private var addStatus: Bool = false
@@ -314,7 +320,7 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
                     buttonLabel.frame.origin = buttonLabelOrigin
                     buttonLabelBackground.frame.origin = buttonLabelOrigin
                     
-                    self.dimScreenView.alpha = 0.66
+                    self.dimScreenForAddDog.alpha = 0.66
                     MainTabBarViewController.mainTabBarViewController?.tabBar.alpha = 0.06
                     MainTabBarViewController.mainTabBarViewController?.dogsNavigationViewController?.navigationBar.alpha = 0.06
                     
@@ -348,7 +354,7 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
                     buttonLabel.frame.origin.x = self.view.safeAreaLayoutGuide.layoutFrame.maxX
                     buttonLabelBackground.frame.origin.x = self.view.safeAreaLayoutGuide.layoutFrame.maxX
                     
-                    self.dimScreenView.alpha = 0
+                    self.dimScreenForAddDog.alpha = 0
                     MainTabBarViewController.mainTabBarViewController?.tabBar.alpha = 1
                     MainTabBarViewController.mainTabBarViewController?.dogsNavigationViewController?.navigationBar.alpha = 1
                     

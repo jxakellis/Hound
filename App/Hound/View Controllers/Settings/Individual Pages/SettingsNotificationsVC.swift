@@ -28,6 +28,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // TO DO FUTURE add notification catagories for the users to opt out of. The catagories should be the same as defined by globalConstant category field (reminder, log, family, user, and general)
         
         // Notification Sound
         notificationSoundLabel.text = UserConfiguration.notificationSound.rawValue

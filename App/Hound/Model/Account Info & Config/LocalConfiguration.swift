@@ -113,6 +113,9 @@ enum LocalConfiguration {
     
     /// Keeps track of if the user has viewed AND completed the settings family introduction view controller (which helps notify the user of their family limits)
     static var localHasCompletedSettingsFamilyIntroductionViewController: Bool = false
+    
+    /// Everytime Hound is restarted and entering from a terminated state, this value is set to Date(). Then when the app closes, it is set to Date() again. If Hound is closed for more than a certain time frame, using this variable to track how long it was closed, then we do certain actions, e.g. refresh the dog manager for new updates.
+    static var localDateWhenAppLastEnteredBackground: Date = Date()
 }
 
 extension LocalConfiguration {

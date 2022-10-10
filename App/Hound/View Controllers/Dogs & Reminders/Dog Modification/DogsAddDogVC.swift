@@ -14,7 +14,7 @@ protocol DogsAddDogViewControllerDelegate: AnyObject {
     func didCancel(sender: Sender)
 }
 
-final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIGestureRecognizerDelegate {
+final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
     // MARK: - UIImagePickerControllerDelegate
     
@@ -25,12 +25,6 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
         }
         
         picker.dismiss(animated: true)
-    }
-    
-    // MARK: - UIGestureRecognizerDelegate
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
     }
     
     // MARK: - UITextFieldDelegate
