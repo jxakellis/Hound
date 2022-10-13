@@ -35,8 +35,8 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
     /// Parent dog id of the log selected in the main table view of the logs of care page.
     private var forDogIdOfSelectedLog: Int?
     
-    func didSelectLog(forDogId: Int, log: Log) {
-        selectedLog = log
+    func didSelectLog(forDogId: Int, forLog: Log) {
+        selectedLog = forLog
         forDogIdOfSelectedLog = forDogId
         self.performSegueOnceInWindowHierarchy(segueIdentifier: "LogsAddLogViewController")
         selectedLog = nil

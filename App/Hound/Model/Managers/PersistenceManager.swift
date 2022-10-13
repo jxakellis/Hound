@@ -45,11 +45,6 @@ enum PersistenceManager {
         // MARK: Load User Information
         
         UserInformation.userId = UserDefaults.standard.value(forKey: KeyConstant.userId.rawValue) as? String ?? UserInformation.userId
-        
-        if DevelopmentConstant.isProductionDatabase == false {
-            UserInformation.userId = "3991d3ce3891651df1f722ed8f4ba555986e82b968c7039aec2e8fb603352e65"
-            UserInformation.userIdentifier = "1f66dbb1e7df20e51a8cd88c2334f5e4def79a2ebc1444f6766ff4160ea6927a"
-        }
        
         UserInformation.familyId = UserDefaults.standard.value(forKey: KeyConstant.familyId.rawValue) as? String ?? UserInformation.familyId
         

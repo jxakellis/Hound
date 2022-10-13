@@ -10,7 +10,7 @@ import UIKit
 
 protocol LogsTableViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
-    func didSelectLog(forDogId: Int, log: Log)
+    func didSelectLog(forDogId: Int, forLog: Log)
 }
 
 final class LogsTableViewController: UITableViewController {
@@ -274,7 +274,7 @@ final class LogsTableViewController: UITableViewController {
                     return
                 }
                 
-                self.delegate.didSelectLog(forDogId: dogId, log: newLog)
+                self.delegate.didSelectLog(forDogId: dogId, forLog: newLog)
             }
         }
     }

@@ -43,7 +43,7 @@ final class CountdownComponents: NSObject, NSCoding, NSCopying {
         self.executionInterval = executionInterval
     }
     
-    /// Interval at which a countdown should be last for reminder
+    /// Interval at which a timer should be triggered for reminder
     var executionInterval: TimeInterval = ClassConstant.ReminderComponentConstant.defaultCountdownExecutionInterval
     
 }

@@ -49,6 +49,6 @@ final class SnoozeComponents: NSObject, NSCoding, NSCopying {
     
     // MARK: - Properties
     
-    /// Interval at which a snooze should be last for reminder. If this value isn't nil, then the reminder is snoozing.
+    /// Interval at which a timer should be triggered for reminder. If this value isn't nil, then the reminder is snoozing. 
     var executionInterval: TimeInterval?
 }

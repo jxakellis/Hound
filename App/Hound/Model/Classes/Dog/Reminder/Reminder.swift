@@ -41,13 +41,13 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         copy.monthlyComponents = self.monthlyComponents.copy() as? MonthlyComponents ?? MonthlyComponents()
         copy.oneTimeComponents = self.oneTimeComponents.copy() as? OneTimeComponents ?? OneTimeComponents()
         copy.snoozeComponents = self.snoozeComponents.copy() as? SnoozeComponents ?? SnoozeComponents()
-        copy.storedReminderType = self.storedReminderType
+        copy.storedReminderType = self.reminderType
         
+        copy.hasAlarmPresentationHandled = self.hasAlarmPresentationHandled
         copy.reminderExecutionBasis = self.reminderExecutionBasis
-        copy.storedReminderAlarmTimer = self.storedReminderAlarmTimer
-        copy.storedReminderDisableIsSkippingTimer = self.storedReminderDisableIsSkippingTimer
+        copy.timer = self.timer
         
-        copy.storedReminderIsEnabled = self.storedReminderIsEnabled
+        copy.reminderIsEnabled = self.reminderIsEnabled
         
         return copy
     }
@@ -223,8 +223,6 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         self.storedReminderType = reminderType
         self.reminderExecutionBasis = reminderExecutionBasis
         self.reminderIsEnabled = reminderIsEnabled
-        self.reminderAlarmTimer = overrideReminder?.reminderAlarmTimer
-        self.reminderDisableIsSkippingTimer = overrideReminder?.reminderDisableIsSkippingTimer
         
         self.countdownComponents = CountdownComponents(executionInterval: countdownExecutionInterval)
 
@@ -268,8 +266,9 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             guard newReminderType != storedReminderType else {
                 return
             }
-            resetForNextAlarm()
-        
+            
+            self.prepareForNextAlarm()
+            
             storedReminderType = newReminderType
         }
     }
@@ -285,13 +284,16 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         get {
             return storedReminderIsEnabled
         }
-        set (newReminderIsEnabled) {
-            // going from disable to enabled
-            if reminderIsEnabled == false && newReminderIsEnabled == true {
-                resetForNextAlarm()
+        set (newEnableStatus) {
+            if storedReminderIsEnabled == false && newEnableStatus == true {
+                prepareForNextAlarm()
+            }
+            else if newEnableStatus == false {
+                timer?.invalidate()
+                timer = nil
             }
             
-            storedReminderIsEnabled = newReminderIsEnabled
+            storedReminderIsEnabled = newEnableStatus
         }
     }
     
@@ -308,6 +310,9 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     var snoozeComponents: SnoozeComponents = SnoozeComponents()
     
     // MARK: - Timing
+    
+    /// When an alert from this reminder is enqueued to be presented, this property is true. This prevents multiple alerts for the same reminder being requeued everytime timing manager refreshes.
+    var hasAlarmPresentationHandled: Bool = false
     
     var intervalRemaining: TimeInterval? {
         guard snoozeComponents.executionInterval == nil else {
@@ -365,39 +370,15 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         }
     }
     
-    private var storedReminderAlarmTimer: Timer?
-    /// Timer that executes a reminder's alarm. It triggers at reminderExecutionDate and invokes didExecuteReminderAlarmTimer. If assigning new timer, invalidates the current timer then assigns reminderAlarmTimer to new timer.
-    var reminderAlarmTimer: Timer? {
-        get {
-            return storedReminderAlarmTimer
-        }
-        set (newReminderAlarmTimer) {
-            // if the newReminderAlarmTimer references a different timer than storedReminderAlarmTimer, invalidate storedReminderAlarmTimer and assign it to newReminderAlarmTimer
-            if newReminderAlarmTimer !== storedReminderAlarmTimer {
-                storedReminderAlarmTimer?.invalidate()
-                storedReminderAlarmTimer = newReminderAlarmTimer
-            }
-        }
-    }
+    /// This is the timer that is used to make the reminder function. It triggers the events for the reminder. If getting rid of or replacing a reminder, invalidate this timer
+    var timer: Timer?
     
-    private var storedReminderDisableIsSkippingTimer: Timer?
-    /// Timer that executes to change a reminder from isSkipping true to false. It triggers when the current date passes the original reminderExecutionDate that was skipped, indicating the reminder should go back into regular, non-skipping mode. If assigning new timer, invalidates the current timer then assigns reminderDisableIsSkippingTimer to new timer.
-    var reminderDisableIsSkippingTimer: Timer? {
-        get {
-            return storedReminderDisableIsSkippingTimer
-        }
-        set (newReminderDisableIsSkippingTimer) {
-            // if the newReminderDisableIsSkippingTimer references a different timer than storedReminderDisableIsSkippingTimer, invalidate storedReminderDisableIsSkippingTimer and assign it to newReminderDisableIsSkippingTimer
-            if newReminderDisableIsSkippingTimer !== storedReminderDisableIsSkippingTimer {
-                storedReminderDisableIsSkippingTimer?.invalidate()
-                storedReminderDisableIsSkippingTimer = newReminderDisableIsSkippingTimer
-            }
-        }
-    }
-    
-    /// Restores the reminder to a state where it is ready for its next alarm. This resets reminderExecutionBasis, clears skippedDates, and clears snooze. Typically use if reminder's alarm executed and user responded to it or if reminder's timing has updated and needs a complete reset.
-    func resetForNextAlarm() {
+    /// The reminder's alarm executed and the user responded to it. We want to restore the reminder to a state where it is ready for its next alarm. This should also be called if the timing components are updated.
+    func prepareForNextAlarm() {
+        
         reminderExecutionBasis = Date()
+        
+        hasAlarmPresentationHandled = false
         
         snoozeComponents.executionInterval = nil
         
@@ -405,14 +386,8 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         monthlyComponents.skippedDate = nil
     }
     
-    /// Only invoke this functions if the reminder's timers have taken an action to indicate they are past their fireDate. Timers will be overriden by TimingManager if they haven't passed their fireDate. Otherwise, if the timers have passed their fireDate, the reminder's references to the timers are important as they prevent TimingManager from producing duplicate timers (which would create duplicate alerts) with initalizeReminderTimers.
-    func clearTimers() {
-        reminderAlarmTimer = nil
-        reminderDisableIsSkippingTimer = nil
-    }
-    
     /// Finds the date which the reminder should be transformed from isSkipping to not isSkipping. This is the date at which the skipped reminder would have occured.
-    var disableIsSkippingDate: Date? {
+    func unskipDate() -> Date? {
         guard reminderIsEnabled && snoozeComponents.executionInterval == nil else {
             return nil
         }
@@ -443,7 +418,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             // can skip and can't unskip
             if isSkipping == true {
                 // only way to skip a countdown reminder is to reset it to restart its countdown
-                resetForNextAlarm()
+                prepareForNextAlarm()
             }
         case .weekly:
             // can skip and can unskip

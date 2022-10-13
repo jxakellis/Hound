@@ -15,7 +15,8 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
         let copy = ReminderManager()
         for reminder in reminders {
             if let reminderCopy = reminder.copy() as? Reminder {
-                copy.reminders.append(reminderCopy)            }
+                copy.addReminder(forReminder: reminderCopy)
+            }
         }
         return copy
     }
@@ -75,23 +76,22 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
     // MARK: Functions
     
     /// Helper function allows us to use the same logic for addReminder and addReminders and allows us to only sort at the end. Without this function, addReminders would invoke addReminder repeadly and sortReminders() with each call.
-    private func addReminderWithoutSorting(forReminder newReminder: Reminder, shouldOverrideReminderWithSamePlaceholderId: Bool) {
+    private func addReminderWithoutSorting(forReminder newReminder: Reminder, shouldOverridePlaceholderReminder: Bool) {
         
-        // removes any existing reminders that have the same reminderId as they would cause problems.
+        // removes any existing reminders that have the same reminderId as they would cause problems. Placeholder Ids aren't real so they can be shifted .reversed() is needed to make it work, without it there will be an index of out bounds error.
         reminders.removeAll { oldReminder in
             guard oldReminder.reminderId == newReminder.reminderId else {
                 return false
             }
             
-            guard (shouldOverrideReminderWithSamePlaceholderId == true) ||
-                    (shouldOverrideReminderWithSamePlaceholderId == false && oldReminder.reminderId >= 0) else {
+            guard (shouldOverridePlaceholderReminder == true) ||
+                    (shouldOverridePlaceholderReminder == false && oldReminder.reminderId >= 0) else {
                 return false
             }
             
-            // if oldReminder's timers don't reference newReminder's timers, then oldReminder's timer is invalidated and removed.
-            oldReminder.reminderAlarmTimer = newReminder.reminderAlarmTimer
-            oldReminder.reminderDisableIsSkippingTimer = newReminder.reminderDisableIsSkippingTimer
-            
+            oldReminder.timer?.invalidate()
+            // there shouldn't be a matching reminder with an alarm presented, but if there is, we don't want to duplicate. therefore we should copy the presentation handled
+            newReminder.hasAlarmPresentationHandled = oldReminder.hasAlarmPresentationHandled
             return true
         }
         
@@ -114,10 +114,10 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
         reminders.append(newReminder)
     }
     
-    /// Checks to see if a reminder is already present. If its reminderId is, then is removes the old one and replaces it with the new. However, if the reminders have placeholderIds and shouldOverrideReminderWithSamePlaceholderId is false, then the newReminder's placeholderId is shifted to a different placeholderId and both reminders are retained.
-    func addReminder(forReminder reminder: Reminder, shouldOverrideReminderWithSamePlaceholderId: Bool = false) {
+    /// Checks to see if a reminder is already present. If its reminderId is, then is removes the old one and replaces it with the new. If the reminder has a placeholder reminderId and a reminder with the same reminderId already exists, then the placeholder id is shifted and the reminder is added
+    func addReminder(forReminder reminder: Reminder, shouldOverridePlaceholderReminder: Bool = false) {
         
-        addReminderWithoutSorting(forReminder: reminder, shouldOverrideReminderWithSamePlaceholderId: shouldOverrideReminderWithSamePlaceholderId)
+        addReminderWithoutSorting(forReminder: reminder, shouldOverridePlaceholderReminder: shouldOverridePlaceholderReminder)
         
         sortReminders()
     }
@@ -125,7 +125,7 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
     /// Invokes addReminder(forReminder: Reminder) for newReminder.count times (but only sorts once at the end to be more efficent)
     func addReminders(forReminders reminders: [Reminder]) {
         for reminder in reminders {
-            addReminderWithoutSorting(forReminder: reminder, shouldOverrideReminderWithSamePlaceholderId: false)
+            addReminderWithoutSorting(forReminder: reminder, shouldOverridePlaceholderReminder: false)
         }
         
         sortReminders()
@@ -261,9 +261,7 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
             return
         }
         
-        reminders[removedReminderIndex].reminderAlarmTimer = nil
-        reminders[removedReminderIndex].reminderDisableIsSkippingTimer = nil
-        
+        reminders[removedReminderIndex].timer?.invalidate()
         reminders.remove(at: removedReminderIndex)
     }
     

@@ -76,7 +76,7 @@
 		A26FA13E27F514C700546306 /* ScaledUITextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26FA13D27F514C700546306 /* ScaledUITextField.swift */; };
 		A26FA14027F5168300546306 /* UILabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26FA13F27F5168300546306 /* UILabelExtension.swift */; };
 		A278ED882610FF05000575FC /* DogsReminderManagerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED872610FF05000575FC /* DogsReminderManagerVC.swift */; };
-		A278ED8C2610FF3D000575FC /* DogsReminderCountDownVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED8B2610FF3D000575FC /* DogsReminderCountDownVC.swift */; };
+		A278ED8C2610FF3D000575FC /* DogsReminderCountdownVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED8B2610FF3D000575FC /* DogsReminderCountdownVC.swift */; };
 		A278ED942610FF89000575FC /* DogsReminderWeeklyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED932610FF89000575FC /* DogsReminderWeeklyVC.swift */; };
 		A27C3D8B25B781B4005F46BA /* DogsAddDogVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A27C3D8A25B781B4005F46BA /* DogsAddDogVC.swift */; };
 		A27C3D8F25B8A213005F46BA /* DogsNestedReminderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A27C3D8E25B8A213005F46BA /* DogsNestedReminderVC.swift */; };
@@ -243,7 +243,7 @@
 		A26FA13D27F514C700546306 /* ScaledUITextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaledUITextField.swift; sourceTree = "<group>"; };
 		A26FA13F27F5168300546306 /* UILabelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UILabelExtension.swift; sourceTree = "<group>"; };
 		A278ED872610FF05000575FC /* DogsReminderManagerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderManagerVC.swift; sourceTree = "<group>"; };
-		A278ED8B2610FF3D000575FC /* DogsReminderCountDownVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderCountDownVC.swift; sourceTree = "<group>"; };
+		A278ED8B2610FF3D000575FC /* DogsReminderCountdownVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderCountdownVC.swift; sourceTree = "<group>"; };
 		A278ED932610FF89000575FC /* DogsReminderWeeklyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderWeeklyVC.swift; sourceTree = "<group>"; };
 		A27C3D8A25B781B4005F46BA /* DogsAddDogVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsAddDogVC.swift; sourceTree = "<group>"; };
 		A27C3D8E25B8A213005F46BA /* DogsNestedReminderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsNestedReminderVC.swift; sourceTree = "<group>"; };
@@ -622,7 +622,7 @@
 			isa = PBXGroup;
 			children = (
 				A278ED872610FF05000575FC /* DogsReminderManagerVC.swift */,
-				A278ED8B2610FF3D000575FC /* DogsReminderCountDownVC.swift */,
+				A278ED8B2610FF3D000575FC /* DogsReminderCountdownVC.swift */,
 				A278ED932610FF89000575FC /* DogsReminderWeeklyVC.swift */,
 				A2DC23A7264D822F00EB287A /* DogsReminderMonthlyVC.swift */,
 				A2121DBC26649C7E00647682 /* DogsReminderOneTimeVC.swift */,
@@ -1134,7 +1134,7 @@
 				A20D64A42880E0CD001BDC9B /* Subscription.swift in Sources */,
 				A2C4091E27C9D41300073420 /* RequestUtils.swift in Sources */,
 				A2AA5CED27FE486500FD0134 /* SettingsFamilyVC.swift in Sources */,
-				A278ED8C2610FF3D000575FC /* DogsReminderCountDownVC.swift in Sources */,
+				A278ED8C2610FF3D000575FC /* DogsReminderCountdownVC.swift in Sources */,
 				A2B678E527D13AD100424FB0 /* ServerSyncVC.swift in Sources */,
 				A2B00F9E27FA3C2E00C6126E /* FamilyRequest.swift in Sources */,
 				A264AC1D2821B6620041E88A /* Interface Scale.swift in Sources */,
@@ -1295,7 +1295,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hound/HoundDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10000;
+				CURRENT_PROJECT_VERSION = 9500;
 				DEVELOPMENT_TEAM = 9L3M99FST5;
 				INFOPLIST_FILE = "$(SRCROOT)/Hound/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -1321,7 +1321,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hound/HoundDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10000;
+				CURRENT_PROJECT_VERSION = 9500;
 				DEVELOPMENT_TEAM = 9L3M99FST5;
 				INFOPLIST_FILE = "$(SRCROOT)/Hound/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
