@@ -46,7 +46,6 @@ extension UISegmentedControl {
                     // dark
                 case 2:
                     self.selectedSegmentIndex = 1
-                    // system/unspecified
                 default:
                     self.selectedSegmentIndex = 2
                 }
