@@ -7,23 +7,9 @@
 //
 import UIKit
 
-final class MainTabBarViewController: UITabBarController, DogsNavigationViewControllerDelegate, TimingManagerDelegate, LogsNavigationViewControllerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate, SettingsNavigationViewControllerDelegate {
+final class MainTabBarViewController: UITabBarController, TimingManagerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate, LogsViewControllerDelegate, DogsViewControllerDelegate {
     
-    // MARK: - DogsNavigationViewControllerDelegate
-    
-    func checkForRemindersIntroductionPage() {
-        // figure out where to go next, if the user is new and has no reminders for their dog (aka probably no family yet either) then we help them make their first reminder
-        
-        // hasn't shown configuration to create reminders
-        if LocalConfiguration.localHasCompletedRemindersIntroductionViewController == false {
-            // Created family with no reminders
-            // Joined family with no reminders
-            // Joined family with reminders
-            self.performSegueOnceInWindowHierarchy(segueIdentifier: "RemindersIntroductionViewController")
-        }
-    }
-    
-    // MARK: - TimingManagerDelegate && DogsViewControllerDelegate && SettingsNavigationViewControllerDelegate
+    // MARK: LogsViewControllerDelegate && DogsViewControllerDelegate
     
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
         setDogManager(sender: sender, forDogManager: forDogManager)
@@ -45,16 +31,18 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
         setDogManager(sender: sender, forDogManager: dogManager)
     }
     
-    func didAddReminder(sender: Sender, forDogId dogId: Int, forReminder reminder: Reminder) {
+    func didRemoveReminder(sender: Sender, forDogId dogId: Int, forReminderId reminderId: Int) {
         
-        dogManager.findDog(forDogId: dogId)?.dogReminders.addReminder(forReminder: reminder)
+        dogManager.findDog(forDogId: dogId)?.dogReminders.removeReminder(forReminderId: reminderId)
         
         setDogManager(sender: sender, forDogManager: dogManager)
     }
     
-    func didRemoveReminder(sender: Sender, forDogId dogId: Int, forReminderId reminderId: Int) {
+    // MARK: - AlarmManagerDelegate && TimingManagerDelegate
+    
+    func didAddReminder(sender: Sender, forDogId dogId: Int, forReminder reminder: Reminder) {
         
-        dogManager.findDog(forDogId: dogId)?.dogReminders.removeReminder(forReminderId: reminderId)
+        dogManager.findDog(forDogId: dogId)?.dogReminders.addReminder(forReminder: reminder)
         
         setDogManager(sender: sender, forDogManager: dogManager)
     }
@@ -67,9 +55,9 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
     func setDogManager(sender: Sender, forDogManager: DogManager) {
         dogManager = forDogManager
         
-        // MainTabBarViewController may not have been fully initalized by the time setDogManager is called on it, leading to TimingManager throwing an error possibly
+        // MainTabBarViewController will not have been fully initalized when ServerSyncViewController calls setDogManager, leading to TimingManager's delegate being nil and errors being thrown
         if (sender.localized is ServerSyncViewController) == false {
-            TimingManager.willReinitalize(forOldDogManager: dogManager, forNewDogManager: forDogManager)
+            TimingManager.initalizeReminderTimers(forDogManager: dogManager)
         }
         if (sender.localized is DogsViewController) == false {
             dogsViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
@@ -82,13 +70,10 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
     
     // MARK: - Properties
     
-    var logsNavigationViewController: LogsNavigationViewController?
     var logsViewController: LogsViewController?
     
-    var dogsNavigationViewController: DogsNavigationViewController?
     var dogsViewController: DogsViewController?
     
-    var settingsNavigationViewController: SettingsNavigationViewController?
     var settingsViewController: SettingsViewController?
     
     private var storedShouldRefreshDogManager: Bool = false
@@ -158,19 +143,15 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
         super.viewDidLoad()
         AppDelegate.generalLogger.notice("Version: \(UIApplication.appVersion)")
         
-        logsNavigationViewController = self.viewControllers?[0] as? LogsNavigationViewController
-        logsNavigationViewController?.passThroughDelegate = self
-        logsViewController = logsNavigationViewController?.viewControllers[0] as? LogsViewController
+        logsViewController = (self.viewControllers?[0] as? UINavigationController)?.viewControllers[0] as? LogsViewController
+        logsViewController?.delegate = self
         logsViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         
-        dogsNavigationViewController = self.viewControllers?[1] as? DogsNavigationViewController
-        dogsNavigationViewController?.passThroughDelegate = self
-        dogsViewController = dogsNavigationViewController?.viewControllers[0] as? DogsViewController
+        dogsViewController = (self.viewControllers?[1] as? UINavigationController)?.viewControllers[0] as? DogsViewController
+        dogsViewController?.delegate = self
         dogsViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         
-        settingsNavigationViewController = self.viewControllers?[2] as? SettingsNavigationViewController
-        settingsNavigationViewController?.passThroughDelegate = self
-        settingsViewController = settingsNavigationViewController?.viewControllers[0] as? SettingsViewController
+        settingsViewController = (self.viewControllers?[2] as? UINavigationController)?.viewControllers[0] as? SettingsViewController
         
         MainTabBarViewController.mainTabBarViewController = self
         
@@ -215,7 +196,7 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
         // 1. Hound entering foreground from being terminated. willEnterForeground isn't called upon inital launch of Hound, only once Hound is sent to background then brought back to foreground, but viewDidAppear MainTabBarViewController will catch as it's invoked once ServerSyncViewController is done loading
         // 2. Hound entering foreground after entering background. viewDidAppear MainTabBarViewController won't catch as MainTabBarViewController's view isn't appearing anymore but willEnterForeground will catch any imbalance as it's called once app is loaded to foreground
         NotificationManager.synchronizeNotificationAuthorization()
-        TimingManager.willInitalize(forDogManager: dogManager)
+        TimingManager.initalizeReminderTimers(forDogManager: dogManager)
     }
     
     override public var shouldAutorotate: Bool {
@@ -226,9 +207,23 @@ final class MainTabBarViewController: UITabBarController, DogsNavigationViewCont
         return .portrait
     }
     
+    // MARK: - Functions
+    
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        // selected the reminders page
+        if self.selectedIndex == 1 {
+            // hasn't shown configuration to create reminders
+            if LocalConfiguration.localHasCompletedRemindersIntroductionViewController == false {
+                // Created family with no reminders
+                // Joined family with no reminders
+                // Joined family with reminders
+                self.performSegueOnceInWindowHierarchy(segueIdentifier: "RemindersIntroductionViewController")
+            }
+        }
+    }
+    
     // MARK: - Navigation
     
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let remindersIntroductionViewController: RemindersIntroductionViewController = segue.destination as? RemindersIntroductionViewController {
             remindersIntroductionViewController.delegate = self

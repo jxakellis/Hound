@@ -123,13 +123,13 @@ extension RemindersRequest {
     /**
      completionHandler returns a reminder and response status. If the query is successful and the reminder isn't deleted, then the reminder is returned. Otherwise, nil is returned.
      */
-    @discardableResult static func get(invokeErrorManager: Bool, forDogId dogId: Int, forReminderId reminderId: Int, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) -> Progress? {
+    @discardableResult static func get(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) -> Progress? {
         
-        return RemindersRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderId: reminderId) { responseBody, responseStatus in
+        return RemindersRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderId: reminder.reminderId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let reminderBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
-                    completionHandler(Reminder(forReminderBody: reminderBody, overrideReminder: nil), responseStatus)
+                    completionHandler(Reminder(forReminderBody: reminderBody, overrideReminder: reminder), responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)

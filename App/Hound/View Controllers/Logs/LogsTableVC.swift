@@ -10,7 +10,7 @@ import UIKit
 
 protocol LogsTableViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
-    func didSelectLog(parentDogId: Int, log: Log)
+    func didSelectLog(forDogId: Int, log: Log)
 }
 
 final class LogsTableViewController: UITableViewController {
@@ -30,7 +30,7 @@ final class LogsTableViewController: UITableViewController {
     
     // MARK: - Properties
     
-    /// Array of tuples [(uniqueDay, uniqueMonth, uniqueYear, [(parentDogId, log)])]. This array has all of the logs for all of the dogs grouped what unique day/month/year they occured on, first element is furthest in the future and last element is the oldest. Optionally filters by the dogId and logAction provides IMPORTANT IMPORTANT IMPORTANT to store this value so we don't recompute more than needed
+    /// Array of tuples [(uniqueDay, uniqueMonth, uniqueYear, [(forDogId, log)])]. This array has all of the logs for all of the dogs grouped what unique day/month/year they occured on, first element is furthest in the future and last element is the oldest. Optionally filters by the dogId and logAction provides IMPORTANT IMPORTANT IMPORTANT to store this value so we don't recompute more than needed
     private var groupedLogsByUniqueDate: [(Int, Int, Int, [(Int, Log)])] = []
     
     private var storedLogsFilter: [Int: [LogAction]] = [:]
@@ -236,11 +236,11 @@ final class LogsTableViewController: UITableViewController {
         // let originalNumberOfSections = groupedLogsByUniqueDate.count
         
         let nestedLogsArray = groupedLogsByUniqueDate[indexPath.section].3
-        let parentDogId = nestedLogsArray[indexPath.row - 1].0
+        let forDogId = nestedLogsArray[indexPath.row - 1].0
         let logId = nestedLogsArray[indexPath.row - 1].1.logId
         
-        LogsRequest.delete(invokeErrorManager: true, forDogId: parentDogId, forLogId: logId) { requestWasSuccessful, _ in
-            guard requestWasSuccessful, let dog = self.dogManager.findDog(forDogId: parentDogId) else {
+        LogsRequest.delete(invokeErrorManager: true, forDogId: forDogId, forLogId: logId) { requestWasSuccessful, _ in
+            guard requestWasSuccessful, let dog = self.dogManager.findDog(forDogId: forDogId) else {
                 return
             }
             
@@ -274,7 +274,7 @@ final class LogsTableViewController: UITableViewController {
                     return
                 }
                 
-                self.delegate.didSelectLog(parentDogId: dogId, log: newLog)
+                self.delegate.didSelectLog(forDogId: dogId, log: newLog)
             }
         }
     }

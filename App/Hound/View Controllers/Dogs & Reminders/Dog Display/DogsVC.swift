@@ -27,25 +27,20 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
         CheckManager.checkForReview()
     }
     
-    func didCancel(sender: Sender) {
-        // Reinitalizes timers that were possibly destroyed
-        setDogManager(sender: sender, forDogManager: dogManager)
-    }
-    
     // MARK: - DogsIndependentReminderViewControllerDelegate
     
-    func didAddReminder(sender: Sender, parentDogId: Int, forReminder reminder: Reminder) {
+    func didAddReminder(sender: Sender, forDogId: Int, forReminder reminder: Reminder) {
         
-        dogManager.findDog(forDogId: parentDogId)?.dogReminders.addReminder(forReminder: reminder)
+        dogManager.findDog(forDogId: forDogId)?.dogReminders.addReminder(forReminder: reminder)
         
         setDogManager(sender: sender, forDogManager: dogManager)
         
         CheckManager.checkForReview()
     }
     
-    func didRemoveReminder(sender: Sender, parentDogId: Int, reminderId: Int) {
+    func didRemoveReminder(sender: Sender, forDogId: Int, forReminderId: Int) {
         
-        dogManager.findDog(forDogId: parentDogId)?.dogReminders.removeReminder(forReminderId: reminderId)
+        dogManager.findDog(forDogId: forDogId)?.dogReminders.removeReminder(forReminderId: forReminderId)
         
         setDogManager(sender: sender, forDogManager: dogManager)
         
@@ -82,34 +77,34 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
     }
     
     /// If a reminder in DogsTableViewController or Add Reminder were clicked, invokes this function. Opens up the same page but changes between creating new and editing existing mode.
-    func willOpenReminderMenu(parentDogId: Int, forReminderId reminderId: Int? = nil) {
+    func willOpenReminderMenu(forDogId: Int, forReminder: Reminder?) {
         
-        if let reminderId = reminderId {
-            // updating
-            RequestUtils.beginRequestIndictator()
-            // query for existing
-            RemindersRequest.get(invokeErrorManager: true, forDogId: parentDogId, forReminderId: reminderId) { newReminder, responseStatus in
-                RequestUtils.endRequestIndictator {
-                    guard let newReminder = newReminder else {
-                        if responseStatus == .successResponse {
-                            // If the response was successful but no reminder was returned, that means the reminder was deleted. Therefore, update the dogManager to indicate as such.
-                            self.dogManager.findDog(forDogId: parentDogId)?.dogReminders.removeReminder(forReminderId: reminderId)
-                            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-                        }
-                        return
-                    }
-                    
-                    self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsIndependentReminderViewController")
-                    self.dogsIndependentReminderViewController.parentDogId = parentDogId
-                    self.dogsIndependentReminderViewController.targetReminder = newReminder
-                }
-            }
-        }
-        else {
+        guard let forReminder = forReminder else {
             // creating new
             // no need to query as nothing in server since creating
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsIndependentReminderViewController")
-            dogsIndependentReminderViewController.parentDogId = parentDogId
+            dogsIndependentReminderViewController.forDogId = forDogId
+            return
+        }
+        
+        // updating
+        RequestUtils.beginRequestIndictator()
+        // query for existing
+        RemindersRequest.get(invokeErrorManager: true, forDogId: forDogId, forReminder: forReminder) { reminder, responseStatus in
+            RequestUtils.endRequestIndictator {
+                guard let reminder = reminder else {
+                    if responseStatus == .successResponse {
+                        // If the response was successful but no reminder was returned, that means the reminder was deleted. Therefore, update the dogManager to indicate as such.
+                        self.dogManager.findDog(forDogId: forDogId)?.dogReminders.removeReminder(forReminderId: forReminder.reminderId)
+                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    }
+                    return
+                }
+                
+                self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsIndependentReminderViewController")
+                self.dogsIndependentReminderViewController.forDogId = forDogId
+                self.dogsIndependentReminderViewController.targetReminder = reminder
+            }
         }
     }
     
@@ -203,15 +198,15 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
         AlertManager.globalPresenter = self
     }
     
-    // MARK: - Navigation To Dog Addition and Modification
+    // MARK: - Dog Addition and Modification
     
     @objc private func willCreateNew(sender: UIButton) {
-        // the senders tag indicates the parentDogId, if -1 then it means we are creating a new dog and if != -1 then it means we are creating a new reminder (as it has a parent dog)
-        if sender.tag == -1 {
+        // the senders tag indicates the forDogId, if -1 then it means we are creating a new dog and if != -1 then it means we are creating a new reminder (as it has a parent dog)
+        if sender.tag <= -1 {
             self.willOpenDogMenu(forDogId: nil)
         }
         else {
-            self.willOpenReminderMenu(parentDogId: sender.tag, forReminderId: nil)
+            self.willOpenReminderMenu(forDogId: sender.tag, forReminder: nil)
         }
     }
     
@@ -322,7 +317,7 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
                     
                     self.dimScreenForAddDog.alpha = 0.66
                     MainTabBarViewController.mainTabBarViewController?.tabBar.alpha = 0.06
-                    MainTabBarViewController.mainTabBarViewController?.dogsNavigationViewController?.navigationBar.alpha = 0.06
+                    MainTabBarViewController.mainTabBarViewController?.dogsViewController?.navigationController?.navigationBar.alpha = 0.06
                     
                 }
                 
@@ -356,7 +351,7 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
                     
                     self.dimScreenForAddDog.alpha = 0
                     MainTabBarViewController.mainTabBarViewController?.tabBar.alpha = 1
-                    MainTabBarViewController.mainTabBarViewController?.dogsNavigationViewController?.navigationBar.alpha = 1
+                    MainTabBarViewController.mainTabBarViewController?.dogsViewController?.navigationController?.navigationBar.alpha = 1
                     
                 } completion: { (_) in
                     DispatchQueue.main.asyncAfter(deadline: .now() + VisualConstant.AnimationConstant.largeButtonHide) {
@@ -452,7 +447,6 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
     
     // MARK: - Navigation
     
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let dogsAddDogViewController = segue.destination as? DogsAddDogViewController {
             self.dogsAddDogViewController = dogsAddDogViewController

@@ -69,19 +69,56 @@ final class DogManager: NSObject, NSCoding, NSCopying {
     private(set) var dogs: [Dog] = []
     
     /// Helper function allows us to use the same logic for addDog and addDogs and allows us to only sort at the end. Without this function, addDogs would invoke addDog repeadly and sortDogs() with each call.
-    func addDogWithoutSorting(forDog newDog: Dog) {
-        // If we discover a newDog has the same dogId as an existing dog, we remove
+    func addDogWithoutSorting(forDog newDog: Dog, shouldOverrideDogWithSamePlaceholderId: Bool) {
+        
+        // removes any existing dogs that have the same dogId as they would cause problems.
         dogs.removeAll { oldDog in
-            return oldDog.dogId == newDog.dogId
+            guard oldDog.dogId == newDog.dogId else {
+                return false
+            }
+            
+            guard (shouldOverrideDogWithSamePlaceholderId == true) ||
+                    (shouldOverrideDogWithSamePlaceholderId == false && oldDog.dogId >= 0) else {
+                return false
+            }
+            
+            oldDog.dogReminders.reminders.forEach { oldReminder in
+                // check to see if the new dog has a corresponding old reminder
+                guard let newReminder = newDog.dogReminders.findReminder(forReminderId: oldReminder.reminderId) else {
+                    return
+                }
+                
+                // if oldReminder's timers don't reference newReminder's timers, then oldReminder's timer is invalidated and removed.
+                oldReminder.reminderAlarmTimer = newReminder.reminderAlarmTimer
+                oldReminder.reminderDisableIsSkippingTimer = newReminder.reminderDisableIsSkippingTimer
+            }
+            
+            return true
+        }
+        
+        // check to see if we are dealing with a placeholder id dog
+        if newDog.dogId < 0 {
+            // If there are multiple dogs with placeholder ids, set the new dog's placeholder id to the lowest possible, therefore no overlap.
+            var lowestDogId = Int.max
+            dogs.forEach { dog in
+                if dog.dogId < lowestDogId {
+                    lowestDogId = dog.dogId
+                }
+            }
+            
+            // the lowest dog is is <0 so there are other placeholder dogs, that means we should set our new dog to a placeholder id that is 1 below the lowest (making this dog the new lowest)
+            if lowestDogId < 0 {
+                newDog.dogId = lowestDogId - 1
+            }
         }
         
         dogs.append(newDog)
     }
     
-    /// Adds a dog to dogs. If a dog with the same dogId already exists, combines that dog into newDog, then replaces dog with newDog.
-    func addDog(forDog dog: Dog) {
+    /// Checks to see if a dog is already present. If its dogId is, then is removes the old dog and replaces it with the new. However, if the dogs have placeholderIds and shouldOverrideDogWithSamePlaceholderId is false, then the newDog's placeholderId is shifted to a different placeholderId and both dogs are retained.
+    func addDog(forDog dog: Dog, shouldOverrideDogWithSamePlaceholderId: Bool = false) {
         
-        addDogWithoutSorting(forDog: dog)
+        addDogWithoutSorting(forDog: dog, shouldOverrideDogWithSamePlaceholderId: shouldOverrideDogWithSamePlaceholderId)
         
         sortDogs()
     }
@@ -89,24 +126,9 @@ final class DogManager: NSObject, NSCoding, NSCopying {
     /// Adds array of dogs with addDog(forDog: Dog) repition  (but only sorts once at the end to be more efficent)
     func addDogs(forDogs: [Dog]) {
         for dog in forDogs {
-            addDogWithoutSorting(forDog: dog)
+            addDogWithoutSorting(forDog: dog, shouldOverrideDogWithSamePlaceholderId: false)
         }
         
-        sortDogs()
-    }
-    
-    /// Adds or updates a dog to dogs. If a dog with the same dogId already exists, doesn't combine that dog into newDog, simply just replaces dog with newDog.
-    func updateDog(forDog updatedDog: Dog) {
-        dogs.removeAll { oldDog in
-            guard oldDog.dogId == updatedDog.dogId else {
-                return false
-            }
-            // Don't combine oldDog into newDog, we are replacing for updateDog
-            
-            return true
-        }
-        
-        dogs.append(updatedDog)
         sortDogs()
     }
     
@@ -119,12 +141,12 @@ final class DogManager: NSObject, NSCoding, NSCopying {
     
     /// Removes a dog with the given dogId
     func removeDog(forDogId dogId: Int) {
-        // make sure we invalidate all the timers associated. this isn't technically necessary but its easier to tie up lose ends here
-        if let dog = findDog(forDogId: dogId) {
-            for reminder in dog.dogReminders.reminders {
-                reminder.timer?.invalidate()
-            }
-        }
+        
+        findDog(forDogId: dogId)?.dogReminders.reminders.forEach({ reminder in
+            // make sure we invalidate all the timers associated, tie up any loose ends
+            reminder.reminderAlarmTimer = nil
+            reminder.reminderDisableIsSkippingTimer = nil
+        })
         
         dogs.removeAll { dog in
             return dog.dogId == dogId
@@ -152,7 +174,7 @@ extension DogManager {
         return false
     }
     
-    /// Returns an array of tuples [(parentDogId, log]). This array has all the logs for all the dogs sorted chronologically, oldest log at index 0 and newest at end of array. Optionally filters by dictionary literal of [dogIds: [logActions]] provided
+    /// Returns an array of tuples [(forDogId, log]). This array has all the logs for all the dogs sorted chronologically, oldest log at index 0 and newest at end of array. Optionally filters by dictionary literal of [dogIds: [logActions]] provided
     private func logsByDogId(forLogsFilter logsFilter: [Int: [LogAction]], forMaximumNumberOfLogsPerDog maximumNumberOfLogsPerDog: Int) -> [Int: [Log]] {
         var logsByDogId: [Int: [Log]] = [:]
         
@@ -192,7 +214,7 @@ extension DogManager {
         return logsByDogId
     }
     
-    /// Returns an array of tuples [(uniqueDay, uniqueMonth, uniqueYear, [(parentDogId, log)])]. This array has all of the logs for all of the dogs grouped what unique day/month/year they occured on, first element is furthest in the future and last element is the oldest. Optionally filters by the dogId and logAction provides
+    /// Returns an array of tuples [(uniqueDay, uniqueMonth, uniqueYear, [(forDogId, log)])]. This array has all of the logs for all of the dogs grouped what unique day/month/year they occured on, first element is furthest in the future and last element is the oldest. Optionally filters by the dogId and logAction provides
     func groupedLogsByUniqueDate(forLogsFilter logsFilter: [Int: [LogAction]], forMaximumNumberOfLogsPerDog maximumNumberOfLogsPerDog: Int) -> [(Int, Int, Int, [(Int, Log)])] {
         // let startDate = Date()
         var dogIdLogsTuples: [(Int, Log)] = []

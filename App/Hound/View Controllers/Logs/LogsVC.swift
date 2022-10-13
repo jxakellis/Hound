@@ -33,14 +33,14 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
     /// Log selected in the main table view of the logs of care page. This log object has JUST been retrieved and constructed from data from the server.
     private var selectedLog: Log?
     /// Parent dog id of the log selected in the main table view of the logs of care page.
-    private var parentDogIdOfSelectedLog: Int?
+    private var forDogIdOfSelectedLog: Int?
     
-    func didSelectLog(parentDogId: Int, log: Log) {
+    func didSelectLog(forDogId: Int, log: Log) {
         selectedLog = log
-        parentDogIdOfSelectedLog = parentDogId
+        forDogIdOfSelectedLog = forDogId
         self.performSegueOnceInWindowHierarchy(segueIdentifier: "LogsAddLogViewController")
         selectedLog = nil
-        parentDogIdOfSelectedLog = nil
+        forDogIdOfSelectedLog = nil
     }
     
     // MARK: - IB
@@ -73,35 +73,35 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
     
     @IBAction private func willShowFilter(_ sender: Any) {
         // TO DO FUTURE allow the user to filter logs by family members
-        var numRowsDisplayed: Int {
+        let numberOfRowsToDisplay: Int = {
             
             // finds the total count of rows needed
-            var totalCount: Int {
+            let totalNumberOfRowsNeeded: Int = {
                 var count = 0
                 for dog in dogManager.dogs {
-                    count += dog.dogLogs.uniqueLogActions.count + 1
+                    // need a row for each dog
+                    count += 1
+                    // need a row for each unique log action of each dog
+                    count += dog.dogLogs.uniqueLogActions.count
                 }
                 
-                if count == 0 {
-                    return 1
-                }
+                // need a row for "clear filter"
                 return count + 1
-            }
+            }()
             
             // finds the total number of rows that can be displayed and makes sure that the needed does not exceed that
             let maximumHeight = self.view.safeAreaLayoutGuide.layoutFrame.size.height
-            let neededHeight = DropDownUIView.rowHeightForLogFilter * CGFloat(totalCount)
+            let neededHeight = DropDownUIView.rowHeightForLogFilter * CGFloat(totalNumberOfRowsNeeded)
             
             if neededHeight < maximumHeight {
-                return totalCount
+                return totalNumberOfRowsNeeded
             }
             else {
                 return Int((maximumHeight / DropDownUIView.rowHeightForLogFilter).rounded(.down))
             }
-            
-        }
+        }()
         
-        dropDown.showDropDown(numberOfRowsToShow: CGFloat(numRowsDisplayed), animated: true)
+        dropDown.showDropDown(numberOfRowsToShow: CGFloat(numberOfRowsToDisplay), animated: true)
     }
     
     // MARK: - Dog Manager
@@ -445,7 +445,6 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
     
     // MARK: - Navigation
     
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let logsTableViewController = segue.destination as? LogsTableViewController {
             self.logsTableViewController = logsTableViewController
@@ -457,7 +456,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
             self.logsAddLogViewController = logsAddLogViewController
             logsAddLogViewController.delegate = self
             
-            logsAddLogViewController.parentDogIdToUpdate = parentDogIdOfSelectedLog
+            logsAddLogViewController.forDogIdToUpdate = forDogIdOfSelectedLog
             logsAddLogViewController.logToUpdate = selectedLog
             logsAddLogViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         }

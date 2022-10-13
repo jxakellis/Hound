@@ -44,7 +44,7 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
     
     var reminder: Reminder!
     
-    var parentDogId: Int!
+    var forDogId: Int!
     
     // MARK: - Main
     
@@ -59,8 +59,8 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
     // MARK: - Setup
     
     // Setup function that sets up the different IBOutlet properties
-    func setup(forParentDogId parentDogId: Int, forReminder reminder: Reminder) {
-        self.parentDogId = parentDogId
+    func setup(forForDogId forDogId: Int, forReminder reminder: Reminder) {
+        self.forDogId = forDogId
         self.reminder = reminder
         
         //  Text and Image Configuration

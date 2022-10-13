@@ -10,8 +10,6 @@ import UIKit
 
 protocol DogsAddDogViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
-    /// Reinitalizes timers that were possibly destroyed
-    func didCancel(sender: Sender)
 }
 
 final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
@@ -82,18 +80,14 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
         addDogButtonBackground.beginQuerying(isBackgroundButton: true)
         
         let initalReminders = initalReminders?.reminders ?? []
-        let currentReminders = dogsReminderNavigationViewController?.dogsReminderTableViewController?.reminderManager.reminders ?? []
+        let currentReminders = dogsReminderTableViewController?.reminders ?? []
         // create reminders have placeholder ids
         let createdReminders = currentReminders.filter({ currentReminder in
             return currentReminder.reminderId <= -1
         })
         
         createdReminders.forEach { reminder in
-            // If the user created countdown reminder(s) and then sat on the create a dog page, those countdown reminders will be 'counting down' as time has passed from their reminderExecutionBasis's. Therefore we must reset their executionBasis so they are fresh.
-            guard reminder.reminderType == .countdown else {
-                return
-            }
-            reminder.prepareForNextAlarm()
+            reminder.resetForNextAlarm()
         }
         
         let updatedReminders = currentReminders.filter { currentReminder in
@@ -113,6 +107,11 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
             return currentReminder.isSame(asReminder: initalReminder) == false
         }
         
+        updatedReminders.forEach { updatedReminder in
+            // updated reminder could have had its timing updating, so resetForNextAlarm to clear skippedDate, snoozing, etc.
+            updatedReminder.resetForNextAlarm()
+        }
+        
         // looks for reminders that were present in initalReminders but not in currentReminders
         let deletedReminders = initalReminders.filter({ initalReminder in
             // deleted reminders have to have a real reminderId as we are contacting the server
@@ -126,8 +125,6 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
             // if current reminders contains the target inital reminder, then that inital reminder wasn't deleted and shouldnt be included
             return !currentRemindersContainsInitalReminder
         })
-        
-        print(createdReminders, updatedReminders, deletedReminders)
         
         if dogToUpdate != nil {
             
@@ -147,11 +144,12 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
                 return numberOfTasks
             }()
             
+            // TO DO NOW differentiate between completing single task and completing all tasks in CompletionTracker. upon completing a single task, add the dog and set the dog manager, upon completing all the tasks, end the query indicator and dismiss the navigationController.
             let completionTracker = CompletionTracker(numberOfTasks: numberOfTasks) {
                 // all tasks completed successfully
                 self.addDogButton.endQuerying()
                 self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
-                self.dogManager.updateDog(forDog: dog)
+                self.dogManager.addDog(forDog: dog)
                 self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                 self.navigationController?.popViewController(animated: true)
             } failureCompletionHandler: {
@@ -226,21 +224,20 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
                 RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
                     self.addDogButton.endQuerying()
                     self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
-                    if let reminders = reminders {
-                        // dog and reminders successfully created, so we can proceed
-                        dog.dogReminders.addReminders(forReminders: reminders)
-                        
-                        self.dogManager.addDog(forDog: dog)
-                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-                        
-                        self.navigationController?.popViewController(animated: true)
-                    }
-                    else {
+                    guard let reminders = reminders else {
                         // reminders were unable to be created so we delete the dog to remove everything.
                         DogsRequest.delete(invokeErrorManager: false, forDogId: dog.dogId) { _, _ in
                             // do nothing, we can't do more even if it fails.
                         }
+                        return
                     }
+                    // dog and reminders successfully created, so we can proceed
+                    dog.dogReminders.addReminders(forReminders: reminders)
+                    
+                    self.dogManager.addDog(forDog: dog)
+                    self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    
+                    self.navigationController?.popViewController(animated: true)
                 }
             }
         }
@@ -290,7 +287,6 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
         let unsavedInformationConfirmation = GeneralUIAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
         
         let alertActionExit = UIAlertAction(title: "Yes, I don't want to save changes", style: .default) { _ in
-            self.delegate.didCancel(sender: Sender(origin: self, localized: self))
             self.navigationController?.popViewController(animated: true)
         }
         
@@ -316,7 +312,7 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
     
     // MARK: - Properties
     
-    var dogsReminderNavigationViewController: DogsReminderNavigationViewController?
+    var dogsReminderTableViewController: DogsReminderTableViewController?
     
     weak var delegate: DogsAddDogViewControllerDelegate! = nil
     
@@ -335,15 +331,15 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
             return true
         }
         // need to check count, make sure the arrays are 1:1. if current reminders has more reminders than inital reminders, the loop below won't catch it, as the loop below just looks to see if each inital reminder is still present in current reminders.
-        else if initalReminders?.reminders.count != dogsReminderNavigationViewController?.dogsReminderTableViewController?.reminderManager.reminders.count {
+        else if initalReminders?.reminders.count != dogsReminderTableViewController?.reminders.count {
             return true
         }
         
         if let initalReminders = initalReminders?.reminders {
-            let currentReminders = dogsReminderNavigationViewController?.dogsReminderTableViewController?.reminderManager
+            let currentReminders = dogsReminderTableViewController?.reminders
             // make sure each inital reminder has a corresponding current reminder, otherwise current reminders have been updated
             for initalReminder in initalReminders {
-                let currentReminder = currentReminders?.findReminder(forReminderId: initalReminder.reminderId)
+                let currentReminder = currentReminders?.first(where: { $0.reminderId == initalReminder.reminderId })
                 
                 guard let currentReminder = currentReminder else {
                     // no corresponding reminder
@@ -387,8 +383,6 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
         var passedReminders: ReminderManager {
             return dogToUpdate?.dogReminders.copy() as? ReminderManager ?? ReminderManager(forReminders: ClassConstant.ReminderConstant.defaultReminders)
         }
-        // if we have a dogToUpdate available, then we pass a copy of its reminders, otherwise we pass a reminder manager filled with just default reminders
-        dogsReminderNavigationViewController?.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: passedReminders)
         
         // buttons
         dogIcon.layer.masksToBounds = true
@@ -421,11 +415,14 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
     
     // MARK: - Navigation
     
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let dogsReminderNavigationViewController = segue.destination as? DogsReminderNavigationViewController {
-            self.dogsReminderNavigationViewController = dogsReminderNavigationViewController
-            dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: dogToUpdate?.dogReminders.copy() as? ReminderManager ?? ReminderManager(forReminders: ClassConstant.ReminderConstant.defaultReminders))
+        if let navigationController = segue.destination as? UINavigationController {
+            
+            if let dogsReminderTableViewController = navigationController.viewControllers.first as? DogsReminderTableViewController {
+                self.dogsReminderTableViewController = dogsReminderTableViewController
+                dogsReminderTableViewController.reminders = (dogToUpdate?.dogReminders.copy() as? ReminderManager)?.reminders ?? ReminderManager(forReminders: ClassConstant.ReminderConstant.defaultReminders).reminders
+            }
+            
         }
         
     }

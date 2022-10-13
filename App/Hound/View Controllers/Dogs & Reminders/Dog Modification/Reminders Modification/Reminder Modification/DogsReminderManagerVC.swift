@@ -8,16 +8,7 @@
 
 import UIKit
 
-/*
- protocol DogsReminderManagerViewControllerDelegate: AnyObject {
- func didAddReminder(newReminder: Reminder)
- func didAddReminder(updatedReminder: Reminder)
- }
- */
-
 final class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, DogsReminderCountdownViewControllerDelegate, DogsReminderWeeklyViewControllerDelegate, DropDownUIViewDataSource, DogsReminderMonthlyViewControllerDelegate, DogsReminderOneTimeViewControllerDelegate {
-    
-    // MARK: Auto Save Trigger
     
     // MARK: - DogsReminderCountdownViewControllerDelegate and DogsReminderWeeklyViewControllerDelegate
     
@@ -315,7 +306,7 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
     // MARK: - Functions
     
     /// Attempts to either create a new reminder or update an existing reminder from the settings chosen by the user. If there are invalid settings (e.g. no weekdays), an error message is sent to the user and nil is returned. If the reminder is valid, a reminder is returned that is ready to be sent to the server.
-    func applyReminderSettings() -> Reminder? {
+    func reminderWithSettingsApplied() -> Reminder? {
         do {
             guard let selectedReminderAction = selectedReminderAction else {
                 throw ErrorConstant.ReminderError.reminderActionBlank
@@ -367,7 +358,8 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
             
             // Check if we are updating a reminder
             guard let targetReminder = targetReminder else {
-                // Not updating an existing reminders
+                // Not updating an existing reminder, therefore created a reminder and prepare it for use
+                reminder.resetForNextAlarm()
                 return reminder
             }
             
@@ -380,22 +372,22 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
             case .oneTime:
                 // execution date changed
                 if reminder.oneTimeComponents.oneTimeDate != targetReminder.oneTimeComponents.oneTimeDate {
-                    reminder.prepareForNextAlarm()
+                    reminder.resetForNextAlarm()
                 }
             case .countdown:
                 // execution interval changed
                 if reminder.countdownComponents.executionInterval != targetReminder.countdownComponents.executionInterval {
-                    reminder.prepareForNextAlarm()
+                    reminder.resetForNextAlarm()
                 }
             case .weekly:
                 // time of day or weekdays changed
                 if reminder.weeklyComponents.weekdays != targetReminder.weeklyComponents.weekdays || reminder.weeklyComponents.UTCHour != targetReminder.weeklyComponents.UTCHour || reminder.weeklyComponents.UTCMinute != targetReminder.weeklyComponents.UTCMinute {
-                    reminder.prepareForNextAlarm()
+                    reminder.resetForNextAlarm()
                 }
             case .monthly:
                 // time of day or day of month changed
                 if reminder.monthlyComponents.UTCDay != targetReminder.monthlyComponents.UTCDay || reminder.monthlyComponents.UTCHour != targetReminder.monthlyComponents.UTCHour || reminder.monthlyComponents.UTCMinute != targetReminder.monthlyComponents.UTCMinute {
-                    reminder.prepareForNextAlarm()
+                    reminder.resetForNextAlarm()
                 }
             }
             

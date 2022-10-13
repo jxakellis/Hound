@@ -58,7 +58,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             
             let dog = dogManager.dogs[indexPath.row]
             
-            customCell.willToggleDropDownSelection(forSelected: (parentDogIdsSelected ?? []).contains(dog.dogId))
+            customCell.willToggleDropDownSelection(forSelected: (forDogIdsSelected ?? []).contains(dog.dogId))
             
             customCell.label.text = dog.dogName
             
@@ -120,38 +120,38 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         if dropDownUIViewIdentifier == "DropDownParentDog", let selectedCell = dropDownParentDog.dropDownTableView?.cellForRow(at: indexPath) as? DropDownTableViewCell {
             
             let dogSelected = dogManager.dogs[indexPath.row]
-            let initalParentDogIdsSelected = parentDogIdsSelected
+            let initalForDogIdsSelected = forDogIdsSelected
             
             // check if the dog the user clicked on was already part of the parent dogs selected, if so then we remove its selection
-            let isAlreadySelected = parentDogIdsSelected?.contains(dogSelected.dogId) ?? false
+            let isAlreadySelected = forDogIdsSelected?.contains(dogSelected.dogId) ?? false
             
             // Since we are flipping the selection state of the cell, that means if the dogId isn't in the array, we need to add it and if is in the array we remove it
             if isAlreadySelected {
-                parentDogIdsSelected?.removeAll { dogId in
+                forDogIdsSelected?.removeAll { dogId in
                     return dogId == dogSelected.dogId
                 }
             }
             else {
                 // since the user has selected a parent dog, make sure we give them an array to append to
-                parentDogIdsSelected = parentDogIdsSelected ?? []
-                parentDogIdsSelected?.append(dogSelected.dogId)
+                forDogIdsSelected = forDogIdsSelected ?? []
+                forDogIdsSelected?.append(dogSelected.dogId)
             }
             
             // Flip is selected state
             selectedCell.willToggleDropDownSelection(forSelected: !isAlreadySelected)
             
             parentDogLabel.text = {
-                guard let parentDogIdsSelected = parentDogIdsSelected, parentDogIdsSelected.count >= 1 else {
-                    // If no parentDogIdsSelected.count == 0, we leave the text blank so that the placeholder text will display
+                guard let forDogIdsSelected = forDogIdsSelected, forDogIdsSelected.count >= 1 else {
+                    // If no forDogIdsSelected.count == 0, we leave the text blank so that the placeholder text will display
                     return nil
                 }
                 
                 // dogSelected is the dog clicked and now that dog is removed, we need to find the name of the remaining dog
-                if parentDogIdsSelected.count == 1, let singularRemainingDog = dogManager.findDog(forDogId: parentDogIdsSelected[0]) {
+                if forDogIdsSelected.count == 1, let singularRemainingDog = dogManager.findDog(forDogId: forDogIdsSelected[0]) {
                     return singularRemainingDog.dogName
                 }
-                // parentDogIdsSelected.count >= 2
-                else if parentDogIdsSelected.count == dogManager.dogs.count {
+                // forDogIdsSelected.count >= 2
+                else if forDogIdsSelected.count == dogManager.dogs.count {
                     return nameForAllParentDogs
                 }
                 else {
@@ -160,14 +160,14 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             }()
             
             // If its the first time of a user selecting a dog, assume they only want to create a log for one dog. We therefore hide the drop down immediately after.
-            // However, if the user opens this dropdown again, initalParentDogIdsSelected won't be nil and the dropdown will stay open for multiple selections. This allows the user to easily leave the dropdown open for selecting multiple parent dogs
-            if initalParentDogIdsSelected == nil {
+            // However, if the user opens this dropdown again, initalForDogIdsSelected won't be nil and the dropdown will stay open for multiple selections. This allows the user to easily leave the dropdown open for selecting multiple parent dogs
+            if initalForDogIdsSelected == nil {
                 dropDownParentDog.hideDropDown()
                 // Since its the first time a user is selecting a dog, go through the normal flow of creating a log. next open the log action drop down for them
                 dropDownLogAction.showDropDown(numberOfRowsToShow: dropDownLogActionNumberOfRows, animated: true)
             }
             // selected every dog in the drop down, close the drop down
-            else if parentDogIdsSelected?.count == dogManager.dogs.count {
+            else if forDogIdsSelected?.count == dogManager.dogs.count {
                 dropDownParentDog.hideDropDown()
             }
         }
@@ -278,7 +278,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         dismissKeyboard()
         
         do {
-            guard let parentDogIdsSelected = parentDogIdsSelected, parentDogIdsSelected.count >= 1 else {
+            guard let forDogIdsSelected = forDogIdsSelected, forDogIdsSelected.count >= 1 else {
                 throw ErrorConstant.LogError.parentDogNotSelected
             }
             guard let logActionSelected = logActionSelected else {
@@ -286,7 +286,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             }
             
             // Check to see if we are updating or adding a log
-            guard let parentDogIdToUpdate = parentDogIdToUpdate, let logToUpdate = logToUpdate else {
+            guard let forDogIdToUpdate = forDogIdToUpdate, let logToUpdate = logToUpdate else {
                 // Adding a log
                 addLogButton.beginQuerying()
                 addLogButtonBackground.beginQuerying(isBackgroundButton: true)
@@ -294,7 +294,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 // Only retrieve correspondingReminders if switch is on. The switch can only be on if the correspondingReminders array isn't empty and the user turned it on themselves. The switch is hidden when correspondingReminders.count == 0.
                 let correspondingReminders = resetCorrespondingRemindersSwitch.isOn ? self.correspondingReminders : []
                 
-                let completionTracker = CompletionTracker(numberOfTasks: parentDogIdsSelected.count + correspondingReminders.count) {
+                let completionTracker = CompletionTracker(numberOfTasks: forDogIdsSelected.count + correspondingReminders.count) {
                     self.addLogButton.endQuerying()
                     self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
                     self.navigationController?.popViewController(animated: true)
@@ -323,7 +323,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 newLog.logDate = logDateDatePicker.date
                 try newLog.changeLogNote(forLogNote: logNoteTextView.text ?? "")
                 
-                parentDogIdsSelected.forEach { dogId in
+                forDogIdsSelected.forEach { dogId in
                     // Each dog needs it's own newLog object.
                     guard let newLog = newLog.copy() as? Log else {
                         return
@@ -366,7 +366,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             addLogButton.beginQuerying()
             addLogButtonBackground.beginQuerying(isBackgroundButton: true)
             
-            LogsRequest.update(invokeErrorManager: true, forDogId: parentDogIdToUpdate, forLog: logToUpdate) { requestWasSuccessful, _ in
+            LogsRequest.update(invokeErrorManager: true, forDogId: forDogIdToUpdate, forLog: logToUpdate) { requestWasSuccessful, _ in
                 self.addLogButton.endQuerying()
                 self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
                 if requestWasSuccessful == true {
@@ -376,7 +376,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                         LocalConfiguration.addLogCustomAction(forName: logCustomActionName)
                     }
                     
-                    self.dogManager.findDog(forDogId: parentDogIdToUpdate)?.dogLogs.addLog(forLog: logToUpdate)
+                    self.dogManager.findDog(forDogId: forDogIdToUpdate)?.dogLogs.addLog(forLog: logToUpdate)
                     
                     self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                     
@@ -393,7 +393,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     @IBOutlet private weak var removeLogBarButton: UIBarButtonItem!
     @IBAction private func willRemoveLog(_ sender: Any) {
         
-        guard let parentDogIdToUpdate = parentDogIdToUpdate, let logToUpdate = logToUpdate else {
+        guard let forDogIdToUpdate = forDogIdToUpdate, let logToUpdate = logToUpdate else {
             return
         }
         
@@ -402,9 +402,9 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             
             // the user decided to delete so we must query server
-            LogsRequest.delete(invokeErrorManager: true, forDogId: parentDogIdToUpdate, forLogId: logToUpdate.logId) { requestWasSuccessful, _ in
+            LogsRequest.delete(invokeErrorManager: true, forDogId: forDogIdToUpdate, forLogId: logToUpdate.logId) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
-                    if let dog = self.dogManager.findDog(forDogId: parentDogIdToUpdate) {
+                    if let dog = self.dogManager.findDog(forDogId: forDogIdToUpdate) {
                         for dogLog in dog.dogLogs.logs where dogLog.logId == logToUpdate.logId {
                             dog.dogLogs.removeLog(forLogId: dogLog.logId)
                         }
@@ -440,8 +440,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     
     // MARK: - Properties
     
-    /// This is the parentDogId of a log if the user is updating an existing log instead of creating a new one
-    var parentDogIdToUpdate: Int?
+    /// This is the forDogId of a log if the user is updating an existing log instead of creating a new one
+    var forDogIdToUpdate: Int?
     /// This is the information of a log if the user is updating an existing log instead of creating a new one
     var logToUpdate: Log?
     
@@ -449,7 +449,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     
     // MARK: INITAL VALUE TRACKING
     
-    private var initalParentDogIdsSelected: [Int]!
+    private var initalForDogIdsSelected: [Int]!
     private var initalLogAction: LogAction?
     private var initalLogCustomActionName: String?
     private var initalLogNote: String!
@@ -468,7 +468,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         else if initalLogDate != logDateDatePicker.date {
             return true
         }
-        else if initalParentDogIdsSelected != parentDogIdsSelected {
+        else if initalForDogIdsSelected != forDogIdsSelected {
             return true
         }
         else {
@@ -484,7 +484,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         return dogManager.dogs.count > 5 ? 5.5 : CGFloat(dogManager.dogs.count)
     }
     
-    private var parentDogIdsSelected: [Int]?
+    private var forDogIdsSelected: [Int]?
     private let nameForMultipleParentDogs = "Multiple"
     private let nameForAllParentDogs = "All"
     
@@ -527,7 +527,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         
         // Find the dogs that are currently selected
         let selectedDogs = dogManager.dogs.filter { dog in
-            return (parentDogIdsSelected ?? []).contains(dog.dogId)
+            return (forDogIdsSelected ?? []).contains(dog.dogId)
         }
         
         // Search through all of the dogs currently selected. For each dog, find any reminders where the reminderAction and reminderCustomActionName match the logAction and logCustomActionName currently selected on the create log page.
@@ -566,13 +566,13 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         
         /// Requires log information to be present. Sets up the values of different variables that is found out from information passed
         func setupValues() {
-            if let parentDogIdToUpdate = parentDogIdToUpdate, logToUpdate != nil {
+            if let forDogIdToUpdate = forDogIdToUpdate, logToUpdate != nil {
                 pageTitle?.title = "Edit Log"
                 removeLogBarButton.isEnabled = true
                 
-                if let dog = dogManager.findDog(forDogId: parentDogIdToUpdate) {
+                if let dog = dogManager.findDog(forDogId: forDogIdToUpdate) {
                     parentDogLabel.text = dog.dogName
-                    parentDogIdsSelected = [dog.dogId]
+                    forDogIdsSelected = [dog.dogId]
                 }
                 
                 parentDogLabel.isUserInteractionEnabled = false
@@ -583,7 +583,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 removeLogBarButton.isEnabled = false
                 
                 // If the family only has one dog, then force the parent dog selected to be that single dog. otherwise, make the parent dog selected none and force the user to select parent dog(s)
-                parentDogIdsSelected = dogManager.dogs.count == 1
+                forDogIdsSelected = dogManager.dogs.count == 1
                 ? [dogManager.dogs[0].dogId]
                 : nil
                 
@@ -620,7 +620,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             logDateDatePicker.date = logToUpdate?.logDate ?? Date()
             
             // configure inital values so we can track if anything gets updated
-            initalParentDogIdsSelected = parentDogIdsSelected
+            initalForDogIdsSelected = forDogIdsSelected
             initalLogAction = logActionSelected
             initalLogCustomActionName = logCustomActionNameTextField.text
             initalLogDate = logDateDatePicker.date
@@ -655,8 +655,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             backgroundGestureView.addGestureRecognizer(dismissDropDownLogActionGesture)
           
             // Only allow use of parentDogLabel if they are creating a log, not updating
-            parentDogLabel.isUserInteractionEnabled = parentDogIdToUpdate == nil
-            parentDogLabel.isEnabled = parentDogIdToUpdate == nil
+            parentDogLabel.isUserInteractionEnabled = forDogIdToUpdate == nil
+            parentDogLabel.isEnabled = forDogIdToUpdate == nil
             let parentDogLabelGesture = UITapGestureRecognizer(target: self, action: #selector(showDropDownParentDog))
             parentDogLabelGesture.delegate = self
             parentDogLabelGesture.cancelsTouchesInView = false
@@ -736,7 +736,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         // MARK: Show Drop Down
         
         // if the user hasn't selected a parent dog, indicating that this is the first time the logsaddlogvc is appearing, then show the drop down. this functionality will make it so when the user clicks the plus button to add a new log, we automatically present the parent dog dropdown to them
-        if parentDogIdsSelected == nil {
+        if forDogIdsSelected == nil {
             dropDownParentDog.showDropDown(numberOfRowsToShow: dropDownParentDogNumberOfRows, animated: true)
         }
         // if the user has selected a parent dog (clicking the create log plus button while only having one dog), then show the drop down for log action. this functionality will make it so when the user clicks the pluss button to add a new log, and they only have one parent dog to choose from so we automatically select the parent dog, we automatically present the log action drop down to them

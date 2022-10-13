@@ -10,7 +10,7 @@ import UIKit
 
 protocol DogsTableViewControllerDelegate: AnyObject {
     func willOpenDogMenu(forDogId: Int?)
-    func willOpenReminderMenu(parentDogId: Int, forReminderId: Int?)
+    func willOpenReminderMenu(forDogId: Int, forReminder: Reminder?)
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
@@ -145,7 +145,7 @@ final class DogsTableViewController: UITableViewController {
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
         let alertActionAdd = UIAlertAction(title: "Add Reminder", style: .default) { _ in
-            self.delegate.willOpenReminderMenu(parentDogId: dogId, forReminderId: nil)
+            self.delegate.willOpenReminderMenu(forDogId: dogId, forReminder: nil)
         }
         
         let alertActionEdit = UIAlertAction(
@@ -192,7 +192,7 @@ final class DogsTableViewController: UITableViewController {
     
     /// Called when a reminder is clicked by the user, display an action sheet of possible modifcations to the alarm/reminder.
     private func willShowReminderActionSheet(forCell cell: DogsReminderDisplayTableViewCell, forIndexPath indexPath: IndexPath) {
-        guard let dog = dogManager.findDog(forDogId: cell.parentDogId) else {
+        guard let dog = dogManager.findDog(forDogId: cell.forDogId) else {
             return
         }
         
@@ -203,7 +203,7 @@ final class DogsTableViewController: UITableViewController {
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
         let alertActionEdit = UIAlertAction(title: "Edit Reminder", style: .default) { _ in
-            self.delegate.willOpenReminderMenu(parentDogId: cell.parentDogId, forReminderId: reminder.reminderId)
+            self.delegate.willOpenReminderMenu(forDogId: cell.forDogId, forReminder: reminder)
         }
         
         // REMOVE BUTTON
@@ -319,7 +319,7 @@ final class DogsTableViewController: UITableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "DogsReminderDisplayTableViewCell", for: indexPath)
             
             if let customCell = cell as? DogsReminderDisplayTableViewCell {
-                customCell.setup(forParentDogId: dogManager.dogs[indexPath.section].dogId,
+                customCell.setup(forForDogId: dogManager.dogs[indexPath.section].dogId,
                                  forReminder: dogManager.dogs[indexPath.section].dogReminders.reminders[indexPath.row - 1])
             }
             
@@ -375,13 +375,13 @@ final class DogsTableViewController: UITableViewController {
             removeConfirmation?.addAction(alertActionCancel)
         }
         // delete reminder
-        if indexPath.row > 0, let reminderCell = tableView.cellForRow(at: indexPath) as? DogsReminderDisplayTableViewCell, let dog: Dog = dogManager.findDog(forDogId: reminderCell.parentDogId) {
+        if indexPath.row > 0, let reminderCell = tableView.cellForRow(at: indexPath) as? DogsReminderDisplayTableViewCell, let dog: Dog = dogManager.findDog(forDogId: reminderCell.forDogId) {
             let reminder: Reminder = reminderCell.reminder
             
             removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))?", message: nil, preferredStyle: .alert)
             
             let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                RemindersRequest.delete(invokeErrorManager: true, forDogId: reminderCell.parentDogId, forReminder: reminder) { requestWasSuccessful, _ in
+                RemindersRequest.delete(invokeErrorManager: true, forDogId: reminderCell.forDogId, forReminder: reminder) { requestWasSuccessful, _ in
                     if requestWasSuccessful == true {
                         dog.dogReminders.removeReminder(forReminderId: reminder.reminderId)
                         self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)

@@ -14,8 +14,6 @@ enum PersistenceManager {
     /// Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
     static func applicationDidFinishLaunching() {
         
-        // TO DO NOW PRODUCTION create image ec2 instance. truncate development database and review production database (potentially truncate certain data). review backup configuration of database servers, make sure backing up frequently.
-        
         // MARK: Log Launch
         
         AppDelegate.generalLogger.notice("\n-----Device Info-----\n Model: \(UIDevice.current.model) \n Name: \(UIDevice.current.name) \n System Name: \(UIDevice.current.systemName) \n System Version: \(UIDevice.current.systemVersion)")
@@ -47,6 +45,11 @@ enum PersistenceManager {
         // MARK: Load User Information
         
         UserInformation.userId = UserDefaults.standard.value(forKey: KeyConstant.userId.rawValue) as? String ?? UserInformation.userId
+        
+        if DevelopmentConstant.isProductionDatabase == false {
+            UserInformation.userId = "3991d3ce3891651df1f722ed8f4ba555986e82b968c7039aec2e8fb603352e65"
+            UserInformation.userIdentifier = "1f66dbb1e7df20e51a8cd88c2334f5e4def79a2ebc1444f6766ff4160ea6927a"
+        }
        
         UserInformation.familyId = UserDefaults.standard.value(forKey: KeyConstant.familyId.rawValue) as? String ?? UserInformation.familyId
         

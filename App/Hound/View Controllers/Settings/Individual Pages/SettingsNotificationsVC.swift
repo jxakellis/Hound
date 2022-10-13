@@ -132,7 +132,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
                     // nothing to update (as permissions denied) so we don't tell the server anything
                     
                     // Permission is denied, so we want to flip the switch back to its proper off position
-                    let switchDisableTimer = Timer(fire: Date().addingTimeInterval(0.22), interval: -1, repeats: false) { _ in
+                    let switchDisableTimer = Timer(fire: Date().addingTimeInterval(0.25), interval: -1, repeats: false) { _ in
                         self.synchronizeNotificationsValues(animated: true)
                     }
                     

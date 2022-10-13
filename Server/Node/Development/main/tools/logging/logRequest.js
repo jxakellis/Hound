@@ -7,6 +7,7 @@ const { formatString, formatNumber } = require('../format/formatObject');
 
 // Outputs request to the console and logs to database
 async function logRequest(req, res, next) {
+  // TO DO NOW before a request insert, check the total number of requests and responses, if that number is over ~10 million, then delete the first 100,000
   const date = new Date();
 
   const appVersion = formatString(req.params.appVersio, 10);

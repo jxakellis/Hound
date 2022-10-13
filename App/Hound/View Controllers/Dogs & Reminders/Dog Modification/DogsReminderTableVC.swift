@@ -12,45 +12,53 @@ final class DogsReminderTableViewController: UITableViewController, DogsReminder
     
     // MARK: DogsNestedReminderViewControllerDelegate
     
-    func didAddReminder(sender: Sender, forReminder: Reminder) {
-        reminderManager.addReminder(forReminder: forReminder)
-        setReminderManager(sender: Sender(origin: sender, localized: sender), newReminderManager: reminderManager)
-    }
-    
-    func didUpdateReminder(sender: Sender, forReminder: Reminder) {
-        reminderManager.addReminder(forReminder: forReminder, shouldOverridePlaceholderReminder: true)
-        setReminderManager(sender: Sender(origin: sender, localized: sender), newReminderManager: reminderManager)
-    }
-    
-    func didRemoveReminder(sender: Sender, forReminder: Reminder) {
-        reminderManager.removeReminder(forReminderId: forReminder.reminderId)
-        setReminderManager(sender: Sender(origin: sender, localized: sender), newReminderManager: reminderManager)
-    }
-    
-    // MARK: - Dogs Reminder Table View Cell
-    
-    func didUpdateReminderIsEnabled(sender: Sender, reminderId: Int, reminderIsEnabled: Bool) {
-        guard let reminder = reminderManager.findReminder(forReminderId: reminderId) else {
-            return
+    func willAddReminder(sender: Sender, forReminder: Reminder) {
+        reminders.removeAll { reminder in
+            guard reminder.reminderId >= 0 else {
+                return
+            }
+            
+            return reminder.reminderId == forReminder.reminderId
         }
         
-        reminder.reminderIsEnabled = reminderIsEnabled
-        setReminderManager(sender: sender, newReminderManager: reminderManager)
+        // find the reminder with the lowest reminderId of all the existing reminderIds
+        let lowestReminderId = reminders.min { reminderOne, reminderTwo in
+            return reminderOne.reminderId <= reminderTwo.reminderId
+        }
+        
+        // if the reminder we want to add has a placeholderId and another reminder in the array already has a placeholderId, then shift the new reminder's placeholderId
+        if let lowestReminderId = lowestReminderId, forReminder.reminderId <= -1 && lowestReminderId.reminderId <= -1 {
+            forReminder.reminderId = lowestReminderId.reminderId - 1
+        }
+        reminders.append(forReminder)
+        reloadTable()
+    }
+    
+    func willUpdateReminder(sender: Sender, forReminder: Reminder) {
+        reminders.removeAll { reminder in
+            return reminder.reminderId == forReminder.reminderId
+        }
+        reminders.append(forReminder)
+        reloadTable()
+    }
+    
+    func willRemoveReminder(sender: Sender, forReminder: Reminder) {
+        reminders.removeAll { reminder in
+            return reminder.reminderId == forReminder.reminderId
+        }
+        reloadTable()
+    }
+    
+    // MARK: - DogsReminderTableViewCell
+    
+    func didUpdateReminderIsEnabled(sender: Sender, forReminderId: Int, forReminderIsEnabled: Bool) {
+        reminders.first(where: { $0.reminderId == forReminderId })?.reminderIsEnabled = forReminderIsEnabled
     }
     
     // MARK: - Reminder Manager
     
-    private(set) var reminderManager = ReminderManager()
-    
-    func setReminderManager(sender: Sender, newReminderManager: ReminderManager) {
-        reminderManager = newReminderManager
-        
-        if !(sender.localized is DogsReminderTableViewController) && !(sender.localized is DogsReminderTableViewCell) {
-            reloadTable()
-        }
-        
-        tableView.rowHeight = reminderManager.reminders.count > 0 ? -1 : 65.5
-    }
+    /// Use a reminders array instead of a ReminderManager. We will be performing changes on the reminderManager that can potentially be discarded by hitting the cancel button, therefore we can't use ReminderManager as it can invalidate timers
+    var reminders: [Reminder] = []
     
     // MARK: - Properties
     
@@ -67,12 +75,7 @@ final class DogsReminderTableViewController: UITableViewController, DogsReminder
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if self.reminderManager.reminders.count == 0 {
-            self.tableView.allowsSelection = false
-        }
-        else {
-            self.tableView.allowsSelection = true
-        }
+        reloadTable()
         
         MainTabBarViewController.mainTabBarViewController?.dogsViewController?.dogsAddDogViewController.willHideButtons(isHidden: false)
     }
@@ -91,11 +94,7 @@ final class DogsReminderTableViewController: UITableViewController, DogsReminder
     
     /// Returns the number of cells present in section (currently only 1 section)
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        // if reminderManager.reminders.count == 0{
-        //    return 1
-        // }
-        return reminderManager.reminders.count
+        return reminders.count
     }
     
     /// Configures cells at the given index path, pulls from reminder manager reminders to get configuration parameters for each cell, corrosponding cell goes to corrosponding index of reminder manager reminder e.g. cell 1 at [0]
@@ -105,7 +104,7 @@ final class DogsReminderTableViewController: UITableViewController, DogsReminder
         
         if let castCell = cell as? DogsReminderTableViewCell {
             castCell.delegate = self
-            castCell.setup(forReminder: reminderManager.reminders[indexPath.row])
+            castCell.setup(forReminder: reminders[indexPath.row])
         }
         
         return cell
@@ -114,33 +113,34 @@ final class DogsReminderTableViewController: UITableViewController, DogsReminder
     /// Reloads table data when it is updated, if you change the data w/o calling this, the data display to the user will not be updated
     private func reloadTable() {
         
-        if self.reminderManager.reminders.count == 0 {
-            self.tableView.allowsSelection = false
+        tableView.rowHeight = reminders.count > 0 ? -1 : 65.5
+        
+        if reminders.count == 0 {
+            tableView.allowsSelection = false
         }
         else {
-            self.tableView.allowsSelection = true
+            tableView.allowsSelection = true
         }
         
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        selectedReminder = reminders[indexPath.row]
         
-        selectedReminder = reminderManager.reminders[indexPath.row]
-        self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsNestedReminderViewController")
-        
+        performSegueOnceInWindowHierarchy(segueIdentifier: "DogsNestedReminderViewController")
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete && reminderManager.reminders.count > 0 {
-            let reminder = reminderManager.reminders[indexPath.row]
+        if editingStyle == .delete && reminders.count > 0 {
+            let reminder = reminders[indexPath.row]
             
             let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))?", message: nil, preferredStyle: .alert)
             
             let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                
-                self.reminderManager.removeReminder(forReminderId: reminder.reminderId)
-                self.setReminderManager(sender: Sender(origin: self, localized: self), newReminderManager: self.reminderManager)
+                self.reminders.removeAll { currentReminder in
+                    return currentReminder.reminderId == reminder.reminderId
+                }
                 
                 self.tableView.deleteRows(at: [indexPath], with: .automatic)
             }
@@ -152,7 +152,7 @@ final class DogsReminderTableViewController: UITableViewController, DogsReminder
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        if self.reminderManager.reminders.count == 0 {
+        if reminders.count == 0 {
             return false
         }
         else {
