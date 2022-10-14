@@ -144,16 +144,16 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
                 return numberOfTasks
             }()
             
-            // TO DO NOW differentiate between completing single task and completing all tasks in CompletionTracker. upon completing a single task, add the dog and set the dog manager, upon completing all the tasks, end the query indicator and dismiss the navigationController.
             let completionTracker = CompletionTracker(numberOfTasks: numberOfTasks) {
-                // all tasks completed successfully
+                // everytime a task completes, update the dog manager so everything else updates
+                self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+            } completedAllTasksCompletionHandler: {
+                // when everything completes, close the page
                 self.addDogButton.endQuerying()
                 self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
-                self.dogManager.addDog(forDog: dog)
-                self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                 self.navigationController?.popViewController(animated: true)
-            } failureCompletionHandler: {
-                // something failed
+            } failedTaskCompletionHandler: {
+                // if a problem is encountered, then just stop the indicator
                 self.addDogButton.endQuerying()
                 self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
             }
@@ -166,6 +166,7 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
                 }
                 
                 // Updated dog
+                self.dogManager.addDog(forDog: dog)
                 completionTracker.completedTask()
                 
                 if createdReminders.count >= 1 {

@@ -13,10 +13,11 @@ final class CompletionTracker: NSObject {
     
     // MARK: - Main
     
-    init(numberOfTasks: Int, successfulCompletionHandler: @escaping (() -> Void), failureCompletionHandler: @escaping (() -> Void)) {
+    init(numberOfTasks: Int, completedTaskCompletionHandler: @escaping (() -> Void), completedAllTasksCompletionHandler: @escaping (() -> Void), failedTaskCompletionHandler: @escaping (() -> Void)) {
         self.numberOfTasks = numberOfTasks
-        self.successfulCompletionHandler = successfulCompletionHandler
-        self.failureCompletionHandler = failureCompletionHandler
+        self.completedTaskCompletionHandler = completedTaskCompletionHandler
+        self.completedAllTasksCompletionHandler = completedAllTasksCompletionHandler
+        self.failedTaskCompletionHandler = failedTaskCompletionHandler
         super.init()
     }
     
@@ -28,40 +29,45 @@ final class CompletionTracker: NSObject {
     /// Number of tasks that need to be successful in order to invoke successfulCompletionHandler
     private var numberOfTasks: Int
     
-    /// Once a completion handler is invoked, we track it here so a completion handler isn't accidently invoked twice
-    private var completionHandlerInvoked = false
+    /// Once a completedAllTasksCompletionHandler or failedTaskCompletionHandler is invoked, we track it here. This indicates that the CompletionTracker has completed/failed and it should execute no more code
+    private var completionTrackerFinished = false
+    
+    /// Completion handler invoked every time a task successfully completes
+    private var completedTaskCompletionHandler: (() -> Void)
     
     /// Completion handler invoked if all tasks successfully complete
-    private var successfulCompletionHandler: (() -> Void)
+    private var completedAllTasksCompletionHandler: (() -> Void)
     
     /// Completion handler invoked if one or more of the tasks failed
-    private var failureCompletionHandler: (() -> Void)
+    private var failedTaskCompletionHandler: (() -> Void)
     
     // MARK: - Functions
     
     /// Increments numberOfCompletions. If numberOfCompletions == numberOfTasks, then executes the successfulCompletionHandler
     func completedTask() {
-        guard completionHandlerInvoked == false else {
+        guard completionTrackerFinished == false else {
             return
         }
         
         numberOfCompletions += 1
         
+        completedTaskCompletionHandler()
+        
         guard numberOfCompletions == numberOfTasks else {
             return
         }
         
-        completionHandlerInvoked = true
-        successfulCompletionHandler()
+        completionTrackerFinished = true
+        completedAllTasksCompletionHandler()
     }
     
     /// Executes failureCompletionHandler
     func failedTask() {
-        guard completionHandlerInvoked == false else {
+        guard completionTrackerFinished == false else {
             return
         }
         
-        completionHandlerInvoked = true
-        failureCompletionHandler()
+        completionTrackerFinished = true
+        failedTaskCompletionHandler()
     }
 }

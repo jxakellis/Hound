@@ -295,10 +295,15 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 let correspondingReminders = resetCorrespondingRemindersSwitch.isOn ? self.correspondingReminders : []
                 
                 let completionTracker = CompletionTracker(numberOfTasks: forDogIdsSelected.count + correspondingReminders.count) {
+                    // everytime a task completes, update the dog manager so everything else updates
+                    self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                } completedAllTasksCompletionHandler: {
+                    // when everything completes, close the page
                     self.addLogButton.endQuerying()
                     self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
                     self.navigationController?.popViewController(animated: true)
-                } failureCompletionHandler: {
+                } failedTaskCompletionHandler: {
+                    // if a problem is encountered, then just stop the indicator
                     self.addLogButton.endQuerying()
                     self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
                 }
@@ -309,7 +314,6 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                     RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                         if requestWasSuccessful {
                             completionTracker.completedTask()
-                            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                         }
                         else {
                             completionTracker.failedTask()
@@ -343,8 +347,6 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                         newLog.logId = logId
                         
                         self.dogManager.findDog(forDogId: dogId)?.dogLogs.addLog(forLog: newLog)
-                        
-                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                         
                         completionTracker.completedTask()
                     }
