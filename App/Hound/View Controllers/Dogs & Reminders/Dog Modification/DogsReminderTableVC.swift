@@ -13,14 +13,15 @@ final class DogsReminderTableViewController: UITableViewController, DogsReminder
     // MARK: DogsNestedReminderViewControllerDelegate
     
     func willAddReminder(sender: Sender, forReminder: Reminder) {
+        
         reminders.removeAll { reminder in
             guard reminder.reminderId >= 0 else {
-                return
+                return false
             }
             
             return reminder.reminderId == forReminder.reminderId
         }
-        
+         
         // find the reminder with the lowest reminderId of all the existing reminderIds
         let lowestReminderId = reminders.min { reminderOne, reminderTwo in
             return reminderOne.reminderId <= reminderTwo.reminderId
