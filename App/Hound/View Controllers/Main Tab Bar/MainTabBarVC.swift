@@ -33,7 +33,9 @@ final class MainTabBarViewController: UITabBarController, TimingManagerDelegate,
     
     func didRemoveReminder(sender: Sender, forDogId dogId: Int, forReminderId reminderId: Int) {
         
-        dogManager.findDog(forDogId: dogId)?.dogReminders.removeReminder(forReminderId: reminderId)
+        let dogReminders = dogManager.findDog(forDogId: dogId)?.dogReminders
+        dogReminders?.findReminder(forReminderId: reminderId)?.clearTimers()
+        dogReminders?.removeReminder(forReminderId: reminderId)
         
         setDogManager(sender: sender, forDogManager: dogManager)
     }

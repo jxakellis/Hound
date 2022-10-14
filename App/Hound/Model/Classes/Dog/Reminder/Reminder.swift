@@ -134,7 +134,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             guard let reminderExecutionBasisString = reminderBody[KeyConstant.reminderExecutionBasis.rawValue] as? String else {
                 return nil
             }
-            return ResponseUtils.dateFormatter(fromISO8601String: reminderExecutionBasisString)
+            return RequestUtils.dateFormatter(fromISO8601String: reminderExecutionBasisString)
         }() ?? overrideReminder?.reminderExecutionBasis
         let reminderIsEnabled: Bool? = reminderBody[KeyConstant.reminderIsEnabled.rawValue] as? Bool ?? overrideReminder?.reminderIsEnabled
         
@@ -160,7 +160,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             guard let weeklySkippedDateString = reminderBody[KeyConstant.weeklySkippedDate.rawValue] as? String else {
                 return nil
             }
-            return ResponseUtils.dateFormatter(fromISO8601String: weeklySkippedDateString)
+            return RequestUtils.dateFormatter(fromISO8601String: weeklySkippedDateString)
         }() ?? overrideReminder?.weeklyComponents.skippedDate
         let weeklySunday: Bool? = reminderBody[KeyConstant.weeklySunday.rawValue] as? Bool ?? overrideReminder?.weeklyComponents.weekdays.contains(1)
         let weeklyMonday: Bool? = reminderBody[KeyConstant.weeklyMonday.rawValue] as? Bool ?? overrideReminder?.weeklyComponents.weekdays.contains(2)
@@ -184,7 +184,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             guard let monthlySkippedDateString = reminderBody[KeyConstant.monthlySkippedDate.rawValue] as? String else {
                 return nil
             }
-            return ResponseUtils.dateFormatter(fromISO8601String: monthlySkippedDateString)
+            return RequestUtils.dateFormatter(fromISO8601String: monthlySkippedDateString)
         }() ?? overrideReminder?.monthlyComponents.skippedDate
         
         // monthlySkippedDate can be nil
@@ -198,7 +198,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             guard let oneTimeDateString = reminderBody[KeyConstant.oneTimeDate.rawValue] as? String else {
                 return nil
             }
-            return ResponseUtils.dateFormatter(fromISO8601String: oneTimeDateString)
+            return RequestUtils.dateFormatter(fromISO8601String: oneTimeDateString)
         }() ?? overrideReminder?.oneTimeComponents.oneTimeDate
         
         guard let oneTimeDate = oneTimeDate else {

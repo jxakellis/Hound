@@ -80,7 +80,7 @@ final class Log: NSObject, NSCoding, NSCopying {
         let logCustomActionName: String? = logBody[KeyConstant.logCustomActionName.rawValue] as? String ?? overrideLog?.logCustomActionName
         let logDate: Date? = {
             if let logDateString = logBody[KeyConstant.logDate.rawValue] as? String {
-                return ResponseUtils.dateFormatter(fromISO8601String: logDateString)
+                return RequestUtils.dateFormatter(fromISO8601String: logDateString)
             }
             return nil
         }() ?? overrideLog?.logDate

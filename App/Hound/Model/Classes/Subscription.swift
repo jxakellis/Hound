@@ -87,12 +87,12 @@ final class Subscription: NSObject {
         
         var purchaseDate: Date?
         if let purchaseDateString = body[KeyConstant.purchaseDate.rawValue] as? String {
-            purchaseDate = ResponseUtils.dateFormatter(fromISO8601String: purchaseDateString)
+            purchaseDate = RequestUtils.dateFormatter(fromISO8601String: purchaseDateString)
         }
         
         var expirationDate: Date?
         if let expirationDateString = body[KeyConstant.expirationDate.rawValue] as? String {
-            expirationDate = ResponseUtils.dateFormatter(fromISO8601String: expirationDateString)
+            expirationDate = RequestUtils.dateFormatter(fromISO8601String: expirationDateString)
         }
         
         let numberOfFamilyMembers = body[KeyConstant.numberOfFamilyMembers.rawValue] as? Int ?? ClassConstant.SubscriptionConstant.defaultSubscriptionNumberOfFamilyMembers

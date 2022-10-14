@@ -80,7 +80,7 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
         addDogButtonBackground.beginQuerying(isBackgroundButton: true)
         
         let initalReminders = initalReminders?.reminders ?? []
-        let currentReminders = dogsReminderTableViewController?.reminders ?? []
+        let currentReminders = dogsReminderTableViewController?.dogReminders.reminders ?? []
         // create reminders have placeholder ids
         let createdReminders = currentReminders.filter({ currentReminder in
             return currentReminder.reminderId <= -1
@@ -197,6 +197,7 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
                     RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminders: deletedReminders) { requestWasSuccessful2, _ in
                         if requestWasSuccessful2 == true {
                             for deletedReminder in deletedReminders {
+                                dog.dogReminders.findReminder(forReminderId: deletedReminder.reminderId)?.clearTimers()
                                 dog.dogReminders.removeReminder(forReminderId: deletedReminder.reminderId)
                             }
                             completionTracker.completedTask()
@@ -257,6 +258,7 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
                 if requestWasSuccessful == true {
                     
                     self.dogManager.removeDog(forDogId: dogToUpdate.dogId)
+                    self.dogManager.clearTimers()
                     self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                     
                     self.navigationController?.popViewController(animated: true)
@@ -331,12 +333,12 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
             return true
         }
         // need to check count, make sure the arrays are 1:1. if current reminders has more reminders than inital reminders, the loop below won't catch it, as the loop below just looks to see if each inital reminder is still present in current reminders.
-        else if initalReminders?.reminders.count != dogsReminderTableViewController?.reminders.count {
+        else if initalReminders?.reminders.count != dogsReminderTableViewController?.dogReminders.reminders.count {
             return true
         }
         
         if let initalReminders = initalReminders?.reminders {
-            let currentReminders = dogsReminderTableViewController?.reminders
+            let currentReminders = dogsReminderTableViewController?.dogReminders.reminders
             // make sure each inital reminder has a corresponding current reminder, otherwise current reminders have been updated
             for initalReminder in initalReminders {
                 let currentReminder = currentReminders?.first(where: { $0.reminderId == initalReminder.reminderId })
@@ -420,7 +422,7 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
             
             if let dogsReminderTableViewController = navigationController.viewControllers.first as? DogsReminderTableViewController {
                 self.dogsReminderTableViewController = dogsReminderTableViewController
-                dogsReminderTableViewController.reminders = (dogToUpdate?.dogReminders.copy() as? ReminderManager)?.reminders ?? ReminderManager(forReminders: ClassConstant.ReminderConstant.defaultReminders).reminders
+                dogsReminderTableViewController.dogReminders = (dogToUpdate?.dogReminders.copy() as? ReminderManager) ?? ReminderManager(forReminders: ClassConstant.ReminderConstant.defaultReminders)
             }
             
         }

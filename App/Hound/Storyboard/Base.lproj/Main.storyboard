@@ -145,10 +145,10 @@
             </objects>
             <point key="canvasLocation" x="-5486" y="1710"/>
         </scene>
-        <!--Add Dog Reminder Navigation Controller-->
+        <!--Navigation Controller-->
         <scene sceneID="jno-57-8Ma">
             <objects>
-                <navigationController title="Add Dog Reminder Navigation Controller" id="eFt-4z-qcU" customClass="DogsReminderNavigationViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController id="eFt-4z-qcU" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="8o7-wh-P2A">
                         <rect key="frame" x="0.0" y="48" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -173,11 +173,11 @@
             <objects>
                 <viewController title="Dog Reminder Count Down" id="gRX-vW-PrI" customClass="DogsReminderCountdownViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1dJ-c5-zaj">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="331"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="523"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" horizontalHuggingPriority="240" verticalHuggingPriority="240" horizontalCompressionResistancePriority="740" verticalCompressionResistancePriority="740" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="5400" minuteInterval="5" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nvt-ES-U6h">
-                                <rect key="frame" x="0.0" y="94" width="414" height="237"/>
+                                <rect key="frame" x="0.0" y="94" width="414" height="429"/>
                                 <connections>
                                     <action selector="willUpdateCountdown:" destination="gRX-vW-PrI" eventType="editingChanged" id="Qt9-8F-KfP"/>
                                     <action selector="willUpdateCountdown:" destination="gRX-vW-PrI" eventType="valueChanged" id="xZo-V2-zDP"/>
@@ -215,14 +215,14 @@
             <objects>
                 <viewController title="Dog Reminder Editor" id="ngF-4H-kgO" customClass="DogsReminderManagerViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wCA-tV-nak">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="529"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="721"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8KF-Nk-KXG" userLabel="Container">
-                                <rect key="frame" x="0.0" y="48" width="414" height="481"/>
+                                <rect key="frame" x="0.0" y="48" width="414" height="673"/>
                                 <subviews>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3lK-XC-aXM">
-                                        <rect key="frame" x="0.0" y="150" width="414" height="331"/>
+                                        <rect key="frame" x="0.0" y="150" width="414" height="523"/>
                                         <connections>
                                             <segue destination="Kec-u3-YCz" kind="embed" identifier="DogsReminderOneTimeViewController" id="1Lf-u6-k6g"/>
                                         </connections>
@@ -248,19 +248,19 @@
                                         </connections>
                                     </segmentedControl>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MhX-Hm-1r1">
-                                        <rect key="frame" x="0.0" y="150" width="414" height="331"/>
+                                        <rect key="frame" x="0.0" y="150" width="414" height="523"/>
                                         <connections>
                                             <segue destination="gRX-vW-PrI" kind="embed" identifier="DogsReminderCountdownViewController" id="wbe-5J-4CA"/>
                                         </connections>
                                     </containerView>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XhW-xN-8L1">
-                                        <rect key="frame" x="0.0" y="150" width="414" height="331"/>
+                                        <rect key="frame" x="0.0" y="150" width="414" height="523"/>
                                         <connections>
                                             <segue destination="Zjt-y9-htp" kind="embed" identifier="DogsReminderWeeklyViewController" id="FIA-mJ-bsf"/>
                                         </connections>
                                     </containerView>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o5c-qK-6d7">
-                                        <rect key="frame" x="0.0" y="150" width="414" height="331"/>
+                                        <rect key="frame" x="0.0" y="150" width="414" height="523"/>
                                         <connections>
                                             <segue destination="Xze-9B-CGF" kind="embed" identifier="DogsReminderMonthlyViewController" id="eqG-zf-IyY"/>
                                         </connections>
@@ -390,7 +390,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6MT-az-4bi">
                                 <rect key="frame" x="0.0" y="192" width="414" height="621"/>
                                 <connections>
-                                    <segue destination="eFt-4z-qcU" kind="embed" identifier="DogReminderNavigationController" id="E3d-ML-4L4"/>
+                                    <segue destination="eFt-4z-qcU" kind="embed" identifier="" id="E3d-ML-4L4"/>
                                 </connections>
                             </containerView>
                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iWI-X8-QFy" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
@@ -1791,11 +1791,11 @@
             <objects>
                 <viewController title="Dog Reminder Weekly" id="Zjt-y9-htp" customClass="DogsReminderWeeklyViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="87k-Ug-zEc">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="331"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="523"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" horizontalHuggingPriority="240" verticalHuggingPriority="240" horizontalCompressionResistancePriority="740" verticalCompressionResistancePriority="740" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="5" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="KE9-sW-ERX">
-                                <rect key="frame" x="0.0" y="117.5" width="414" height="213.5"/>
+                                <rect key="frame" x="0.0" y="117.5" width="414" height="405.5"/>
                                 <connections>
                                     <action selector="didUpdateTimeOfDay:" destination="Zjt-y9-htp" eventType="valueChanged" id="wg8-nh-bSt"/>
                                 </connections>
@@ -2044,7 +2044,7 @@
         <!--Settings-->
         <scene sceneID="DYF-tb-Yz2">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="t9t-B7-eVe" customClass="SettingsNavigationViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="t9t-B7-eVe" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Settings" image="gearshape" catalog="system" id="1ee-KT-eOC"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="DrI-Pw-scK">
@@ -2068,7 +2068,7 @@
         <!--Reminders-->
         <scene sceneID="3cf-I6-Jg6">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="c3p-F3-kMn" customClass="DogsNavigationViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="c3p-F3-kMn" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Reminders" image="blackPaw" selectedImage="blackPaw" id="cPa-gy-q4n"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="qxF-gX-J4v">
@@ -2092,7 +2092,7 @@
         <!--Logs-->
         <scene sceneID="VSB-CX-Tzm">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="3Gc-35-HHr" customClass="LogsNavigationViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="3Gc-35-HHr" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Logs" image="list.bullet.rectangle" catalog="system" id="wai-Kx-4b1"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="zSH-9U-6Xa">
@@ -2118,11 +2118,11 @@
             <objects>
                 <viewController title="Dog Reminder Monthly" id="Xze-9B-CGF" customClass="DogsReminderMonthlyViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="kVk-E3-URR">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="331"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="523"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="9v0-8g-D5f">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="331"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="523"/>
                                 <connections>
                                     <action selector="didUpdateTimeOfDay:" destination="Xze-9B-CGF" eventType="valueChanged" id="CMn-st-pM3"/>
                                 </connections>
@@ -2150,11 +2150,11 @@
             <objects>
                 <viewController id="Kec-u3-YCz" customClass="DogsReminderOneTimeViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Vi5-vu-bH5">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="331"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="523"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" horizontalHuggingPriority="240" verticalHuggingPriority="240" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="zll-Bn-jIA">
-                                <rect key="frame" x="0.0" y="94" width="414" height="237"/>
+                                <rect key="frame" x="0.0" y="94" width="414" height="429"/>
                                 <connections>
                                     <action selector="didUpdateDatePicker:" destination="Kec-u3-YCz" eventType="valueChanged" id="QTg-ax-iEK"/>
                                 </connections>
@@ -3852,7 +3852,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="nsH-qM-K4m"/>
-        <segue reference="1g9-zQ-LRF"/>
+        <segue reference="GZX-3R-sVV"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="alarm" catalog="system" width="123" height="128"/>

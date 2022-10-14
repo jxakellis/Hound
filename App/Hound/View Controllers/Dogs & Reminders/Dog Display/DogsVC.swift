@@ -40,7 +40,10 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
     
     func didRemoveReminder(sender: Sender, forDogId: Int, forReminderId: Int) {
         
-        dogManager.findDog(forDogId: forDogId)?.dogReminders.removeReminder(forReminderId: forReminderId)
+        let dogReminders = dogManager.findDog(forDogId: forDogId)?.dogReminders
+        
+        dogReminders?.findReminder(forReminderId: forReminderId)?.clearTimers()
+        dogReminders?.removeReminder(forReminderId: forReminderId)
         
         setDogManager(sender: sender, forDogManager: dogManager)
         
@@ -65,6 +68,7 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
                     if responseStatus == .successResponse {
                         // If the response was successful but no dog was returned, that means the dog was deleted. Therefore, update the dogManager to indicate as such.
                         self.dogManager.removeDog(forDogId: currentDog.dogId)
+                        self.dogManager.clearTimers()
                         self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                     }
                     return
@@ -95,7 +99,10 @@ final class DogsViewController: UIViewController, DogsAddDogViewControllerDelega
                 guard let reminder = reminder else {
                     if responseStatus == .successResponse {
                         // If the response was successful but no reminder was returned, that means the reminder was deleted. Therefore, update the dogManager to indicate as such.
-                        self.dogManager.findDog(forDogId: forDogId)?.dogReminders.removeReminder(forReminderId: forReminder.reminderId)
+                        let dogReminders = self.dogManager.findDog(forDogId: forDogId)?.dogReminders
+                        dogReminders?.findReminder(forReminderId: forReminder.reminderId)?.clearTimers()
+                        dogReminders?.removeReminder(forReminderId: forReminder.reminderId)
+                        
                         self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                     }
                     return

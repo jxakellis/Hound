@@ -11,6 +11,7 @@ import UIKit
 final class ReminderManager: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
+    
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = ReminderManager()
         for reminder in reminders {
@@ -21,6 +22,7 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
     }
     
     // MARK: - NSCoding
+    
     required init?(coder aDecoder: NSCoder) {
         reminders = aDecoder.decodeObject(forKey: KeyConstant.reminders.rawValue) as? [Reminder] ?? reminders
         // If multiple reminders have the same placeholder id (e.g. migrating from Hound 1.3.5 to 2.0.0), shift the dogIds so they all have a unique placeholder id
@@ -73,6 +75,11 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
     private(set) var reminders: [Reminder] = []
     
     // MARK: Functions
+    
+    /// finds and returns the reference of a reminder matching the given reminderId
+    func findReminder(forReminderId reminderId: Int) -> Reminder? {
+        return reminders.first(where: { $0.reminderId == reminderId })
+    }
     
     /// Helper function allows us to use the same logic for addReminder and addReminders and allows us to only sort at the end. Without this function, addReminders would invoke addReminder repeadly and sortReminders() with each call.
     private func addReminderWithoutSorting(forReminder newReminder: Reminder, shouldOverrideReminderWithSamePlaceholderId: Bool) {
@@ -261,20 +268,8 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
             return
         }
         
-        reminders[removedReminderIndex].reminderAlarmTimer = nil
-        reminders[removedReminderIndex].reminderDisableIsSkippingTimer = nil
+        // don't clearTimers() for reminder. we can't be sure what is invoking this function and we don't want to accidentily invalidate the timers. Therefore, leave the timers in place. If the timers are left over and after the reminder is deleted, then they will fail the server query willShowAlarm and be disregarded. If the timers are still valid, then all continues as normal
         
         reminders.remove(at: removedReminderIndex)
-    }
-    
-}
-
-extension ReminderManager {
-    
-    // MARK: Locate
-    
-    /// finds and returns the reference of a reminder matching the given reminderId
-    func findReminder(forReminderId reminderId: Int) -> Reminder? {
-        return reminders.first(where: { $0.reminderId == reminderId })
     }
 }

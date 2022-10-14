@@ -8,6 +8,15 @@
 
 import Foundation
 
+enum ResponseStatus {
+    /// 200...299
+    case successResponse
+    /// != 200...299, e.g. 400, 404, 500
+    case failureResponse
+    /// Request couldn't be constructed, request wasn't sent, request didn't go through, server was down, response was lost, or some other error
+    case noResponse
+}
+
 enum RequestUtils {
     
     enum RequestIndicatorType {
@@ -38,5 +47,19 @@ enum RequestUtils {
         alertController.dismiss(animated: false) {
             completionHandler()
         }
+    }
+    
+    /// Takes an ISO8601 string from the Hound server then attempts to create a Date
+    static func dateFormatter(fromISO8601String ISO8601String: String) -> Date? {
+        // from client
+        // 2022-04-06T21:03:15Z
+        // from server
+        // 2022-04-12T20:40:00.000Z
+        let formatterWithMilliseconds = Foundation.ISO8601DateFormatter()
+        formatterWithMilliseconds.formatOptions = [.withFractionalSeconds, .withDashSeparatorInDate, .withColonSeparatorInTime, .withFullDate, .withTime]
+        let formatterWithoutMilliseconds = Foundation.ISO8601DateFormatter()
+        formatterWithoutMilliseconds.formatOptions = [.withDashSeparatorInDate, .withColonSeparatorInTime, .withFullDate, .withTime]
+        return formatterWithMilliseconds.date(from: ISO8601String) ?? formatterWithoutMilliseconds.date(from: ISO8601String) ?? nil
+        
     }
 }

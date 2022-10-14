@@ -32,7 +32,7 @@ final class DogManager: NSObject, NSCoding, NSCopying {
         aCoder.encode(dogs, forKey: KeyConstant.dogs.rawValue)
     }
     
-    // MARK: - Main
+    // MARK: - Instantiate
     
     /// initalizes, sets dogs to []
     override init() {
@@ -65,8 +65,25 @@ final class DogManager: NSObject, NSCoding, NSCopying {
         }
     }
     
+    // MARK: - Properties
+    
     /// Stores all the dogs. This is get only to make sure integrite of dogs added is kept
     private(set) var dogs: [Dog] = []
+    
+    /// Returns true if ANY the dogs present has at least 1 CREATED reminder
+    var hasCreatedReminder: Bool {
+        for dog in dogs where dog.dogReminders.reminders.count > 0 {
+            return true
+        }
+        return false
+    }
+    
+    // MARK: - Functions
+    
+    /// Returns reference of a dog with the given dogId
+    func findDog(forDogId dogId: Int) -> Dog? {
+        return dogs.first(where: { $0.dogId == dogId })
+    }
     
     /// Helper function allows us to use the same logic for addDog and addDogs and allows us to only sort at the end. Without this function, addDogs would invoke addDog repeadly and sortDogs() with each call.
     func addDogWithoutSorting(forDog newDog: Dog, shouldOverrideDogWithSamePlaceholderId: Bool) {
@@ -142,37 +159,25 @@ final class DogManager: NSObject, NSCoding, NSCopying {
     /// Removes a dog with the given dogId
     func removeDog(forDogId dogId: Int) {
         
-        findDog(forDogId: dogId)?.dogReminders.reminders.forEach({ reminder in
-            // make sure we invalidate all the timers associated, tie up any loose ends
-            reminder.reminderAlarmTimer = nil
-            reminder.reminderDisableIsSkippingTimer = nil
-        })
+        // don't clearTimers() for reminders. we can't be sure what is invoking this function and we don't want to accidentily invalidate the timers. Therefore, leave the timers in place. If the timers are left over and after the dog/reminders are deleted, then they will fail the server query willShowAlarm and be disregarded. If the timers are still valid, then all continues as normal
         
         dogs.removeAll { dog in
             return dog.dogId == dogId
         }
     }
     
+    /// Invokes clearTimers() for each reminder of each dog
+    func clearTimers() {
+        dogs.forEach { dog in
+            dog.dogReminders.reminders.forEach { reminder in
+                reminder.clearTimers()
+            }
+        }
+    }
+    
 }
 
 extension DogManager {
-    
-    // MARK: Locate
-    
-    /// Returns reference of a dog with the given dogId
-    func findDog(forDogId dogId: Int) -> Dog? {
-        return dogs.first(where: { $0.dogId == dogId })
-    }
-    
-    // MARK: Information
-    
-    /// Returns true if ANY the dogs present has at least 1 CREATED reminder
-    var hasCreatedReminder: Bool {
-        for dog in dogs where dog.dogReminders.reminders.count > 0 {
-            return true
-        }
-        return false
-    }
     
     /// Returns an array of tuples [(forDogId, log]). This array has all the logs for all the dogs sorted chronologically, oldest log at index 0 and newest at end of array. Optionally filters by dictionary literal of [dogIds: [logActions]] provided
     private func logsByDogId(forLogsFilter logsFilter: [Int: [LogAction]], forMaximumNumberOfLogsPerDog maximumNumberOfLogsPerDog: Int) -> [Int: [Log]] {
