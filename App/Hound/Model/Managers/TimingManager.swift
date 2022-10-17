@@ -104,7 +104,6 @@ final class TimingManager {
             guard requestWasSuccessful == true else {
                 return
             }
-            reminder.clearTimers()
             
             delegate.didAddReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
         }

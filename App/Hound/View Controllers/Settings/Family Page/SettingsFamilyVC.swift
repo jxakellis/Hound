@@ -122,10 +122,12 @@ final class SettingsFamilyViewController: UIViewController, UITableViewDelegate,
             leaveFamilyAlertController.title = "Are you sure you want to leave your family?"
             let leaveAlertAction = UIAlertAction(title: "Leave Family", style: .destructive) { _ in
                 FamilyRequest.delete(invokeErrorManager: true) { requestWasSuccessful, _ in
-                    if requestWasSuccessful == true {
-                        // family was successfully left, revert to server sync view controller
-                        dismissViewControllersUntilServerSyncViewController()
+                    guard requestWasSuccessful else {
+                        return
                     }
+                    
+                    // family was successfully left, revert to server sync view controller
+                    dismissViewControllersUntilServerSyncViewController()
                 }
             }
             leaveFamilyAlertController.addAction(leaveAlertAction)
@@ -152,10 +154,11 @@ final class SettingsFamilyViewController: UIViewController, UITableViewDelegate,
             leaveFamilyAlertController.title = "Are you sure you want to delete your family? \(forfitSubscriptionDisclaimer)"
             let deleteAlertAction = UIAlertAction(title: "Delete Family", style: .destructive) { _ in
                 FamilyRequest.delete(invokeErrorManager: true) { requestWasSuccessful, _ in
-                    if requestWasSuccessful == true {
-                        // family was successfully deleted, revert to server sync view controller
-                        dismissViewControllersUntilServerSyncViewController()
+                    guard requestWasSuccessful else {
+                        return
                     }
+                    // family was successfully deleted, revert to server sync view controller
+                    dismissViewControllersUntilServerSyncViewController()
                 }
             }
             leaveFamilyAlertController.addAction(deleteAlertAction)
@@ -255,10 +258,11 @@ final class SettingsFamilyViewController: UIViewController, UITableViewDelegate,
                 RequestUtils.beginRequestIndictator()
                 FamilyRequest.delete(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                     RequestUtils.endRequestIndictator {
-                        if requestWasSuccessful == true {
-                            // invoke the @IBAction private function to refresh this page
-                            self.willRefresh(0)
+                        guard requestWasSuccessful else {
+                            return
                         }
+                        // invoke the @IBAction private function to refresh this page
+                        self.willRefresh(0)
                     }
                 }
             }

@@ -171,41 +171,40 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
                 
                 if createdReminders.count >= 1 {
                     RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
-                        if let reminders = reminders {
-                            dog.dogReminders.addReminders(forReminders: reminders)
-                            completionTracker.completedTask()
-                        }
-                        else {
+                        guard let reminders = reminders else {
                             completionTracker.failedTask()
+                            return
                         }
+                        
+                        dog.dogReminders.addReminders(forReminders: reminders)
+                        completionTracker.completedTask()
                     }
                 }
                 
                 if updatedReminders.count >= 1 {
-                    RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: updatedReminders) { requestWasSuccessful2, _ in
-                        if requestWasSuccessful2 == true {
-                            // add updated reminders as they already have their reminderId
-                            dog.dogReminders.addReminders(forReminders: updatedReminders)
-                            completionTracker.completedTask()
-                        }
-                        else {
+                    RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: updatedReminders) { reminderUpdateWasSuccessful, _ in
+                        guard reminderUpdateWasSuccessful else {
                             completionTracker.failedTask()
+                            return
                         }
+                        
+                        // add updated reminders as they already have their reminderId
+                        dog.dogReminders.addReminders(forReminders: updatedReminders)
+                        completionTracker.completedTask()
                     }
                 }
                 
                 if deletedReminders.count >= 1 {
-                    RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminders: deletedReminders) { requestWasSuccessful2, _ in
-                        if requestWasSuccessful2 == true {
-                            for deletedReminder in deletedReminders {
-                                dog.dogReminders.findReminder(forReminderId: deletedReminder.reminderId)?.clearTimers()
-                                dog.dogReminders.removeReminder(forReminderId: deletedReminder.reminderId)
-                            }
-                            completionTracker.completedTask()
-                        }
-                        else {
+                    RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminders: deletedReminders) { reminderDeleteWasSuccessful, _ in
+                        guard reminderDeleteWasSuccessful else {
                             completionTracker.failedTask()
+                            return
                         }
+                        
+                        for deletedReminder in deletedReminders {
+                            dog.dogReminders.removeReminder(forReminderId: deletedReminder.reminderId)
+                        }
+                        completionTracker.completedTask()
                     }
                 }
                 
@@ -256,14 +255,16 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             DogsRequest.delete(invokeErrorManager: true, forDogId: dogToUpdate.dogId) { requestWasSuccessful, _ in
-                if requestWasSuccessful == true {
-                    
-                    self.dogManager.removeDog(forDogId: dogToUpdate.dogId)
-                    self.dogManager.clearTimers()
-                    self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-                    
-                    self.navigationController?.popViewController(animated: true)
+                guard requestWasSuccessful else {
+                    return
                 }
+                
+                self.dogManager.removeDog(forDogId: dogToUpdate.dogId)
+                self.dogManager.clearTimers()
+                self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                
+                self.navigationController?.popViewController(animated: true)
+                
                 
             }
             

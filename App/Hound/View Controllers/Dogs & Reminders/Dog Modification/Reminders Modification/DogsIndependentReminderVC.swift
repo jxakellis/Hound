@@ -39,17 +39,20 @@ final class DogsIndependentReminderViewController: UIViewController {
             RemindersRequest.update(invokeErrorManager: true, forDogId: forDogId, forReminder: reminder) { requestWasSuccessful, _ in
                 self.saveReminderButton.endQuerying()
                 self.saveReminderButtonBackground.endQuerying(isBackgroundButton: true)
-                if requestWasSuccessful == true {
-                    // the query was successful so we should now persist the reminderCustomActionName to LocalConfiguration if there was one
-                    let reminderCustomActionName = reminder.reminderCustomActionName
-                    if reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                        LocalConfiguration.addReminderCustomAction(forName: reminderCustomActionName)
-                    }
-                    
-                    // successful so persist the data locally
-                    self.delegate.didAddReminder(sender: Sender(origin: self, localized: self), forDogId: self.forDogId, forReminder: reminder)
-                    self.navigationController?.popViewController(animated: true)
+                guard requestWasSuccessful else {
+                    return
                 }
+                
+                // the query was successful so we should now persist the reminderCustomActionName to LocalConfiguration if there was one
+                let reminderCustomActionName = reminder.reminderCustomActionName
+                if reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                    LocalConfiguration.addReminderCustomAction(forName: reminderCustomActionName)
+                }
+                
+                // successful so persist the data locally
+                self.delegate.didAddReminder(sender: Sender(origin: self, localized: self), forDogId: self.forDogId, forReminder: reminder)
+                self.navigationController?.popViewController(animated: true)
+                
             }
         }
         else {
@@ -89,11 +92,13 @@ final class DogsIndependentReminderViewController: UIViewController {
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             RemindersRequest.delete(invokeErrorManager: true, forDogId: self.forDogId, forReminder: targetReminder) { requestWasSuccessful, _ in
-                if requestWasSuccessful == true {
-                    // persist data locally
-                    self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forDogId: self.forDogId, forReminderId: targetReminder.reminderId)
-                    self.navigationController?.popViewController(animated: true)
+                guard requestWasSuccessful else {
+                    return
                 }
+                // persist data locally
+                self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forDogId: self.forDogId, forReminderId: targetReminder.reminderId)
+                self.navigationController?.popViewController(animated: true)
+                
             }
             
         }

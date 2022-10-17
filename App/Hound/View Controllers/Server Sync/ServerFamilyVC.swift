@@ -63,9 +63,11 @@ final class ServerFamilyViewController: UIViewController {
                 FamilyRequest.update(invokeErrorManager: true, body: [KeyConstant.familyCode.rawValue: familyCode]) { requestWasSuccessful, _ in
                     RequestUtils.endRequestIndictator {
                         // the code successfully allowed the user to join
-                        if requestWasSuccessful == true {
-                            self.dismiss(animated: true, completion: nil)
+                        guard requestWasSuccessful else {
+                            return
                         }
+                        self.dismiss(animated: true, completion: nil)
+                        
                     }
                 }
             }

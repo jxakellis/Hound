@@ -195,7 +195,8 @@ extension RemindersRequest {
     }
     
     /**
-     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
+     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
+     Upon successful completion, invokes clearTimers() for each reminder
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
     @discardableResult static func update(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
@@ -203,6 +204,8 @@ extension RemindersRequest {
         return RemindersRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: [reminder]) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
+                // successfully updated the reminder, clear the timers for all of them as timing might have changed
+                reminder.clearTimers()
                 completionHandler(true, responseStatus)
             case .failureResponse:
                 completionHandler(false, responseStatus)
@@ -213,7 +216,8 @@ extension RemindersRequest {
     }
     
     /**
-     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
+     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
+     Upon successful completion, invokes clearTimers() for each reminder
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
     @discardableResult static func update(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
@@ -221,6 +225,10 @@ extension RemindersRequest {
         return RemindersRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
+                // successfully updated the reminders, clear the timers for all of them as timing might have changed
+                reminders.forEach { reminder in
+                    reminder.clearTimers()
+                }
                 completionHandler(true, responseStatus)
             case .failureResponse:
                 completionHandler(false, responseStatus)
@@ -232,12 +240,15 @@ extension RemindersRequest {
     
     /**
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
+     Upon successful completion, invokes clearTimers() for each reminder
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
     @discardableResult static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         return RemindersRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: [reminder]) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
+                // successfully deleted the reminder, clear the timers for it as no longer needs timer
+                reminder.clearTimers()
                 completionHandler(true, responseStatus)
             case .failureResponse:
                 completionHandler(false, responseStatus)
@@ -249,12 +260,17 @@ extension RemindersRequest {
     
     /**
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
+     Upon successful completion, invokes clearTimers() for each reminder
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
     @discardableResult static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         return RemindersRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
+                // successfully deleted the reminders, clear the timers for all of them as no longer needs timers
+                reminders.forEach { reminder in
+                    reminder.clearTimers()
+                }
                 completionHandler(true, responseStatus)
             case .failureResponse:
                 completionHandler(false, responseStatus)

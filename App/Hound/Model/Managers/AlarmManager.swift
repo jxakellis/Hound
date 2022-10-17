@@ -173,7 +173,6 @@ final class AlarmManager {
             guard requestWasSuccessful else {
                 return
             }
-            reminder.clearTimers()
             
             delegate.didAddReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
         }
@@ -186,9 +185,11 @@ final class AlarmManager {
         if reminder.reminderType == .oneTime {
             // just make request to delete reminder for oneTime remidner
             RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
-                if requestWasSuccessful == true {
-                    delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminderId: reminder.reminderId)
+                guard requestWasSuccessful else {
+                    return
                 }
+                
+                delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminderId: reminder.reminderId)
             }
         }
         // Nest all the other cases inside this else statement as otherwise .oneTime alarms would make request with the above code then again down here.
@@ -201,7 +202,6 @@ final class AlarmManager {
                 guard requestWasSuccessful else {
                     return
                 }
-                reminder.clearTimers()
                 
                 delegate.didAddReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
             }
@@ -222,18 +222,20 @@ final class AlarmManager {
             
             // delete the reminder on the server
             RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
-                if requestWasSuccessful == true {
-                    delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminderId: reminder.reminderId)
-                    // create log on the server and then assign it the logId and then add it to the dog
-                    LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: log) { logId, _ in
-                        guard let logId = logId else {
-                            return
-                        }
-                        
-                        // persist log successful, therefore we can save the info locally
-                        log.logId = logId
-                        delegate.didAddLog(sender: Sender(origin: self, localized: self), forDogId: dogId, forLog: log)
+                guard requestWasSuccessful else {
+                    return
+                }
+                
+                delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminderId: reminder.reminderId)
+                // create log on the server and then assign it the logId and then add it to the dog
+                LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: log) { logId, _ in
+                    guard let logId = logId else {
+                        return
                     }
+                    
+                    // persist log successful, therefore we can save the info locally
+                    log.logId = logId
+                    delegate.didAddLog(sender: Sender(origin: self, localized: self), forDogId: dogId, forLog: log)
                 }
             }
         }
@@ -247,7 +249,6 @@ final class AlarmManager {
                 guard requestWasSuccessful else {
                     return
                 }
-                reminder.clearTimers()
                 
                 delegate.didAddReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
                 // we need to persist a log as well
@@ -277,17 +278,19 @@ final class AlarmManager {
             
             // delete the reminder on the server
             RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
-                if requestWasSuccessful == true {
-                    delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminderId: reminder.reminderId)
-                    // create log on the server and then assign it the logId and then add it to the dog
-                    LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: log) { logId, _ in
-                        guard let logId = logId else {
-                            return
-                        }
-                        // persist log successful, therefore we can save the info locally
-                        log.logId = logId
-                        delegate.didAddLog(sender: Sender(origin: self, localized: self), forDogId: dogId, forLog: log)
+                guard requestWasSuccessful else {
+                    return
+                }
+                
+                delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminderId: reminder.reminderId)
+                // create log on the server and then assign it the logId and then add it to the dog
+                LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: log) { logId, _ in
+                    guard let logId = logId else {
+                        return
                     }
+                    // persist log successful, therefore we can save the info locally
+                    log.logId = logId
+                    delegate.didAddLog(sender: Sender(origin: self, localized: self), forDogId: dogId, forLog: log)
                 }
             }
         }
@@ -298,17 +301,19 @@ final class AlarmManager {
             
             // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
             RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
-                if requestWasSuccessful == true {
-                    delegate.didAddReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
-                    // we need to persist a log as well
-                    LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: log) { logId, _ in
-                        guard let logId = logId else {
-                            return
-                        }
-                        // persist log successful, therefore we can save the info locally
-                        log.logId = logId
-                        delegate.didAddLog(sender: Sender(origin: self, localized: self), forDogId: dogId, forLog: log)
+                guard requestWasSuccessful else {
+                    return
+                }
+                
+                delegate.didAddReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
+                // we need to persist a log as well
+                LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: log) { logId, _ in
+                    guard let logId = logId else {
+                        return
                     }
+                    // persist log successful, therefore we can save the info locally
+                    log.logId = logId
+                    delegate.didAddLog(sender: Sender(origin: self, localized: self), forDogId: dogId, forLog: log)
                 }
             }
         }
@@ -339,26 +344,30 @@ final class AlarmManager {
         
         // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
         RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminder: reminder) { requestWasSuccessful1, _ in
-            if requestWasSuccessful1 == true {
-                delegate.didAddReminder(sender: Sender(origin: self, localized: self), forDogId: dog.dogId, forReminder: reminder)
-                
-                // find log that is incredibly close the time where the reminder was skipped, once found, then we delete it.
-                var logToRemove: Log?
-                for log in dog.dogLogs.logs where dateOfLogToRemove.distance(to: log.logDate) < ClassConstant.LogConstant.logRemovalPrecision && dateOfLogToRemove.distance(to: log.logDate) > -ClassConstant.LogConstant.logRemovalPrecision {
-                    logToRemove = log
-                    break
-                }
-                
-                guard let logToRemove = logToRemove else {
+            guard requestWasSuccessful1 else {
+                return
+            }
+            
+            delegate.didAddReminder(sender: Sender(origin: self, localized: self), forDogId: dog.dogId, forReminder: reminder)
+            
+            // find log that is incredibly close the time where the reminder was skipped, once found, then we delete it.
+            var logToRemove: Log?
+            for log in dog.dogLogs.logs where dateOfLogToRemove.distance(to: log.logDate) < ClassConstant.LogConstant.logRemovalPrecision && dateOfLogToRemove.distance(to: log.logDate) > -ClassConstant.LogConstant.logRemovalPrecision {
+                logToRemove = log
+                break
+            }
+            
+            guard let logToRemove = logToRemove else {
+                return
+            }
+            
+            // log to remove from unlog event. Attempt to delete the log server side
+            LogsRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forLogId: logToRemove.logId) { requestWasSuccessful2, _ in
+                guard requestWasSuccessful2 else {
                     return
                 }
                 
-                // log to remove from unlog event. Attempt to delete the log server side
-                LogsRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forLogId: logToRemove.logId) { requestWasSuccessful2, _ in
-                    if requestWasSuccessful2 == true {
-                        delegate.didRemoveLog(sender: Sender(origin: self, localized: self), forDogId: dog.dogId, forLogId: logToRemove.logId)
-                    }
-                }
+                delegate.didRemoveLog(sender: Sender(origin: self, localized: self), forDogId: dog.dogId, forLogId: logToRemove.logId)
             }
             
         }

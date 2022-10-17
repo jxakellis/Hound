@@ -242,36 +242,36 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     }
     
     @IBOutlet private weak var logDateDatePicker: UIDatePicker!
-        @IBAction private func didUpdateLogDate(_ sender: Any) {
-            dismissKeyboard()
-        }
+    @IBAction private func didUpdateLogDate(_ sender: Any) {
+        dismissKeyboard()
+    }
     
     @IBOutlet private weak var cancelButton: ScaledUIButton!
-       @IBOutlet private weak var cancelButtonBackground: ScaledUIButton!
-       @IBAction private func willCancel(_ sender: Any) {
-           
-           dismissKeyboard()
-           
-           if initalValuesChanged == true {
-               let unsavedInformationConfirmation = GeneralUIAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
-               
-               let alertActionExit = UIAlertAction(title: "Yes, I don't want to save changes", style: .default) { _ in
-                   self.navigationController?.popViewController(animated: true)
-               }
-               
-               let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-               
-               unsavedInformationConfirmation.addAction(alertActionExit)
-               unsavedInformationConfirmation.addAction(alertActionCancel)
-               
-               AlertManager.enqueueAlertForPresentation(unsavedInformationConfirmation)
-           }
-           else {
-               navigationController?.popViewController(animated: true)
-           }
-           
-       }
-
+    @IBOutlet private weak var cancelButtonBackground: ScaledUIButton!
+    @IBAction private func willCancel(_ sender: Any) {
+        
+        dismissKeyboard()
+        
+        if initalValuesChanged == true {
+            let unsavedInformationConfirmation = GeneralUIAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
+            
+            let alertActionExit = UIAlertAction(title: "Yes, I don't want to save changes", style: .default) { _ in
+                self.navigationController?.popViewController(animated: true)
+            }
+            
+            let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            
+            unsavedInformationConfirmation.addAction(alertActionExit)
+            unsavedInformationConfirmation.addAction(alertActionCancel)
+            
+            AlertManager.enqueueAlertForPresentation(unsavedInformationConfirmation)
+        }
+        else {
+            navigationController?.popViewController(animated: true)
+        }
+        
+    }
+    
     @IBOutlet private weak var addLogButton: ScaledUIButton!
     @IBOutlet private weak var addLogButtonBackground: ScaledUIButton!
     @IBAction private func willAddLog(_ sender: Any) {
@@ -312,12 +312,12 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                     reminder.changeIsSkipping(forIsSkipping: true)
                     
                     RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
-                        if requestWasSuccessful {
-                            completionTracker.completedTask()
-                        }
-                        else {
+                        guard requestWasSuccessful else {
                             completionTracker.failedTask()
+                            return
                         }
+                        
+                        completionTracker.completedTask()
                     }
                 }
                 
@@ -371,20 +371,21 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             LogsRequest.update(invokeErrorManager: true, forDogId: forDogIdToUpdate, forLog: logToUpdate) { requestWasSuccessful, _ in
                 self.addLogButton.endQuerying()
                 self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
-                if requestWasSuccessful == true {
-                    // request was successful so we can now add the new logCustomActionName (if present)
-                    let logCustomActionName = logToUpdate.logCustomActionName
-                    if logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                        LocalConfiguration.addLogCustomAction(forName: logCustomActionName)
-                    }
-                    
-                    self.dogManager.findDog(forDogId: forDogIdToUpdate)?.dogLogs.addLog(forLog: logToUpdate)
-                    
-                    self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-                    
-                    self.navigationController?.popViewController(animated: true)
+                guard requestWasSuccessful else {
+                    return
                 }
                 
+                // request was successful so we can now add the new logCustomActionName (if present)
+                let logCustomActionName = logToUpdate.logCustomActionName
+                if logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                    LocalConfiguration.addLogCustomAction(forName: logCustomActionName)
+                }
+                
+                self.dogManager.findDog(forDogId: forDogIdToUpdate)?.dogLogs.addLog(forLog: logToUpdate)
+                
+                self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                
+                self.navigationController?.popViewController(animated: true)
             }
         }
         catch {
@@ -405,17 +406,21 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             
             // the user decided to delete so we must query server
             LogsRequest.delete(invokeErrorManager: true, forDogId: forDogIdToUpdate, forLogId: logToUpdate.logId) { requestWasSuccessful, _ in
-                if requestWasSuccessful == true {
-                    if let dog = self.dogManager.findDog(forDogId: forDogIdToUpdate) {
-                        for dogLog in dog.dogLogs.logs where dogLog.logId == logToUpdate.logId {
-                            dog.dogLogs.removeLog(forLogId: dogLog.logId)
-                        }
-                    }
-                    
-                    self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-                    
-                    self.navigationController?.popViewController(animated: true)
+                
+                guard requestWasSuccessful else {
+                    return
                 }
+                
+                if let dog = self.dogManager.findDog(forDogId: forDogIdToUpdate) {
+                    for dogLog in dog.dogLogs.logs where dogLog.logId == logToUpdate.logId {
+                        dog.dogLogs.removeLog(forLogId: dogLog.logId)
+                    }
+                }
+                
+                self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                
+                self.navigationController?.popViewController(animated: true)
+                
             }
             
         }
@@ -655,7 +660,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             backgroundGestureView.addGestureRecognizer(dismissKeyboardGesture)
             backgroundGestureView.addGestureRecognizer(dismissDropDownParentDogGesture)
             backgroundGestureView.addGestureRecognizer(dismissDropDownLogActionGesture)
-          
+            
             // Only allow use of parentDogLabel if they are creating a log, not updating
             parentDogLabel.isUserInteractionEnabled = forDogIdToUpdate == nil
             parentDogLabel.isEnabled = forDogIdToUpdate == nil

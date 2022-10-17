@@ -162,12 +162,13 @@ final class DogsTableViewController: UITableViewController {
             
             let removeDogConfirmationRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 DogsRequest.delete(invokeErrorManager: true, forDogId: dogId) { requestWasSuccessful, _ in
-                    if requestWasSuccessful == true {
-                        self.dogManager.removeDog(forDogId: dogId)
-                        self.dogManager.clearTimers()
-                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-                        self.tableView.deleteSections([section], with: .automatic)
+                    guard requestWasSuccessful else {
+                        return
                     }
+                    self.dogManager.removeDog(forDogId: dogId)
+                    self.dogManager.clearTimers()
+                    self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    self.tableView.deleteSections([section], with: .automatic)
                     
                 }
             }
@@ -215,14 +216,15 @@ final class DogsTableViewController: UITableViewController {
             
             let removeReminderConfirmationRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminder: reminder) { requestWasSuccessful, _ in
-                    if requestWasSuccessful == true {
-                        dog.dogReminders.findReminder(forReminderId: reminder.reminderId)?.clearTimers()
-                        dog.dogReminders.removeReminder(forReminderId: reminder.reminderId)
-                        
-                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-                        
-                        self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                    guard requestWasSuccessful else {
+                        return
                     }
+                    dog.dogReminders.removeReminder(forReminderId: reminder.reminderId)
+                    
+                    self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    
+                    self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                    
                 }
                 
             }
@@ -364,12 +366,14 @@ final class DogsTableViewController: UITableViewController {
             
             let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 DogsRequest.delete(invokeErrorManager: true, forDogId: dogId) { requestWasSuccessful, _ in
-                    if requestWasSuccessful == true {
-                        self.dogManager.removeDog(forDogId: dogId)
-                        self.dogManager.clearTimers()
-                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-                        self.tableView.deleteSections([indexPath.section], with: .automatic)
+                    guard requestWasSuccessful else {
+                        return
                     }
+                    self.dogManager.removeDog(forDogId: dogId)
+                    self.dogManager.clearTimers()
+                    self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    self.tableView.deleteSections([indexPath.section], with: .automatic)
+                    
                     
                 }
                 
@@ -386,12 +390,13 @@ final class DogsTableViewController: UITableViewController {
             
             let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 RemindersRequest.delete(invokeErrorManager: true, forDogId: reminderCell.forDogId, forReminder: reminder) { requestWasSuccessful, _ in
-                    if requestWasSuccessful == true {
-                        dog.dogReminders.findReminder(forReminderId: reminder.reminderId)?.clearTimers()
-                        dog.dogReminders.removeReminder(forReminderId: reminder.reminderId)
-                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-                        self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                    guard requestWasSuccessful else {
+                        return
                     }
+                    dog.dogReminders.removeReminder(forReminderId: reminder.reminderId)
+                    self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                    self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                    
                 }
                 
             }
