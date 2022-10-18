@@ -265,7 +265,6 @@ final class DogsAddDogViewController: UIViewController, UITextFieldDelegate, UIN
                 
                 self.navigationController?.popViewController(animated: true)
                 
-                
             }
             
         }

@@ -91,13 +91,13 @@ extension LogsRequest {
     /**
      completionHandler returns a log and response status. If the query is successful and the log isn't deleted, then the log is returned. Otherwise, nil is returned.
      */
-    @discardableResult static func get(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int, completionHandler: @escaping (Log?, ResponseStatus) -> Void) -> Progress? {
+    @discardableResult static func get(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping (Log?, ResponseStatus) -> Void) -> Progress? {
         
-        return LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { responseBody, responseStatus in
+        return LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: log.logId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let logBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
-                    completionHandler(Log(forLogBody: logBody, overrideLog: nil), responseStatus)
+                    completionHandler(Log(forLogBody: logBody, overrideLog: log.copy() as? Log), responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)
@@ -156,7 +156,7 @@ extension LogsRequest {
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
     @discardableResult static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
-         return LogsRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { _, responseStatus in
+        return LogsRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)

@@ -91,9 +91,9 @@ final class DogsReminderTableViewController: UITableViewController, DogsReminder
     /// Reloads table data when it is updated, if you change the data w/o calling this, the data display to the user will not be updated
     private func reloadTable() {
         
-        tableView.rowHeight = dogReminders.reminders.count > 0 ? -1 : 65.5
+        tableView.rowHeight = dogReminders.reminders.isEmpty ? 65.5 : -1
         
-        if dogReminders.reminders.count == 0 {
+        if dogReminders.reminders.isEmpty {
             tableView.allowsSelection = false
         }
         else {
@@ -110,7 +110,7 @@ final class DogsReminderTableViewController: UITableViewController, DogsReminder
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete && dogReminders.reminders.count > 0 {
+        if editingStyle == .delete && dogReminders.reminders.isEmpty == false {
             let reminder = dogReminders.reminders[indexPath.row]
             
             let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))?", message: nil, preferredStyle: .alert)
@@ -128,7 +128,7 @@ final class DogsReminderTableViewController: UITableViewController, DogsReminder
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        if dogReminders.reminders.count == 0 {
+        if dogReminders.reminders.isEmpty {
             return false
         }
         else {

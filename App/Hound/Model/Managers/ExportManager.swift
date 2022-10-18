@@ -33,9 +33,9 @@ enum ExportManager {
         // exclude some activity types from the list (optional)
         activityViewController.excludedActivityTypes =
         [ UIActivity.ActivityType.addToReadingList,
-          UIActivity.ActivityType.assignToContact,
-          UIActivity.ActivityType.markupAsPDF,
-          UIActivity.ActivityType.openInIBooks ]
+            UIActivity.ActivityType.assignToContact,
+            UIActivity.ActivityType.markupAsPDF,
+            UIActivity.ActivityType.openInIBooks ]
         
         if #available(iOS 15.4, *) {
             activityViewController.excludedActivityTypes?.append(UIActivity.ActivityType.sharePlay)

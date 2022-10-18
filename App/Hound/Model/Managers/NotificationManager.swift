@@ -14,7 +14,7 @@ enum NotificationManager {
      If shouldAdviseUserBeforeRequestingNotifications is true, presents an alert controller that asks the user if they want to turn on notifications. This alert controller tells them the benefits of turning on notifications. Additionally, this alert prevents the user from interacting with Apple's "turn on notifications" message until they say they want to turn on notifications, reducing the chance that they hit "Don't Allow (notifications)"
      
      DOES update local UserConfiguration. Requests permission to send notifications to the user then invokes updateServerUserNotificationConfiguration. If the server returned a 200 status and is successful, then return. Otherwise, if the user didn't grant permission or there was a problem with the  query, then return and (if needed) ErrorManager is automatically invoked
-     */
+    */
     static func requestNotificationAuthorization(shouldAdviseUserBeforeRequestingNotifications: Bool, completionHandler: @escaping () -> Void) {
         // If adviseUserBeforeRequestingNotifications == true, we can ignore the localIsNotificationAuthorized status.
         // This is because we want to always invoke our view controller to ask the user if they want notification. If they say yes, then it either immediately turns everything on (if localIsNotificationAuthorized == true) or we invoke the apple 'Allow Notifications' prompt to then turn everything on (if localIsNotificationAuthorized == false).

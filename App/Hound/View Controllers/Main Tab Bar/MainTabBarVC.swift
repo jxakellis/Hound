@@ -7,7 +7,7 @@
 //
 import UIKit
 
-final class MainTabBarViewController: UITabBarController, TimingManagerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate, LogsViewControllerDelegate, DogsViewControllerDelegate {
+final class MainTabBarViewController: UITabBarController, TimingManagerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate, LogsViewControllerDelegate, DogsViewControllerDelegate, SettingsViewControllerDelegate {
     
     // MARK: LogsViewControllerDelegate && DogsViewControllerDelegate
     
@@ -154,6 +154,7 @@ final class MainTabBarViewController: UITabBarController, TimingManagerDelegate,
         dogsViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         
         settingsViewController = (self.viewControllers?[2] as? UINavigationController)?.viewControllers[0] as? SettingsViewController
+        settingsViewController?.delegate = self
         
         MainTabBarViewController.mainTabBarViewController = self
         

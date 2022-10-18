@@ -45,6 +45,7 @@ final class DogManager: NSObject, NSCoding, NSCopying {
         self.addDogs(forDogs: overrideDogManager?.dogs ?? [])
         
         for dogBody in dogBodies {
+            // Don't pull dogId or dogIsDeleted from overrideDog. A valid dogBody needs to provide this itself
             let dogId: Int? = dogBody[KeyConstant.dogId.rawValue] as? Int
             let dogIsDeleted: Bool? = dogBody[KeyConstant.dogIsDeleted.rawValue] as? Bool
             
@@ -72,7 +73,7 @@ final class DogManager: NSObject, NSCoding, NSCopying {
     
     /// Returns true if ANY the dogs present has at least 1 CREATED reminder
     var hasCreatedReminder: Bool {
-        for dog in dogs where dog.dogReminders.reminders.count > 0 {
+        for dog in dogs where dog.dogReminders.reminders.isEmpty == false {
             return true
         }
         return false
@@ -94,8 +95,7 @@ final class DogManager: NSObject, NSCoding, NSCopying {
                 return false
             }
             
-            guard (shouldOverrideDogWithSamePlaceholderId == true) ||
-                    (shouldOverrideDogWithSamePlaceholderId == false && oldDog.dogId >= 0) else {
+            guard (shouldOverrideDogWithSamePlaceholderId == true) || (shouldOverrideDogWithSamePlaceholderId == false && oldDog.dogId >= 0) else {
                 return false
             }
             

@@ -66,7 +66,7 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
         }
         
         // no dogs so we create a new one for the user
-        if dogManager.dogs.count == 0, let dog = try? Dog(dogName: dogName ?? ClassConstant.DogConstant.defaultDogName) {
+        if dogManager.dogs.isEmpty, let dog = try? Dog(dogName: dogName ?? ClassConstant.DogConstant.defaultDogName) {
             // set the dog objects dogIcon before contacting the server, then if the requset to the server is successful, dogsrequest will persist the icon
             dog.dogIcon = {
                 if let image = self.dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseDogIcon {
@@ -132,13 +132,13 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        dogNameHeader.text = (dogManager.dogs.count == 0) ? "What Is Your Dog's Name?" : "Your Dog"
+        dogNameHeader.text = (dogManager.dogs.isEmpty) ? "What Is Your Dog's Name?" : "Your Dog"
         
-        dogNameDescription.text = (dogManager.dogs.count == 0) ? "We will generate a basic dog for you. Reminders will come later." : "It looks like your family has already created a dog. Although, if you want, you can add your own custom icon to it."
+        dogNameDescription.text = (dogManager.dogs.isEmpty) ? "We will generate a basic dog for you. Reminders will come later." : "It looks like your family has already created a dog. Although, if you want, you can add your own custom icon to it."
         
         // Dog Name
         dogName.text = ""
-        if dogManager.dogs.count == 0 {
+        if dogManager.dogs.isEmpty {
             dogName.placeholder = "Bella"
             dogName.delegate = self
             dogName.isEnabled = true

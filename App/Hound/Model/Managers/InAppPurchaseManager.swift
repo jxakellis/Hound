@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import StoreKit
 import KeychainSwift
+import StoreKit
 
 // This main class provides a streamlined way to perform the main two queries
 final class InAppPurchaseManager {

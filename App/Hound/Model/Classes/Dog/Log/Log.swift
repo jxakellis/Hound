@@ -54,6 +54,7 @@ final class Log: NSObject, NSCoding, NSCopying {
     
     /// Provide a dictionary literal of log properties to instantiate log. Optionally, provide a log to override with new properties from logBody.
     convenience init?(forLogBody logBody: [String: Any], overrideLog: Log?) {
+        // Don't pull logId or logIsDeleted from overrideLog. A valid logBody needs to provide this itself
         let logId: Int? = logBody[KeyConstant.logId.rawValue] as? Int
         let logIsDeleted: Bool? = logBody[KeyConstant.logIsDeleted.rawValue] as? Bool
         

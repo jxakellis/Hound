@@ -62,6 +62,7 @@ final class Dog: NSObject, NSCoding, NSCopying {
     
     /// Provide a dictionary literal of dog properties to instantiate dog. Optionally, provide a dog to override with new properties from dogBody.
     convenience init?(forDogBody dogBody: [String: Any], overrideDog: Dog?) {
+        // Don't pull dogId or dogIsDeleted from overrideDog. A valid dogBody needs to provide this itself
         let dogId: Int? = dogBody[KeyConstant.dogId.rawValue] as? Int
         let dogIsDeleted: Bool? = dogBody[KeyConstant.dogIsDeleted.rawValue] as? Bool
             

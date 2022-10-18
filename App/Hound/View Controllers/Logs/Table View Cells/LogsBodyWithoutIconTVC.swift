@@ -46,7 +46,7 @@ final class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         
         let fontSize = VisualConstant.FontConstant.logCellFontSize
         let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
-        let shouldHideLogNote = log.logNote.trimmingCharacters(in: .whitespacesAndNewlines) == ""
+        let shouldHideLogNote = log.logNote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         
         // Dog Name
         dogNameLabel.text = dogName

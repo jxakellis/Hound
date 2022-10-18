@@ -50,7 +50,7 @@ final class ServerFamilyViewController: UIViewController {
             // uppercase everything then replace "-" with "" (nothing) then remove any excess whitespaces/newliens
             let familyCode = (textFields[0].text ?? "").uppercased().replacingOccurrences(of: "-", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
             // code is empty
-            if familyCode == "" {
+            if familyCode.isEmpty {
                 ErrorConstant.FamilyRequestError.familyCodeBlank.alert()
             }
             // code isn't long enough

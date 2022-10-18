@@ -10,6 +10,7 @@ import UIKit
 
 protocol TimingManagerDelegate: AnyObject {
     func didAddReminder(sender: Sender, forDogId: Int, forReminder: Reminder)
+    func didRemoveReminder(sender: Sender, forDogId: Int, forReminderId: Int)
 }
 
 final class TimingManager {
@@ -31,7 +32,7 @@ final class TimingManager {
                     continue
                 }
                 
-                // if the reminder doesn't have a reminderAlarmTimer or the reminderAlarmTimer hasn't fired yet, assign the reminder a new reminderAlarmTimer
+                // if the reminder doesn't have a reminderAlarmTimer or the reminderAlarmTimer hasn't fired yet, assign the reminder a new reminderAlarmTimer. If the reminderAlarmTimer fireDate is nil but there exists a reminderAlarmTimer, that means there is a timer when one shouldn't exist. However, do nothing as this timer could be a placeholder preventing replication.
                 if reminder.reminderAlarmTimer == nil || reminder.reminderAlarmTimer?.fireDate ?? Date(timeIntervalSince1970: 0.0) > Date() {
                     let reminderAlarmTimer = Timer(fireAt: reminderExecutionDate,
                                       interval: -1,
@@ -48,7 +49,7 @@ final class TimingManager {
                 }
                 
                 // Sets a timer that executes when the timer should go from isSkipping true -> false.
-                // If the reminder doesn't have a reminderDisableIsSkippingTimer or the reminderDisableIsSkippingTimer hasn't fired yet, assign the reminder a new reminderDisableIsSkippingTimer
+                // If the reminder doesn't have a reminderDisableIsSkippingTimer or the reminderDisableIsSkippingTimer hasn't fired yet, assign the reminder a new reminderDisableIsSkippingTimer.  If the reminderDisableIsSkippingTimer fireDate is nil but there exists a reminderDisableIsSkippingTimer, that means there is a timer when one shouldn't exist. However, do nothing as this timer could be a placeholder preventing replication.
                 if reminder.reminderDisableIsSkippingTimer == nil || reminder.reminderDisableIsSkippingTimer?.fireDate ?? Date(timeIntervalSince1970: 0.0) > Date(), let disableIsSkippingDate = reminder.disableIsSkippingDate {
                     let reminderDisableIsSkippingTimer = Timer(fireAt: disableIsSkippingDate,
                                                    interval: -1,
@@ -91,21 +92,32 @@ final class TimingManager {
             return
         }
         
-        let dogId: Int? = userInfo[KeyConstant.dogId.rawValue] as? Int
-        let reminder: Reminder? = userInfo[KeyConstant.reminder.rawValue] as? Reminder
+        let forDogId: Int? = userInfo[KeyConstant.dogId.rawValue] as? Int
+        let forReminder: Reminder? = userInfo[KeyConstant.reminder.rawValue] as? Reminder
         
-        guard let dogId = dogId, let reminder = reminder else {
+        guard let forDogId = forDogId, let forReminder = forReminder else {
             return
         }
         
-        reminder.resetForNextAlarm()
-        
-        RemindersRequest.update(invokeErrorManager: false, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
-            guard requestWasSuccessful == true else {
+        RemindersRequest.get(invokeErrorManager: false, forDogId: forDogId, forReminder: forReminder) { reminder, responseStatus in
+            guard let reminder = reminder else {
+                if responseStatus == .successResponse {
+                    // If the response was successful but no reminder was returned, that means the reminder was deleted. Therefore, update the dogManager to indicate as such.
+                    forReminder.clearTimers()
+                    self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forDogId: forDogId, forReminderId: forReminder.reminderId)
+                }
                 return
             }
             
-            delegate.didAddReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
+            reminder.resetForNextAlarm()
+            
+            RemindersRequest.update(invokeErrorManager: false, forDogId: forDogId, forReminder: reminder) { requestWasSuccessful, _ in
+                guard requestWasSuccessful == true else {
+                    return
+                }
+                
+                delegate.didAddReminder(sender: Sender(origin: self, localized: self), forDogId: forDogId, forReminder: reminder)
+            }
         }
     }
     

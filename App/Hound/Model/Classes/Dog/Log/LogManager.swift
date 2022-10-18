@@ -11,21 +11,21 @@ import UIKit
 final class LogManager: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
-       func copy(with zone: NSZone? = nil) -> Any {
-           let copy = LogManager()
-           for log in logs {
-               if let logCopy = log.copy() as? Log {
-                   copy.logs.append(logCopy)
-               }
-           }
-           if let uniqueLogActionsResult = uniqueLogActionsResult {
-               copy.uniqueLogActionsResult = []
-               for uniqueLogActionCopy in uniqueLogActionsResult {
-                   copy.uniqueLogActionsResult?.append(uniqueLogActionCopy)
-               }
-           }
-           return copy
-       }
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = LogManager()
+        for log in logs {
+            if let logCopy = log.copy() as? Log {
+                copy.logs.append(logCopy)
+            }
+        }
+        if let uniqueLogActionsResult = uniqueLogActionsResult {
+            copy.uniqueLogActionsResult = []
+            for uniqueLogActionCopy in uniqueLogActionsResult {
+                copy.uniqueLogActionsResult?.append(uniqueLogActionCopy)
+            }
+        }
+        return copy
+    }
     
     // MARK: - NSCoding
     
@@ -52,6 +52,7 @@ final class LogManager: NSObject, NSCoding, NSCopying {
         self.init(forLogs: overrideLogManager?.logs ?? [])
         
         for logBody in logBodies {
+            // Don't pull logId or logIsDeleted from overrideLog. A valid logBody needs to provide this itself
             let logId: Int? = logBody[KeyConstant.logId.rawValue] as? Int
             let logIsDeleted: Bool? = logBody[KeyConstant.logIsDeleted.rawValue] as? Bool
             
@@ -87,8 +88,7 @@ final class LogManager: NSObject, NSCoding, NSCopying {
                 return false
             }
             
-            guard (shouldOverridePlaceholderLog == true) ||
-                    (shouldOverridePlaceholderLog == false && oldLog.logId >= 0) else {
+            guard (shouldOverridePlaceholderLog == true) || (shouldOverridePlaceholderLog == false && oldLog.logId >= 0) else {
                 return false
             }
             

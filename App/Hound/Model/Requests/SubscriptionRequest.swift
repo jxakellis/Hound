@@ -16,8 +16,8 @@ enum SubscriptionRequest {
     // MARK: - Private Functions
     
     /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
+    completionHandler returns response data: dictionary of the body and the ResponseStatus
+    */
     private static func internalGet(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         return InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams) { responseBody, responseStatus in
@@ -27,8 +27,8 @@ enum SubscriptionRequest {
     }
     
     /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
+    completionHandler returns response data: dictionary of the body and the ResponseStatus
+    */
     private static func internalCreate(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         // Get the receipt if it's available. If the receipt isn't available, we sent through an invalid base64EncodedString, then the server will return us an error
@@ -53,8 +53,8 @@ extension SubscriptionRequest {
     // MARK: - Public Functions
     
     /**
-     completionHandler returns a bool and response status. If the query is successful, automatically sets up familyInformation and returns true. Otherwise, false is returned.
-     */
+    completionHandler returns a bool and response status. If the query is successful, automatically sets up familyInformation and returns true. Otherwise, false is returned.
+    */
     @discardableResult static func get(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         
         return SubscriptionRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
@@ -83,9 +83,9 @@ extension SubscriptionRequest {
     /**
      Sends a request for the user to create a subscription
      Hound uses the provided base64 encoded appStoreReceiptURL to retrieving all transactions for the user, parsing through them and updating its records
-     completionHandler returns a Bool  and the ResponseStatus, indicating whether or not the transaction was successful
+    completionHandler returns a Bool  and the ResponseStatus, indicating whether or not the transaction was successful
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    */
     @discardableResult static func create(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         
         return SubscriptionRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in

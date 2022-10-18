@@ -6,8 +6,8 @@
 //  Copyright © 2022 Jonathan Xakellis. All rights reserved.
 //
 
-import Foundation
 import CryptoKit
+import Foundation
 
 enum Hash {
     static func sha256Hash(forString string: String) -> String {

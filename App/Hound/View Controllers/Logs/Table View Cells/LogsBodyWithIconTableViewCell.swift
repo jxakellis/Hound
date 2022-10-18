@@ -50,7 +50,7 @@ final class LogsBodyWithIconTableViewCell: UITableViewCell {
         
         let fontSize = VisualConstant.FontConstant.logCellFontSize
         let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
-        let shouldHideLogNote = log.logNote.trimmingCharacters(in: .whitespacesAndNewlines) == ""
+        let shouldHideLogNote = log.logNote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         
         // Dog Icon
         dogIconImageView.image = parentDogIcon

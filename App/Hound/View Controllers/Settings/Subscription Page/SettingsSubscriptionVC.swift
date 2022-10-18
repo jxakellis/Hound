@@ -6,8 +6,8 @@
 //  Copyright © 2022 Jonathan Xakellis. All rights reserved.
 //
 
-import UIKit
 import StoreKit
+import UIKit
 
 final class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     

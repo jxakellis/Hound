@@ -6,8 +6,8 @@
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 
-import UIKit
 import StoreKit
+import UIKit
 
 protocol SettingsViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)

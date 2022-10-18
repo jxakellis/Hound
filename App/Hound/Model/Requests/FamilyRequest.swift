@@ -18,8 +18,8 @@ enum FamilyRequest {
     // MARK: - Private Functions
     
     /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
+    completionHandler returns response data: dictionary of the body and the ResponseStatus
+    */
     private static func internalGet(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         return InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithFamilyId) { responseBody, responseStatus in
@@ -29,8 +29,8 @@ enum FamilyRequest {
     }
     
     /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
+    completionHandler returns response data: dictionary of the body and the ResponseStatus
+    */
     private static func internalCreate(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         return InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: [ : ]) { responseBody, responseStatus in
@@ -40,8 +40,8 @@ enum FamilyRequest {
     }
     
     /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
+    completionHandler returns response data: dictionary of the body and the ResponseStatus
+    */
     private static func internalUpdate(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         // the user is trying to join a family with the family code, so omit familyId (as we don't have one)
@@ -59,8 +59,8 @@ enum FamilyRequest {
     }
     
     /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
+    completionHandler returns response data: dictionary of the body and the ResponseStatus
+    */
     private static func internalDelete(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         return InternalRequestUtils.genericDeleteRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithFamilyId, forBody: body) { responseBody, responseStatus in
@@ -75,8 +75,8 @@ extension FamilyRequest {
     // MARK: - Public Functions
     
     /**
-     completionHandler returns a bool and response status. If the query is successful, automatically sets up familyInformation and returns true. Otherwise, false is returned.
-     */
+    completionHandler returns a bool and response status. If the query is successful, automatically sets up familyInformation and returns true. Otherwise, false is returned.
+    */
     @discardableResult static func get(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         return FamilyRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
@@ -100,10 +100,10 @@ extension FamilyRequest {
     }
     
     /**
-     Sends a request for the user to create their own family.
-     completionHandler returns a possible familyId and the ResponseStatus.
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    Sends a request for the user to create their own family.
+    completionHandler returns a possible familyId and the ResponseStatus.
+    If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+    */
     @discardableResult static func create(invokeErrorManager: Bool, completionHandler: @escaping (String?, ResponseStatus) -> Void) -> Progress? {
         return FamilyRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
@@ -124,10 +124,10 @@ extension FamilyRequest {
     }
     
     /**
-     Update specific piece(s) of the family
-     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    Update specific piece(s) of the family
+    completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
+    If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+    */
     @discardableResult static func update(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         return FamilyRequest.internalUpdate(invokeErrorManager: invokeErrorManager, body: body) { _, responseStatus in
             switch responseStatus {
@@ -143,10 +143,10 @@ extension FamilyRequest {
     }
     
     /**
-     If the user is a familyMember, lets the user leave the family. If the user is a familyHead and are the only member, deletes the family. If they are a familyHead and there are other familyMembers, the request fails.
-     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    If the user is a familyMember, lets the user leave the family. If the user is a familyHead and are the only member, deletes the family. If they are a familyHead and there are other familyMembers, the request fails.
+    completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
+    If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+    */
     @discardableResult static func delete(invokeErrorManager: Bool, body: [String: Any] = [:], completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         return FamilyRequest.internalDelete(invokeErrorManager: invokeErrorManager, body: body) { _, responseStatus in
             switch responseStatus {

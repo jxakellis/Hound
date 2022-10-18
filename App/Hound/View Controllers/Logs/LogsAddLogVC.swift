@@ -142,7 +142,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             
             parentDogLabel.text = {
                 guard let forDogIdsSelected = forDogIdsSelected, forDogIdsSelected.count >= 1 else {
-                    // If no forDogIdsSelected.count == 0, we leave the text blank so that the placeholder text will display
+                    // If no forDogIdsSelected.isEmpty, we leave the text blank so that the placeholder text will display
                     return nil
                 }
                 
@@ -291,7 +291,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 addLogButton.beginQuerying()
                 addLogButtonBackground.beginQuerying(isBackgroundButton: true)
                 
-                // Only retrieve correspondingReminders if switch is on. The switch can only be on if the correspondingReminders array isn't empty and the user turned it on themselves. The switch is hidden when correspondingReminders.count == 0.
+                // Only retrieve correspondingReminders if switch is on. The switch can only be on if the correspondingReminders array isn't empty and the user turned it on themselves. The switch is hidden when correspondingReminders.isEmpty.
                 let correspondingReminders = resetCorrespondingRemindersSwitch.isOn ? self.correspondingReminders : []
                 
                 let completionTracker = CompletionTracker(numberOfTasks: forDogIdsSelected.count + correspondingReminders.count) {
@@ -359,10 +359,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             // Updating a log
             logToUpdate.logDate = logDateDatePicker.date
             logToUpdate.logAction = logActionSelected
-            try logToUpdate.changeLogCustomActionName(forLogCustomActionName:
-                                                        logActionSelected == LogAction.custom
-                                                      ? logCustomActionNameTextField.text ?? ""
-                                                      : "")
+            try logToUpdate.changeLogCustomActionName(forLogCustomActionName: logActionSelected == LogAction.custom ? logCustomActionNameTextField.text ?? "" : "")
             try logToUpdate.changeLogNote(forLogNote: logNoteTextView.text ?? ClassConstant.LogConstant.defaultLogNote)
             
             addLogButton.beginQuerying()
@@ -773,9 +770,9 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         view.layoutIfNeeded()
     }
     
-    /// If correspondingReminders.count == 0, hides the label and switch for reset corresponding remiders should be hidden
+    /// If correspondingReminders.isEmpty, hides the label and switch for reset corresponding remiders should be hidden
     private func checkResetCorrespondingReminders() {
-        let shouldHideResetCorrespondingReminders = correspondingReminders.count == 0
+        let shouldHideResetCorrespondingReminders = correspondingReminders.isEmpty
         
         // Check to make sure that the values have changed and need updated
         guard resetCorrespondingRemindersLabel.isHidden != shouldHideResetCorrespondingReminders || resetCorrespondingRemindersSwitch.isHidden != shouldHideResetCorrespondingReminders else {

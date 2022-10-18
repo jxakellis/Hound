@@ -51,15 +51,15 @@ extension FamilyMember {
         let trimmedLastName = lastName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         
         // check to see if anything is blank
-        if trimmedFirstName == "" && trimmedLastName == "" {
+        if trimmedFirstName.isEmpty && trimmedLastName.isEmpty {
             return "No Name"
         }
         // we know one of OR both of the trimmedFirstName and trimmedLast name are != nil && != ""
-        else if trimmedFirstName == "" {
+        else if trimmedFirstName.isEmpty {
             // no first name but has last name
             return trimmedLastName
         }
-        else if trimmedLastName == "" {
+        else if trimmedLastName.isEmpty {
             // no last name but has first name
             return trimmedFirstName
         }
@@ -74,15 +74,15 @@ extension FamilyMember {
         let trimmedLastName = lastName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         
         // check to see if anything is blank
-        if trimmedFirstName == "" && trimmedLastName == "" {
+        if trimmedFirstName.isEmpty && trimmedLastName.isEmpty {
             return "No Name"
         }
         // we know one of OR both of the trimmedFirstName and trimmedLast name are != ""
-        else if trimmedFirstName == "" {
+        else if trimmedFirstName.isEmpty {
             // no first name but has last name
             return trimmedLastName
         }
-        // we know the user has a firstName that isn't == "", so we can use that
+        // we know the user has a firstName that isn't.isEmpty, so we can use that
         else {
             return trimmedFirstName
         }

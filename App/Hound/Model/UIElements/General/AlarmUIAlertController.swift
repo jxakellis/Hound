@@ -56,10 +56,9 @@ final class AlarmUIAlertController: GeneralUIAlertController {
         guard let selfDogId = dogId, let withDogId = withAlarmUIAlertController.dogId else {
             return false
         }
-
+        
         // dogId and reminderAction always have to match
-        guard selfDogId == withDogId
-                && selfReminder.reminderAction == withReminder.reminderAction  else {
+        guard selfDogId == withDogId && selfReminder.reminderAction == withReminder.reminderAction  else {
             return false
         }
         

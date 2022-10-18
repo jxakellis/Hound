@@ -111,7 +111,7 @@ final class LogsTableViewController: UITableViewController {
         // important to store this value so we don't recompute more than needed
         groupedLogsByUniqueDate = dogManager.groupedLogsByUniqueDate(forLogsFilter: logsFilter, forMaximumNumberOfLogsPerDog: UserConfiguration.maximumNumberOfLogsDisplayed)
         
-        if groupedLogsByUniqueDate.count == 0 {
+        if groupedLogsByUniqueDate.isEmpty {
             tableView.separatorStyle = .none
         }
         else {
@@ -124,7 +124,7 @@ final class LogsTableViewController: UITableViewController {
     // MARK: - Table View Data Source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if groupedLogsByUniqueDate.count == 0 {
+        if groupedLogsByUniqueDate.isEmpty {
             return 1
         }
         else {
@@ -134,7 +134,7 @@ final class LogsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        if groupedLogsByUniqueDate.count == 0 {
+        if groupedLogsByUniqueDate.isEmpty {
             return 1
             
         }
@@ -155,7 +155,7 @@ final class LogsTableViewController: UITableViewController {
             }
         }
         
-        guard groupedLogsByUniqueDate.count > 0 else {
+        guard groupedLogsByUniqueDate.isEmpty == false else {
             // no logs present
             let cell = tableView.dequeueReusableCell(withIdentifier: "LogsHeaderTableViewCell", for: indexPath)
             
@@ -257,24 +257,24 @@ final class LogsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let nestedLogsArray = groupedLogsByUniqueDate[indexPath.section].3
-        let dogId = nestedLogsArray[indexPath.row - 1].0
-        let logId = nestedLogsArray[indexPath.row - 1].1.logId
+        let forDogId = nestedLogsArray[indexPath.row - 1].0
+        let forLog = nestedLogsArray[indexPath.row - 1].1
         
         RequestUtils.beginRequestIndictator()
-        LogsRequest.get(invokeErrorManager: true, forDogId: dogId, forLogId: logId) { newLog, responseStatus in
+        LogsRequest.get(invokeErrorManager: true, forDogId: forDogId, forLog: forLog) { log, responseStatus in
             RequestUtils.endRequestIndictator {
                 self.tableView.deselectRow(at: indexPath, animated: true)
                 
-                guard let newLog = newLog else {
+                guard let log = log else {
                     if responseStatus == .successResponse {
                         // If the response was successful but no log was returned, that means the log was deleted. Therefore, update the dogManager to indicate as such.
-                        self.dogManager.findDog(forDogId: dogId)?.dogLogs.removeLog(forLogId: logId)
+                        self.dogManager.findDog(forDogId: forDogId)?.dogLogs.removeLog(forLogId: forLog.logId)
                         self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                     }
                     return
                 }
                 
-                self.delegate.didSelectLog(forDogId: dogId, log: newLog)
+                self.delegate.didSelectLog(forDogId: forDogId, log: log)
             }
         }
     }

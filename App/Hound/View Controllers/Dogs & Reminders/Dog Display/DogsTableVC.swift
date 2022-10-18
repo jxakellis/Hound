@@ -46,8 +46,8 @@ final class DogsTableViewController: UITableViewController {
             }
         }
         
-        tableView.allowsSelection = dogManager.dogs.count > 0
-        tableView.rowHeight = dogManager.dogs.count > 0 ? -1.0 : 65.5
+        tableView.allowsSelection = !dogManager.dogs.isEmpty
+        tableView.rowHeight = dogManager.dogs.isEmpty ? 65.5 : -1.0
     }
     
     // MARK: - Properties
@@ -61,7 +61,7 @@ final class DogsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if dogManager.dogs.count == 0 {
+        if dogManager.dogs.isEmpty {
             tableView.allowsSelection = false
         }
         
@@ -111,7 +111,7 @@ final class DogsTableViewController: UITableViewController {
     }
     
     @objc private func loopReload() {
-        if tableView.visibleCells.count == 0 {
+        if tableView.visibleCells.isEmpty {
             loopTimer?.invalidate()
             loopTimer = nil
         }
@@ -303,7 +303,7 @@ final class DogsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if dogManager.dogs.count == 0 {
+        if dogManager.dogs.isEmpty {
             return 1
         }
         
@@ -324,8 +324,7 @@ final class DogsTableViewController: UITableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "DogsReminderDisplayTableViewCell", for: indexPath)
             
             if let customCell = cell as? DogsReminderDisplayTableViewCell {
-                customCell.setup(forForDogId: dogManager.dogs[indexPath.section].dogId,
-                                 forReminder: dogManager.dogs[indexPath.section].dogReminders.reminders[indexPath.row - 1])
+                customCell.setup(forForDogId: dogManager.dogs[indexPath.section].dogId, forReminder: dogManager.dogs[indexPath.section].dogReminders.reminders[indexPath.row - 1])
             }
             
             return cell
@@ -336,7 +335,7 @@ final class DogsTableViewController: UITableViewController {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
-        guard dogManager.dogs.count > 0 else {
+        guard dogManager.dogs.isEmpty == false else {
             return
         }
         
@@ -351,7 +350,7 @@ final class DogsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
-        guard editingStyle == .delete && dogManager.dogs.count > 0 else {
+        guard editingStyle == .delete && dogManager.dogs.isEmpty == false else {
             return
         }
         var removeConfirmation: GeneralUIAlertController?
@@ -373,7 +372,6 @@ final class DogsTableViewController: UITableViewController {
                     self.dogManager.clearTimers()
                     self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                     self.tableView.deleteSections([indexPath.section], with: .automatic)
-                    
                     
                 }
                 

@@ -130,7 +130,7 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     //// If we add a month to the date, then it might be incorrect and lose accuracy. For example, our day is 31. We are in April so there is only 30 days. Therefore we get a calculated date of April 30th. After adding a month, the result date is May 30th, but it should be 31st because of our day and that May has 31 days. This corrects that.
     private func fallShortCorrection(forDate date: Date) -> Date {
         
-       guard UTCDay > Calendar.UTCCalendar.component(.day, from: date) else {
+        guard UTCDay > Calendar.UTCCalendar.component(.day, from: date) else {
             // when adding a month, the day did not fall short of what was needed
             return date
         }
@@ -165,7 +165,7 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         // We want to make sure that the day of month we are using isn't greater that the number of days in the target month. If it is, then we could accidentily roll over into the next month. For example, without this functionality, setting the day of Feburary to 31 would cause the date to roll into the next month. But, targetDayOfMonth limits the set to 28/29
         
         let targetDayOfMonth: Int = UTCDay <= numberOfDaysInMonth ? UTCDay : numberOfDaysInMonth
-       
+        
         // Set futureExecutionDate to the proper day of month
         futureExecutionDate = Calendar.UTCCalendar.date(bySetting: .day, value: targetDayOfMonth, of: futureExecutionDate) ?? ClassConstant.DateConstant.default1970Date
         
@@ -179,7 +179,7 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
             futureExecutionDate = fallShortCorrection(forDate: Calendar.UTCCalendar.date(byAdding: .month, value: 1, to: futureExecutionDate) ?? ClassConstant.DateConstant.default1970Date)
         }
         var futureExecutionDates = [futureExecutionDate]
-    
+        
         // futureExecutionDates should have at least two dates
         futureExecutionDates.append(
             fallShortCorrection(forDate:

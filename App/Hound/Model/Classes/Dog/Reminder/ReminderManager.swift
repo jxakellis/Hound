@@ -50,6 +50,7 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
         self.init(forReminders: overrideReminderManager?.reminders ?? [])
         
         for reminderBody in reminderBodies {
+            // Don't pull reminderId or reminderIsDeleted from overrideReminder. A valid reminderBody needs to provide this itself
             let reminderId = reminderBody[KeyConstant.reminderId.rawValue] as? Int
             let reminderIsDeleted = reminderBody[KeyConstant.reminderIsDeleted.rawValue] as? Bool
             

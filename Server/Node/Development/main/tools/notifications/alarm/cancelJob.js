@@ -1,6 +1,6 @@
 const { alarmLogger } = require('../../logging/loggers');
 
-const { schedule } = require('./schedules');
+const { schedule } = require('./schedule');
 
 const { areAllDefined } = require('../../format/validateDefined');
 

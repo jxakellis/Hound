@@ -123,7 +123,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
                 // there is no corresponding log action in the dog for the log action in the logs filter, remove that log action from the logs filter
                 logsFilter[dogId]?.removeAll(where: { $0 == logAction })
                 
-                if logsFilter[dogId]?.count == 0 {
+                if logsFilter[dogId]?.isEmpty == true {
                     // if we removed the last log action for a given dogId, then also remove that dogId
                     logsFilter.removeValue(forKey: dogId)
                 }
@@ -372,7 +372,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, L
                 logsFilter[dogId] = existingLogActionFilters
                 
                 // check to see if we removed the the last logAction.
-                if existingLogActionFilters.count == 0 {
+                if existingLogActionFilters.isEmpty {
                     // We removed the last logAction for a dog. Remove the logsFilter key and unselect the dog
                     logsFilter[dogId] = nil
                     if let dogCell = dropDown.dropDownTableView?.cellForRow(at: IndexPath(row: 0, section: indexPath.section)) as? DropDownLogFilterTableViewCell {

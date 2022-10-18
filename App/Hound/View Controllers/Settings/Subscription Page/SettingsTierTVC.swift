@@ -6,9 +6,9 @@
 //  Copyright © 2022 Jonathan Xakellis. All rights reserved.
 //
 
-import UIKit
-import StoreKit
 import KeychainSwift
+import StoreKit
+import UIKit
 
 final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
     

@@ -8,8 +8,8 @@
 //  Modified by Jonathan Xakellis on 2/5/21.
 //
 
-import UIKit
 import NotificationBannerSwift
+import UIKit
 
 final class AlertManager: NSObject {
     

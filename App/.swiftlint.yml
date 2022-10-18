@@ -17,6 +17,13 @@ opt_in_rules:
  - private_action
  - private_outlet
  - force_unwrapping
+ - empty_count
+ - empty_string
+ - explicit_self
+ - sorted_imports
+ - unused_import
+ - unused_declaration
+ - yoda_condition
 
 statement_position:
   statement_mode: uncuddled_else

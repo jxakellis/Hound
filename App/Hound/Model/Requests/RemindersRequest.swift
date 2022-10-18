@@ -16,8 +16,8 @@ enum RemindersRequest {
     // MARK: - Private Functions
     
     /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
+       completionHandler returns response data: dictionary of the body and the ResponseStatus
+    */
     private static func internalGet(invokeErrorManager: Bool, forDogId dogId: Int, forReminderId reminderId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         let URLWithParams: URL
@@ -47,8 +47,8 @@ enum RemindersRequest {
     }
     
     /**
-     completionHandler returns response data: created reminder with reminderId and the ResponseStatus
-     */
+    completionHandler returns response data: created reminder with reminderId and the ResponseStatus
+    */
     private static func internalCreate(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
@@ -62,23 +62,8 @@ enum RemindersRequest {
     }
     
     /**
-     completionHandler returns response data: created reminder with reminderId and the ResponseStatus
-     */
-    private static func internalCreate(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
-        
-        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
-        
-        let body = reminder.createBody()
-        
-        return InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
-            completionHandler(responseBody, responseStatus)
-        }
-        
-    }
-    
-    /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
+    completionHandler returns response data: dictionary of the body and the ResponseStatus
+    */
     private static func internalUpdate(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
@@ -101,8 +86,8 @@ enum RemindersRequest {
     }
     
     /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
+    completionHandler returns response data: dictionary of the body and the ResponseStatus
+    */
     private static func internalDelete(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
@@ -121,8 +106,8 @@ extension RemindersRequest {
     // MARK: - Public Functions
     
     /**
-     completionHandler returns a reminder and response status. If the query is successful and the reminder isn't deleted, then the reminder is returned. Otherwise, nil is returned.
-     */
+    completionHandler returns a reminder and response status. If the query is successful and the reminder isn't deleted, then the reminder is returned. Otherwise, nil is returned.
+    */
     @discardableResult static func get(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) -> Progress? {
         
         return RemindersRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderId: reminder.reminderId) { responseBody, responseStatus in
@@ -143,16 +128,18 @@ extension RemindersRequest {
     }
     
     /**
-     completionHandler returns a possible reminder and the ResponseStatus.
+    completionHandler returns a possible reminder and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    */
     @discardableResult static func create(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) -> Progress? {
         
-        return RemindersRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminder: reminder) { responseBody, responseStatus in
+        return RemindersRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: [reminder]) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let reminderBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
-                    completionHandler(Reminder(forReminderBody: reminderBody, overrideReminder: nil), responseStatus)
+                if let remindersBody = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]], let reminderBody = remindersBody.first {
+                    let reminder = Reminder(forReminderBody: reminderBody, overrideReminder: reminder)
+                    
+                    completionHandler(reminder, responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)
@@ -166,22 +153,22 @@ extension RemindersRequest {
     }
     
     /**
-     completionHandler returns a possible array of reminders and the ResponseStatus.
+    completionHandler returns a possible array of reminders and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    */
     @discardableResult static func create(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([Reminder]?, ResponseStatus) -> Void) -> Progress? {
         
         return RemindersRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let remindersBody = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]] {
-                    var reminderArray: [Reminder] = []
-                    for reminderBody in remindersBody {
-                        if let reminder = Reminder(forReminderBody: reminderBody, overrideReminder: nil) {
-                            reminderArray.append(reminder)
-                        }
+                    // iterate over the remindersBody body. When constructing each reminder, attempt to find a corresponding reminder for each reminderBody. Only return reminders from remindersBody where the reminder can be constructed
+                    let createdReminders: [Reminder] = remindersBody.enumerated().compactMap { (index, reminderBody) in
+                        // the reminders array and the remindersBody should be 1:1, if they aren't then a nil overrideReminder is passed. Additionally, if the Reminder can't be constucted from the reminderBody, then nil is returned and compactMap doesn't include the entry.
+                        return Reminder(forReminderBody: reminderBody, overrideReminder: reminders[safeIndex: index])
                     }
-                    completionHandler(reminderArray, responseStatus)
+                    
+                    completionHandler(createdReminders, responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)
@@ -195,10 +182,10 @@ extension RemindersRequest {
     }
     
     /**
-     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
+    completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
      Upon successful completion, invokes clearTimers() for each reminder
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    */
     @discardableResult static func update(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         
         return RemindersRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: [reminder]) { _, responseStatus in
@@ -216,10 +203,10 @@ extension RemindersRequest {
     }
     
     /**
-     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
+    completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
      Upon successful completion, invokes clearTimers() for each reminder
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    */
     @discardableResult static func update(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         
         return RemindersRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { _, responseStatus in
@@ -239,10 +226,10 @@ extension RemindersRequest {
     }
     
     /**
-     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
+    completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
      Upon successful completion, invokes clearTimers() for each reminder
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    */
     @discardableResult static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         return RemindersRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: [reminder]) { _, responseStatus in
             switch responseStatus {
@@ -259,10 +246,10 @@ extension RemindersRequest {
     }
     
     /**
-     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
+    completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
      Upon successful completion, invokes clearTimers() for each reminder
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    */
     @discardableResult static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         return RemindersRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { _, responseStatus in
             switch responseStatus {

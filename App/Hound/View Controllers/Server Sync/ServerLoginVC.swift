@@ -6,9 +6,9 @@
 //  Copyright © 2022 Jonathan Xakellis. All rights reserved.
 //
 
-import UIKit
 import AuthenticationServices
 import KeychainSwift
+import UIKit
 
 final class ServerLoginViewController: UIViewController, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     
@@ -37,7 +37,7 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
              AppDelegate.generalLogger.error("ASAuthorizationController encounterd an error after didCompleteWithAuthorization: Unable to serialize token string from data: \(appleIDToken.debugDescription)")
              return
              }
-             */
+            */
             
             let keychain = KeychainSwift()
             

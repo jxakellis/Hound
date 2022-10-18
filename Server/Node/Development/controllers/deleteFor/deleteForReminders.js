@@ -1,6 +1,9 @@
 const { ValidationError } = require('../../main/tools/general/errors');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
+const {
+  formatArray,
+} = require('../../main/tools/format/formatObject');
 
 const { deleteAlarmNotificationsForReminder } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
 
@@ -22,6 +25,26 @@ async function deleteReminderForFamilyIdDogIdReminderId(databaseConnection, fami
   );
   // everything here succeeded so we shoot off a request to delete the alarm notification for the reminder
   deleteAlarmNotificationsForReminder(familyId, reminderId);
+}
+
+/**
+ *  Queries the database to delete multiple reminders. If the query is successful, then returns
+ *  If a problem is encountered, creates and throws custom error
+ */
+async function deleteRemindersForFamilyIdDogIdReminderIds(databaseConnection, familyId, dogId, forReminders) {
+  const reminders = formatArray(forReminders);
+
+  if (areAllDefined(databaseConnection, dogId, reminders) === false) {
+    throw new ValidationError('databaseConnection, dogId, or reminders missing', global.constant.error.value.MISSING);
+  }
+
+  const promises = [];
+  for (let i = 0; i < reminders.length; i += 1) {
+    promises.push(deleteReminderForFamilyIdDogIdReminderId(databaseConnection, familyId, dogId, reminders[i].reminderId));
+  }
+  await Promise.all(promises);
+
+  return reminders;
 }
 
 /**
@@ -62,4 +85,4 @@ async function deleteAllRemindersForFamilyIdDogId(databaseConnection, familyId, 
   }
 }
 
-module.exports = { deleteReminderForFamilyIdDogIdReminderId, deleteAllRemindersForFamilyIdDogId };
+module.exports = { deleteReminderForFamilyIdDogIdReminderId, deleteRemindersForFamilyIdDogIdReminderIds, deleteAllRemindersForFamilyIdDogId };

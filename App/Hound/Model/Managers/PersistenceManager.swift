@@ -6,9 +6,9 @@
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 
-import UIKit
 import KeychainSwift
 import StoreKit
+import UIKit
 
 enum PersistenceManager {
     /// Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)

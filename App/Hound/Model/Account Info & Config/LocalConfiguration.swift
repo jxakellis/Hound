@@ -6,8 +6,8 @@
 //  Copyright © 2022 Jonathan Xakellis. All rights reserved.
 //
 
-import UIKit
 import StoreKit
+import UIKit
 
 /// Configuration that is local to the app only. If the app is reinstalled then this data should be fresh
 enum LocalConfiguration {

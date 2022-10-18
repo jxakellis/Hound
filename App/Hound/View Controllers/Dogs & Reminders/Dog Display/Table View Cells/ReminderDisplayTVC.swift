@@ -189,7 +189,7 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
             
             nextAlarmLabel.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font: nextAlarmBodyFont])
             
-            nextAlarmLabel.attributedText = nextAlarmLabel.text?.addingFontToBeginning(text: "Done Snoozing In: ", font: nextAlarmHeaderFont)
+            nextAlarmLabel.attributedText = nextAlarmLabel.text?.addingFontToBeginning(text: "Finish Snoozing In: ", font: nextAlarmHeaderFont)
         }
         else {
             // regular message for regular time

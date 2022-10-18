@@ -2,7 +2,7 @@ const { alarmLogger } = require('../../logging/loggers');
 const { databaseConnectionForAlarms } = require('../../database/establishDatabaseConnections');
 const { databaseQuery } = require('../../database/databaseQuery');
 
-const { schedule } = require('./schedules');
+const { schedule } = require('./schedule');
 
 const { formatDate } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');

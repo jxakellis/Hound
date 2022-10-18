@@ -6,10 +6,10 @@
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 
-import UIKit
-import AVFoundation
 import AudioToolbox
+import AVFoundation
 import MediaPlayer
+import UIKit
 
 enum AudioManager {
     

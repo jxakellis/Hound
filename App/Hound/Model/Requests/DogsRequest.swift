@@ -15,8 +15,8 @@ enum DogsRequest {
     // MARK: - Private Functions
     
     /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
+    completionHandler returns response data: dictionary of the body and the ResponseStatus
+    */
     private static func internalGet(invokeErrorManager: Bool, forDogId dogId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         var urlComponents: URLComponents = {
@@ -52,8 +52,8 @@ enum DogsRequest {
     }
     
     /**
-     completionHandler returns response data: dogId for the created dog and the ResponseStatus
-     */
+    completionHandler returns response data: dogId for the created dog and the ResponseStatus
+    */
     private static func internalCreate(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         let body = dog.createBody()
         
@@ -64,8 +64,8 @@ enum DogsRequest {
     }
     
     /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
+    completionHandler returns response data: dictionary of the body and the ResponseStatus
+    */
     private static func internalUpdate(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dog.dogId)")
@@ -80,8 +80,8 @@ enum DogsRequest {
     }
     
     /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
+    completionHandler returns response data: dictionary of the body and the ResponseStatus
+    */
     private static func internalDelete(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)")
@@ -100,16 +100,16 @@ extension DogsRequest {
     // MARK: - Public Functions
     
     /**
-     completionHandler returns a dog and response status. If the query is successful and the dog isn't deleted, then the dog is returned (the client-side dog is combined with the server-side updated dog). Otherwise, nil is returned.
-     */
+    completionHandler returns a dog and response status. If the query is successful and the dog isn't deleted, then the dog is returned (the client-side dog is combined with the server-side updated dog). Otherwise, nil is returned.
+    */
     @discardableResult static func get(invokeErrorManager: Bool, dog currentDog: Dog, completionHandler: @escaping (Dog?, ResponseStatus) -> Void) -> Progress? {
         
         return DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: currentDog.dogId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // dog JSON {dog1:'foo'}
-                if let newDogBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any], let currentDogCopy = currentDog.copy() as? Dog {
-                    completionHandler(Dog(forDogBody: newDogBody, overrideDog: currentDogCopy), responseStatus)
+                if let newDogBody = responseBody?[KeyConstant.result.rawValue] as? [String: Any] {
+                    completionHandler(Dog(forDogBody: newDogBody, overrideDog: currentDog.copy() as? Dog), responseStatus)
                 }
                 else {
                     // Don't return nil. This is because we pass through userConfigurationPreviousDogManagerSynchronization. That means a successful result could be completely blank (and fail the above if statement), indicating that the user is fully up to date.
@@ -124,8 +124,8 @@ extension DogsRequest {
     }
     
     /**
-     completionHandler returns a dogManager and response status. If the query is successful, then the dogManager is returned (the client-side dog is combined with the server-side updated dog). Otherwise, nil is returned.
-     */
+    completionHandler returns a dogManager and response status. If the query is successful, then the dogManager is returned (the client-side dog is combined with the server-side updated dog). Otherwise, nil is returned.
+    */
     @discardableResult static func get(invokeErrorManager: Bool, dogManager currentDogManager: DogManager, completionHandler: @escaping (DogManager?, ResponseStatus) -> Void) -> Progress? {
         
         // we want this Date() to be slightly in the past. If we set  LocalConfiguration.userConfigurationPreviousDogManagerSynchronization = Date() after the request is successful then any changes that might have occured DURING our query (e.g. we are querying and at the exact same moment a family member creates a log) will not be saved. Therefore, this is more redundant and makes sure nothing is missed
@@ -135,11 +135,11 @@ extension DogsRequest {
         return DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: nil) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let newDogBodies = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]], let currentDogManagerCopy = currentDogManager.copy() as? DogManager {
+                if let newDogBodies = responseBody?[KeyConstant.result.rawValue] as? [[String: Any]] {
                     // successful sync, so we can update value
                     LocalConfiguration.userConfigurationPreviousDogManagerSynchronization = userConfigurationPreviousDogManagerSynchronization
                     
-                    completionHandler(DogManager(forDogBodies: newDogBodies, overrideDogManager: currentDogManagerCopy), responseStatus)
+                    completionHandler(DogManager(forDogBodies: newDogBodies, overrideDogManager: currentDogManager.copy() as? DogManager), responseStatus)
                 }
                 else {
                     // Don't return nil. This is because we pass through userConfigurationPreviousDogManagerSynchronization. That means a successful result could be completely blank (and fail the above if statement), indicating that the user is fully up to date.
@@ -155,9 +155,9 @@ extension DogsRequest {
     }
     
     /**
-     completionHandler returns a possible dogId and the ResponseStatus.
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    completionHandler returns a possible dogId and the ResponseStatus.
+    If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+    */
     @discardableResult static func create(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping (Int?, ResponseStatus) -> Void) -> Progress? {
         return DogsRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDog: dog) { responseBody, responseStatus in
             switch responseStatus {
@@ -187,9 +187,9 @@ extension DogsRequest {
     }
     
     /**
-     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
+    If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+    */
     @discardableResult static func update(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         return DogsRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDog: dog) { _, responseStatus in
             switch responseStatus {
@@ -210,9 +210,9 @@ extension DogsRequest {
     }
     
     /**
-     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
-     */
+    completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
+    If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+    */
     @discardableResult static func delete(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> Progress? {
         return DogsRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId) { _, responseStatus in
             switch responseStatus {

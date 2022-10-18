@@ -100,6 +100,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     
     /// Provide a dictionary literal of reminder properties to instantiate reminder. Optionally, provide a reminder to override with new properties from reminderBody.
     convenience init?(forReminderBody reminderBody: [String: Any], overrideReminder: Reminder?) {
+        // Don't pull reminderId or reminderIsDeleted from overrideReminder. A valid reminderBody needs to provide this itself
         let reminderId: Int? = reminderBody[KeyConstant.reminderId.rawValue] as? Int
         let reminderIsDeleted: Bool? = reminderBody[KeyConstant.reminderIsDeleted.rawValue] as? Bool
         

@@ -6,9 +6,9 @@
 //  Copyright © 2020 Jonathan Xakellis. All rights reserved.
 //
 
+import os.log
 import UIKit
 import UserNotifications
-import os.log
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
