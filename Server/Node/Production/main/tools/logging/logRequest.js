@@ -9,7 +9,7 @@ const { formatString, formatNumber } = require('../format/formatObject');
 async function logRequest(req, res, next) {
   const date = new Date();
 
-  const appVersion = formatString(req.params.appVersio, 10);
+  const appVersion = formatString(req.params.appVersion, 10);
 
   const ip = formatString(req.ip, 32);
 

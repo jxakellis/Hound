@@ -123,6 +123,8 @@ final class SettingsAppearanceViewController: UIViewController, UIPickerViewData
     
     // MARK: Maximum Number Of Displayed Logs
     
+    // TO DO FUTURE remove maximumNumberOfLogsDisplayed. Rather, display x number of logs by default then allow them to load more if they scroll to the bottom
+    
     @IBOutlet private weak var maximumNumberOfLogsDisplayedPickerView: UIPickerView!
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {

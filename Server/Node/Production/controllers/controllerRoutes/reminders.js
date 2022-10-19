@@ -4,7 +4,7 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { getReminderForReminderId, getAllRemindersForDogId } = require('../getFor/getForReminders');
 const { createReminderForDogIdReminder, createRemindersForDogIdReminders } = require('../createFor/createForReminders');
 const { updateReminderForDogIdReminder, updateRemindersForDogIdReminders } = require('../updateFor/updateForReminders');
-const { deleteReminderForFamilyIdDogIdReminderId } = require('../deleteFor/deleteForReminders');
+const { deleteReminderForFamilyIdDogIdReminderId, deleteRemindersForFamilyIdDogIdReminderIds } = require('../deleteFor/deleteForReminders');
 
 const { createAlarmNotificationForFamily } = require('../../main/tools/notifications/alarm/createAlarmNotification');
 
@@ -90,11 +90,7 @@ async function deleteReminder(req, res) {
 
     // reminders array
     if (areAllDefined(reminders)) {
-      const promises = [];
-      for (let i = 0; i < reminders.length; i += 1) {
-        promises.push(deleteReminderForFamilyIdDogIdReminderId(req.databaseConnection, familyId, dogId, reminders[i].reminderId));
-      }
-      await Promise.all(promises);
+      await deleteRemindersForFamilyIdDogIdReminderIds(req.databaseConnection, familyId, dogId, reminders);
     }
     // single reminder
     else {

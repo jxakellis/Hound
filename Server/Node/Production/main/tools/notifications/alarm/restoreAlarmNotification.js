@@ -1,5 +1,5 @@
 const { serverLogger } = require('../../logging/loggers');
-const { schedule } = require('./schedules');
+const { schedule } = require('./schedule');
 const { createAlarmNotificationForFamily } = require('./createAlarmNotification');
 
 const { logServerError } = require('../../logging/logServerError');
