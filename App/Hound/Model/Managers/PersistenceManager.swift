@@ -36,7 +36,7 @@ enum PersistenceManager {
         // These values are retrieved from Sign In With Apple so therefore need to be persisted specially. All other values can be retrieved using these values.
         let keychain = KeychainSwift()
         
-        UserInformation.userIdentifier = keychain.get(KeyConstant.userIdentifier.rawValue)
+        UserInformation.userIdentifier = keychain.get(KeyConstant.userIdentifier.rawValue) ?? DevelopmentConstant.developmentDatabaseUserIdentifier ?? UserInformation.userIdentifier
         
         UserInformation.userEmail = keychain.get(KeyConstant.userEmail.rawValue) ?? UserInformation.userEmail
         UserInformation.userFirstName = keychain.get(KeyConstant.userFirstName.rawValue) ?? UserInformation.userFirstName
@@ -44,12 +44,7 @@ enum PersistenceManager {
         
         // MARK: Load User Information
         
-        UserInformation.userId = UserDefaults.standard.value(forKey: KeyConstant.userId.rawValue) as? String ?? UserInformation.userId
-        
-        if DevelopmentConstant.isProductionDatabase == false {
-            UserInformation.userId = "3991d3ce3891651df1f722ed8f4ba555986e82b968c7039aec2e8fb603352e65"
-            UserInformation.userIdentifier = "1f66dbb1e7df20e51a8cd88c2334f5e4def79a2ebc1444f6766ff4160ea6927a"
-        }
+        UserInformation.userId = UserDefaults.standard.value(forKey: KeyConstant.userId.rawValue) as? String ?? DevelopmentConstant.developmentDatabaseUserId ?? UserInformation.userId
        
         UserInformation.familyId = UserDefaults.standard.value(forKey: KeyConstant.familyId.rawValue) as? String ?? UserInformation.familyId
         
