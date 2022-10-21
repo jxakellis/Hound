@@ -7,22 +7,13 @@ echo $SCRIPT_DIR
 echo $PARENT_DIR
 echo $NODE_DIR
 
-scp -i /Users/jonathanxakellis/Documents/houndServer.cer -r '/Users/jonathanxakellis/Documents/GitHub/COMP-120/How To Clone.rtf' ubuntu@18.116.202.30:/home/jxakellis/Documents
-
-# keep me in place until deploy to production
-exit 0
-
 echo
 echo "DELETING"
 echo
 
-echo "Deleting files inside developmentSecrets"
-rm -rf "${SCRIPT_DIR}/developmentSecrets/*"
 echo "Cloning files inside /Development/main/secrets into developmentSecrets directory"
 cp -rf "${NODE_DIR}/Development/main/secrets/*" "${SCRIPT_DIR}/developmentSecrets"
 
-echo "Deleting files inside productionSecrets"
-rm -rf "${SCRIPT_DIR}/productionSecrets/*"
 echo "Cloning files inside /Production/main/secrets into productionSecrets directory"
 cp -rf "${NODE_DIR}/Production/main/secrets/*" "${SCRIPT_DIR}/productionSecrets"
 
