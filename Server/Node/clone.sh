@@ -1,4 +1,6 @@
 #!/bin/bash
+cd
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 PARENT_DIR="${SCRIPT_DIR}/.."
 NODE_DIR="${PARENT_DIR}/Hound/Server/Node"
@@ -11,11 +13,17 @@ echo
 echo "DELETING"
 echo
 
+ls -a "${SCRIPT_DIR}/developmentSecrets"
+ls -a "${SCRIPT_DIR}/productionSecrets"
+
 echo "Cloning files inside /Development/main/secrets into developmentSecrets directory"
 cp -rf "${NODE_DIR}/Development/main/secrets/." "${SCRIPT_DIR}/developmentSecrets"
 
 echo "Cloning files inside /Production/main/secrets into productionSecrets directory"
 cp -rf "${NODE_DIR}/Production/main/secrets/." "${SCRIPT_DIR}/productionSecrets"
+
+ls -a "${SCRIPT_DIR}/developmentSecrets"
+ls -a "${SCRIPT_DIR}/productionSecrets"
 
 echo "Deleting Hound directory"
 rm -rf "${PARENT_DIR}/Hound"
@@ -40,11 +48,17 @@ echo "Granting read/write privileges on Hound directory (again)"
 # Grant privileges AGAIN so that jxakellis has read/write privileges on node_modules folder
 chmod -R a+rwx "${PARENT_DIR}/Hound"
 
+ls -a "${NODE_DIR}/Development/main/secrets"
+ls -a "${NODE_DIR}/Production/main/secrets"
+
 echo "Cloning files inside developmentSecrets into /Development/main/secrets"
 cp -rf "${SCRIPT_DIR}/developmentSecrets/secrets/." "${NODE_DIR}/Development/main/secrets"
 
 echo "Cloning files inside productionSecrets into /Production/main/secrets"
 cp -rf "${SCRIPT_DIR}/productionSecrets/secrets/." "${NODE_DIR}/Production/main/secrets"
+
+ls -a "${NODE_DIR}/Development/main/secrets"
+ls -a "${NODE_DIR}/Production/main/secrets"
 
 echo "Cloning new bash script"
 cp -rf "${NODE_DIR}/clone.sh" "${SCRIPT_DIR}/clone.sh"
