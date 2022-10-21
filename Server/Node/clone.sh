@@ -10,75 +10,75 @@ echo
 echo "DIRECTORIES"
 echo
 
-echo "Script directory: ${SCRIPT_DIR}"
-echo "Parent directiry: ${PARENT_DIR}"
-echo "Node directory: ${NODE_DIR}"
+echo "SCRIPT DIRECTORY: ${SCRIPT_DIR}"
+echo "PARENT DIRECTORY: ${PARENT_DIR}"
+echo "NODE DIRECTORY: ${NODE_DIR}"
 
 echo
 echo "DELETING"
 echo
 
-echo "Cloning files inside /Development/main/secrets into developmentSecrets directory"
+echo "CLONING FILES INSIDE '/Development/main/secrets' INTO 'developmentSecrets'"
 cp -rf "${NODE_DIR}/Development/main/secrets/." "${SCRIPT_DIR}/developmentSecrets"
 
-echo "Cloning files inside /Production/main/secrets into productionSecrets directory"
+echo "CLONING FILES INSIDE '/Production/main/secrets' INTO 'productionSecrets'"
 cp -rf "${NODE_DIR}/Production/main/secrets/." "${SCRIPT_DIR}/productionSecrets"
 
-echo "Deleting Hound directory"
+echo "DELETING 'Hound'"
 rm -rf "${PARENT_DIR}/Hound"
 
 echo
 echo "CLONING"
 echo
 
-echo "Cloning updated Hound directory from GitHub"
+echo "CLONING UPDATED 'Hound' FROM GitHub"
 git -C "${PARENT_DIR}" clone git@github.com:jxakellis/Hound.git
 
-echo "Granting read/write privileges on Hound directory"
+echo "GRANTING R & W PRIVILEGES ON 'Hound'"
 chmod -R a+rwx "${PARENT_DIR}/Hound"
 
-echo "Installing node_modules into Development directory"
+echo "INSTALLING node_modules INTO 'Development'"
 npm --prefix "${NODE_DIR}/Development" i
 
-echo "Installing node_modules into Production directory"
+echo "INSTALLING node_modules INTO 'Production'"
 npm --prefix "${NODE_DIR}/Production" i
 
-echo "Granting read/write privileges on Hound directory (again)"
+echo "GRANTING R & W PRIVILEGES ON 'Hound' (again)"
 # Grant privileges AGAIN so that jxakellis has read/write privileges on node_modules folder
 chmod -R a+rwx "${PARENT_DIR}/Hound"
 
-echo "Cloning files inside developmentSecrets into /Development/main/secrets"
+echo "CLONING FILES INSIDE 'developmentSecrets' INTO '/Development/main/secrets'"
 cp -rf "${SCRIPT_DIR}/developmentSecrets/." "${NODE_DIR}/Development/main/secrets"
 
-echo "Cloning files inside productionSecrets into /Production/main/secrets"
+echo "CLONING FILES INSIDE 'productionSecrets' INTO '/Production/main/secrets'"
 cp -rf "${SCRIPT_DIR}/productionSecrets/." "${NODE_DIR}/Production/main/secrets"
 
-echo "Cloning new bash script"
+echo "CLONING NEW BASH SCRIPT"
 cp -rf "${NODE_DIR}/clone.sh" "${SCRIPT_DIR}/clone.sh"
 
 echo
 echo "PM2"
 echo
 
-echo "Stopping all PM2 processes"
+echo "STOPPING ALL PROCESSES"
 pm2 stop all
 
-echo "Deleting all PM2 processes"
+echo "DELETING ALL PROCESSES"
 pm2 delete all
 
-echo "Starting developmentDatabase PM2"
+echo "STARTING 'developmentDatabas.config.js'"
 pm2 start "${NODE_DIR}/developmentDatabase.config.js"
 
-echo "Starting productionDatabase PM2"
+echo "STARTING 'productionDatabase.config.js'"
 pm2 start "${NODE_DIR}/productionDatabase.config.js"
 
-echo "Saving PM2 processes"
+echo "SAVING PROCESSES"
 pm2 save --force
 
-echo "Waiting 5 seconds"
+echo "WAITING FIVE SECONDS"
 sleep 5
 
-echo "Listing PM2 processes"
+echo "LISTING PROCESSES"
 pm2 list
 
 echo
