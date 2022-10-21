@@ -1,5 +1,5 @@
 const { alarmLogger } = require('../../logging/loggers');
-const { databaseConnectionForAlarms } = require('../../database/establishDatabaseConnections');
+const { databaseConnectionForAlarms } = require('../../database/createDatabaseConnections');
 const { databaseQuery } = require('../../database/databaseQuery');
 
 const { logServerError } = require('../../logging/logServerError');

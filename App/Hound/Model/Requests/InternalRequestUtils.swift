@@ -23,7 +23,7 @@ enum InternalRequestUtils {
     
     /// Takes an already constructed URLRequest and executes it, returning it in a compeltion handler. This is the basis to all URL requests
     private static func genericRequest(forRequest request: URLRequest, invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
-        
+        // TO DO FUTURE interpret rate limited responses by CloudFlare
         guard NetworkManager.shared.isConnected else {
             DispatchQueue.main.async {
                 if invokeErrorManager == true {

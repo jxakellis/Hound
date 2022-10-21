@@ -3,7 +3,7 @@ const { schedule } = require('./schedule');
 const { createAlarmNotificationForFamily } = require('./createAlarmNotification');
 
 const { logServerError } = require('../../logging/logServerError');
-const { databaseConnectionForAlarms } = require('../../database/establishDatabaseConnections');
+const { databaseConnectionForAlarms } = require('../../database/createDatabaseConnections');
 const { databaseQuery } = require('../../database/databaseQuery');
 
 /**

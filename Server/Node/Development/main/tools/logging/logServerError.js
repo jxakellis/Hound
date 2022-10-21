@@ -1,5 +1,5 @@
 const { serverLogger } = require('./loggers');
-const { databaseConnectionForLogging } = require('../database/establishDatabaseConnections');
+const { databaseConnectionForLogging } = require('../database/createDatabaseConnections');
 const { databaseQuery } = require('../database/databaseQuery');
 const { formatString } = require('../format/formatObject');
 

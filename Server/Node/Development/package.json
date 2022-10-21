@@ -4,10 +4,8 @@
   "description": "Hound Server",
   "main": "./main/server/createServer.js",
   "scripts": {
-    "developmentServerDevelopmentDatabase": "SERVER_ENVIRONMENT=development SERVER_DATABASE=development TEST=true node --max-old-space-size=2048 main/server/createServer.js | pino-pretty -c -t",
-    "developmentServerProductionDatabase": "DO NOT IMPLEMENT, DEVELOPMENT SERVER SHOULD NEVER USE PRODUCTION DATABASE",
-    "productionServerDevelopmentDatabase": "SERVER_ENVIRONMENT=production SERVER_DATABASE=development node main/server/createServer.js | pino-pretty -c -t",
-    "productionServerProductionDatabase": "SERVER_ENVIRONMENT=production SERVER_DATABASE=production node main/server/createServer.js | pino-pretty -c -t"
+    "developmentDatabase": "DATABASE_ENVIRONMENT=development node main/server/createServer.js | pino-pretty -c -t",
+    "productionDatabase": "DATABASE_ENVIRONMENT=production node main/server/createServer.js | pino-pretty -c -t"
   },
   "author": "",
   "license": "ISC",

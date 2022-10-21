@@ -1,7 +1,7 @@
 const { ValidationError, DatabaseError } = require('../general/errors');
 const { formatArray, formatString } = require('../format/formatObject');
 const { areAllDefined } = require('../format/validateDefined');
-const { databaseConnectionForGeneral } = require('./establishDatabaseConnections');
+const { databaseConnectionForGeneral } = require('./createDatabaseConnections');
 
 /**
  * Queries the database with the given sqlString. If a databaseConnection is provided, then uses that databaseConnection, otherwise uses the databaseConnectionForGeneral

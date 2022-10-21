@@ -1,6 +1,6 @@
 const { requestLogger } = require('./loggers');
 const { logServerError } = require('./logServerError');
-const { databaseConnectionForLogging } = require('../database/establishDatabaseConnections');
+const { databaseConnectionForLogging } = require('../database/createDatabaseConnections');
 const { databaseQuery } = require('../database/databaseQuery');
 const { areAllDefined } = require('../format/validateDefined');
 const { formatString, formatNumber } = require('../format/formatObject');
@@ -8,8 +8,6 @@ const { formatString, formatNumber } = require('../format/formatObject');
 // Outputs request to the console and logs to database
 async function logRequest(req, res, next) {
   const date = new Date();
-
-  const appVersion = formatString(req.params.appVersion, 10);
 
   const ip = formatString(req.ip, 32);
 
@@ -24,8 +22,8 @@ async function logRequest(req, res, next) {
     try {
       const result = await databaseQuery(
         databaseConnectionForLogging,
-        'INSERT INTO previousRequests(requestAppVersion, requestIP, requestDate, requestMethod, requestOriginalURL) VALUES (?,?,?,?,?)',
-        [appVersion, ip, date, method, originalUrl],
+        'INSERT INTO previousRequests(requestIP, requestDate, requestMethod, requestOriginalURL) VALUES (?,?,?,?)',
+        [ip, date, method, originalUrl],
       );
       const requestId = formatNumber(result.insertId);
       req.requestId = requestId;

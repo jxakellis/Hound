@@ -1,5 +1,5 @@
 const { alertLogger } = require('../../logging/loggers');
-const { databaseConnectionForGeneral } = require('../../database/establishDatabaseConnections');
+const { databaseConnectionForGeneral } = require('../../database/createDatabaseConnections');
 const { areAllDefined } = require('../../format/validateDefined');
 
 const { logServerError } = require('../../logging/logServerError');
