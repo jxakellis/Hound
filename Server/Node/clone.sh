@@ -12,10 +12,10 @@ echo "DELETING"
 echo
 
 echo "Cloning files inside /Development/main/secrets into developmentSecrets directory"
-cp -rf "${NODE_DIR}/Development/main/secrets/*" "${SCRIPT_DIR}/developmentSecrets"
+cp -rf "${NODE_DIR}/Development/main/secrets/." "${SCRIPT_DIR}/developmentSecrets"
 
 echo "Cloning files inside /Production/main/secrets into productionSecrets directory"
-cp -rf "${NODE_DIR}/Production/main/secrets/*" "${SCRIPT_DIR}/productionSecrets"
+cp -rf "${NODE_DIR}/Production/main/secrets/." "${SCRIPT_DIR}/productionSecrets"
 
 echo "Deleting Hound directory"
 rm -rf "${PARENT_DIR}/Hound"
@@ -41,10 +41,10 @@ echo "Granting read/write privileges on Hound directory (again)"
 chmod -R a+rwx "${PARENT_DIR}/Hound"
 
 echo "Cloning files inside developmentSecrets into /Development/main/secrets"
-cp -rf "${SCRIPT_DIR}/developmentSecrets/secrets/*" "${NODE_DIR}/Development/main/secrets"
+cp -rf "${SCRIPT_DIR}/developmentSecrets/secrets/." "${NODE_DIR}/Development/main/secrets"
 
 echo "Cloning files inside productionSecrets into /Production/main/secrets"
-cp -rf "${SCRIPT_DIR}/productionSecrets/secrets/*" "${NODE_DIR}/Production/main/secrets"
+cp -rf "${SCRIPT_DIR}/productionSecrets/secrets/." "${NODE_DIR}/Production/main/secrets"
 
 echo "Cloning new bash script"
 cp -rf "${NODE_DIR}/clone.sh" "${SCRIPT_DIR}/clone.sh"
