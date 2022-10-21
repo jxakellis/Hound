@@ -1,13 +1,13 @@
 const { serverLogger } = require('../logging/loggers');
 const {
   databaseConnectionForGeneral, databaseConnectionForLogging, databaseConnectionForAlarms, databaseConnectionPoolForRequests,
-} = require('./establishDatabaseConnections');
+} = require('./createDatabaseConnections');
 const { testDatabaseConnections } = require('./testDatabaseConnection');
 const { areAllDefined } = require('../format/validateDefined');
 const { databaseQuery } = require('./databaseQuery');
 const { formatArray } = require('../format/formatObject');
 
-async function verifyDatabaseConnections() {
+async function configureDatabaseConnections() {
   // First make sure all connetions are connected to the database
   const promises = [
     databaseConnectionForGeneral.promise().connect(),
@@ -66,4 +66,4 @@ async function updateDatabaseConnectionsWaitTimeouts(...forDatabaseConnections) 
   await Promise.all(promises);
 }
 
-module.exports = { verifyDatabaseConnections };
+module.exports = { configureDatabaseConnections };

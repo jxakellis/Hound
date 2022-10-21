@@ -1,6 +1,6 @@
 const { responseLogger } = require('./loggers');
 const { logServerError } = require('./logServerError');
-const { databaseConnectionForLogging } = require('../database/establishDatabaseConnections');
+const { databaseConnectionForLogging } = require('../database/createDatabaseConnections');
 const { databaseQuery } = require('../database/databaseQuery');
 const { areAllDefined } = require('../format/validateDefined');
 const { formatString, formatNumber } = require('../format/formatObject');

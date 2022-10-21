@@ -11,7 +11,6 @@ require('./globalConstants');
 const { exec } = require('child_process');
 
 // Import builtin NodeJS modules to instantiate the server
-const http = require('http');
 const https = require('https');
 const fs = require('fs');
 
@@ -26,13 +25,11 @@ const { serverLogger } = require('../tools/logging/loggers');
 //
 
 // Create a NodeJS HTTPS listener on port that points to the Express app
-// We can only create an HTTPS server on the AWS instance. Otherwise we create a HTTP server.
-const HTTPOrHTTPSServer = global.constant.server.IS_PRODUCTION_SERVER
-  ? https.createServer({
-    key: fs.readFileSync('/etc/letsencrypt/live/api.houndorganizer.com/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/api.houndorganizer.com/fullchain.pem'),
-  }, app)
-  : http.createServer(app);
+const pathToSecrets = `${__dirname}/../secrets/`;
+const httpsServer = https.createServer({
+  key: fs.readFileSync(`${pathToSecrets}houndorganizer_com_private_key.pem`),
+  cert: fs.readFileSync(`${pathToSecrets}houndorganizer_com_certificate.pem`),
+}, app);
 
 //
 //
@@ -45,7 +42,7 @@ const { configureAppForRequests } = require('./configureApp');
 
 // Setup the server to process requests
 let testDatabaseConnectionInterval;
-configureServerForRequests(HTTPOrHTTPSServer).then((intervalObject) => {
+configureServerForRequests(httpsServer).then((intervalObject) => {
   testDatabaseConnectionInterval = intervalObject;
 });
 
@@ -63,7 +60,7 @@ const { areAllDefined } = require('../tools/format/validateDefined');
 const { schedule } = require('../tools/notifications/alarm/schedule');
 const {
   databaseConnectionForGeneral, databaseConnectionForLogging, databaseConnectionForAlarms, databaseConnectionPoolForRequests,
-} = require('../tools/database/establishDatabaseConnections');
+} = require('../tools/database/createDatabaseConnections');
 
 /**
  * Gracefully closes/ends everything
@@ -91,7 +88,7 @@ const shutdown = () => new Promise((resolve) => {
       checkForShutdownCompletion();
     });
 
-  HTTPOrHTTPSServer.close((error) => {
+  httpsServer.close((error) => {
     if (error) {
       serverLogger.info('Server Couldn\'t Shutdown', error);
     }

@@ -1,5 +1,5 @@
 const { alertLogger } = require('../../logging/loggers');
-const { databaseConnectionForGeneral } = require('../../database/establishDatabaseConnections');
+const { databaseConnectionForGeneral } = require('../../database/createDatabaseConnections');
 const { formatBoolean } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 

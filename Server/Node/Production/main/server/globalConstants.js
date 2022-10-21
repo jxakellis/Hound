@@ -1,35 +1,23 @@
-const IS_PRODUCTION_SERVER = process.env.SERVER_ENVIRONMENT === 'production';
-const IS_PRODUCTION_DATABASE = process.env.SERVER_DATABASE === 'production';
-
-let SERVER_PORT;
-if (IS_PRODUCTION_SERVER && IS_PRODUCTION_DATABASE) {
-  SERVER_PORT = 443;
-}
-else if (IS_PRODUCTION_SERVER && !IS_PRODUCTION_DATABASE) {
-  SERVER_PORT = 8443;
-}
-else {
-  SERVER_PORT = 80;
-}
+const IS_PRODUCTION_DATABASE = process.env.DATABASE_ENVIRONMENT === 'production';
 
 const server = {
-  // True if the node application is being run on a linux environment that supports HTTPS (i.e. on AWS Ubuntu instance), otherwise false (i.e. on Macbook)
-  IS_PRODUCTION_SERVER,
   // True if we are using the production database that houses real users, false if we are launching a development server for testing
   IS_PRODUCTION_DATABASE,
   // If we are on the production server, then we use HTTPS. The productionDatabase uses port 443 and developmentDatabse uses port 443.
   // If we are on a development server, then we use HTTP. This is always on port 80
-  SERVER_PORT,
+  SERVER_PORT: IS_PRODUCTION_DATABASE ? 443 : 8443,
   // True if we are using a development database, false if we are using a production database as we don't want lots of console logs from users (note: serverLogger logs regardless of this settings)
   CONSOLE_LOGGING_ENABLED: !IS_PRODUCTION_DATABASE,
   // App versions of the iOS Hound app that work properly with the server.
   // A version would be depreciated if an endpoint path is changed or endpoint data return format is changed
   // Allows for testing of new versions in development but leave production alone
   COMPATIBLE_IOS_APP_VERSIONS: IS_PRODUCTION_DATABASE ? ['2.0.0'] : ['2.0.0'],
-  // How often each of the database connections are tested as being connected (in milliseconds)
-  DATABASE_CONNECTION_TEST_INTERVAL: 1000 * 60 * 5,
+  // How often the database connections are tested as being connected and excess previousRequests/previousResponses are deleted (in milliseconds)
+  DATABASE_MAINTENANCE_INTERVAL: IS_PRODUCTION_DATABASE ? (1000 * 60 * 15) : (1000 * 60 * 5),
   // How long the database connection can stay idle before being killed (in seconds)
   DATABASE_CONNECTION_WAIT_TIMEOUT: IS_PRODUCTION_DATABASE ? (60 * 60 * 3) : (60 * 60 * 1),
+  // How many entries to keep in the previousRequests and previousResponses tables
+  DATABASE_NUMBER_OF_PREVIOUS_REQUESTS_RESPONSES: IS_PRODUCTION_DATABASE ? 10000000 : 10000,
 };
 
 const limit = {

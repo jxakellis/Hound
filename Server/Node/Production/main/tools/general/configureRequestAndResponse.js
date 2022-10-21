@@ -5,7 +5,7 @@ const { formatNumber, formatBoolean } = require('../format/formatObject');
 const { convertErrorToJSON } = require('./errors');
 const { areAllDefined } = require('../format/validateDefined');
 const { databaseQuery } = require('../database/databaseQuery');
-const { databaseConnectionPoolForRequests } = require('../database/establishDatabaseConnections');
+const { databaseConnectionPoolForRequests } = require('../database/createDatabaseConnections');
 
 async function configureRequestForResponse(req, res, next) {
   res.hasSentResponse = false;
